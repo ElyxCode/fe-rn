@@ -4,17 +4,17 @@ import {colors} from '../styles/colors';
 import {SvgProps} from 'react-native-svg';
 
 type Props = {
-  buttonText: string;
+  textButton: string;
   ButtonIcon: React.FC<SvgProps>;
   customBackgroundColor?: string;
-  customColorText?: string;
+  customTextColor?: string;
 };
 
 export const ThirdPartyButton = ({
-  buttonText,
+  textButton,
   ButtonIcon,
   customBackgroundColor = colors.White,
-  customColorText = colors.DarkGrayColor,
+  customTextColor = colors.DarkGrayColor,
 }: Props) => {
   return (
     <TouchableHighlight
@@ -28,8 +28,8 @@ export const ThirdPartyButton = ({
           {backgroundColor: customBackgroundColor},
         ]}>
         <ButtonIcon height={25} width={25} />
-        <Text style={[styles.textButton, {color: customColorText}]}>
-          {buttonText}
+        <Text style={[styles.textButton, {color: customTextColor}]}>
+          {textButton}
         </Text>
       </View>
     </TouchableHighlight>
