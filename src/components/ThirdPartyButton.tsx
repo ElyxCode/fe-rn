@@ -6,18 +6,31 @@ import {SvgProps} from 'react-native-svg';
 type Props = {
   buttonText: string;
   ButtonIcon: React.FC<SvgProps>;
+  customBackgroundColor?: string;
+  customColorText?: string;
 };
 
-export const ThirdPartyButton = ({buttonText, ButtonIcon}: Props) => {
+export const ThirdPartyButton = ({
+  buttonText,
+  ButtonIcon,
+  customBackgroundColor = colors.White,
+  customColorText = colors.DarkGrayColor,
+}: Props) => {
   return (
     <TouchableHighlight
       underlayColor={colors.White}
       onPress={() => {
         console.log('Presione el boton');
       }}>
-      <View style={styles.buttonContainer}>
+      <View
+        style={[
+          styles.buttonContainer,
+          {backgroundColor: customBackgroundColor},
+        ]}>
         <ButtonIcon height={25} width={25} />
-        <Text style={styles.textButton}>{buttonText}</Text>
+        <Text style={[styles.textButton, {color: customColorText}]}>
+          {buttonText}
+        </Text>
       </View>
     </TouchableHighlight>
   );
@@ -26,7 +39,6 @@ export const ThirdPartyButton = ({buttonText, ButtonIcon}: Props) => {
 const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
-    backgroundColor: colors.White,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -36,7 +48,6 @@ const styles = StyleSheet.create({
   textButton: {
     fontSize: 16,
     fontFamily: 'Poppins-Regular',
-    color: colors.DarkGrayColor,
     textAlign: 'center',
   },
 });
