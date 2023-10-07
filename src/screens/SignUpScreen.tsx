@@ -4,6 +4,7 @@ import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
 import {ThirdPartyButton} from '../components/ThirdPartyButton';
+import {BackButtonBar} from '../components/BackButtonBar';
 
 import UserTagIcon from '../assets/user_tag.svg';
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
@@ -14,7 +15,6 @@ import GoogleIcon from '../assets/google_logo.svg';
 import AppleIcon from '../assets/apple_logo.svg';
 
 import {colors} from '../styles/colors';
-import {BackButtonBar} from '../components/BackButtonBar';
 
 export const SignUpScreen = () => {
   return (
