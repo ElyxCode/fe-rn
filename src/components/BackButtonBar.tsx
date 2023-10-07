@@ -1,20 +1,35 @@
 import {Pressable, StyleSheet, View, Text} from 'react-native';
 
-import BackArrow from '../assets/arrow_left.svg';
+import BackArrowIcon from '../assets/arrow_left.svg';
+import BackArrowWhiteIcon from '../assets/arrow_left_white.svg';
 
 import {colors} from '../styles/colors';
 
 type Props = {
   titleText?: string;
+  primaryColorDefault?: boolean;
 };
 
-export const BackButtonBar = ({titleText}: Props) => {
+export const BackButtonBar = ({
+  titleText,
+  primaryColorDefault = true,
+}: Props) => {
   return (
     <View style={styles.container}>
       <Pressable onPress={() => console.log('back')}>
-        <BackArrow height={25} width={25} />
+        {primaryColorDefault ? (
+          <BackArrowIcon height={25} width={25} />
+        ) : (
+          <BackArrowWhiteIcon height={25} width={25} />
+        )}
       </Pressable>
-      <Text style={styles.titleText}>{titleText}</Text>
+      <Text
+        style={[
+          styles.titleText,
+          {color: primaryColorDefault ? colors.PrimaryTextColor : colors.White},
+        ]}>
+        {titleText}
+      </Text>
     </View>
   );
 };
