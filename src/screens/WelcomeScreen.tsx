@@ -58,7 +58,7 @@ export const WelcomeScreen = () => {
         </View>
       </View>
       <View style={{margin: 30}}>
-        <SubmitButton buttonText="Comenzar" />
+        <SubmitButton textButton="Comenzar" />
       </View>
     </SafeAreaView>
   );

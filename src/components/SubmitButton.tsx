@@ -1,19 +1,27 @@
-import {TouchableHighlight, View, Text, StyleSheet} from 'react-native';
+import {
+  TouchableHighlight,
+  View,
+  Text,
+  StyleSheet,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import {colors} from '../styles/colors';
 
 type Props = {
-  buttonText: string;
+  textButton: string;
+  customStyles?: StyleProp<ViewStyle>;
 };
 
-export const SubmitButton = ({buttonText}: Props) => {
+export const SubmitButton = ({textButton, customStyles}: Props) => {
   return (
     <TouchableHighlight
       underlayColor={colors.White}
       onPress={() => {
         console.log('Presione el boton');
       }}>
-      <View style={styles.buttonContainer}>
-        <Text style={styles.textButton}>{buttonText}</Text>
+      <View style={[styles.buttonContainer, customStyles]}>
+        <Text style={styles.textButton}>{textButton}</Text>
       </View>
     </TouchableHighlight>
   );
@@ -21,8 +29,8 @@ export const SubmitButton = ({buttonText}: Props) => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    backgroundColor: colors.PrimaryColor,
     justifyContent: 'center',
+    backgroundColor: colors.PrimaryColor,
     height: 53,
     borderRadius: 10,
   },
