@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, SafeAreaView, Text} from 'react-native';
 
-import {BackButtonBar} from '../components/BackButtonBar';
+import {CustomNavBar} from '../components/CustomNavBar';
 import {SubmitButton} from '../components/SubmitButton';
 
 import UserTickIcon from '../assets/user_tick.svg';
@@ -11,7 +11,7 @@ import {colors} from '../styles/colors';
 export const OptionsUnLoggedScreen = () => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
-      <BackButtonBar titleText="Mis Opciones" primaryColorDefault={false} />
+      <CustomNavBar titleText="Mis Opciones" primaryColorDefault={false} />
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <UserTickIcon height={100} />

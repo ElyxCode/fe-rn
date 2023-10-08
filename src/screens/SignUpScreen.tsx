@@ -4,7 +4,7 @@ import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
 import {ThirdPartyButton} from '../components/ThirdPartyButton';
-import {BackButtonBar} from '../components/BackButtonBar';
+import {CustomNavBar} from '../components/CustomNavBar';
 
 import UserTagIcon from '../assets/user_tag.svg';
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
@@ -19,7 +19,7 @@ import {colors} from '../styles/colors';
 export const SignUpScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <BackButtonBar />
+      <CustomNavBar />
       <View style={styles.container}>
         <UserTagIcon height={75} />
         <Text style={styles.titleText}>Registrate</Text>
