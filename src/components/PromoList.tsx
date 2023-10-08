@@ -10,7 +10,7 @@ const images = [
   {id: 4, uri: 'https://reactjs.org/logo-og.png'},
 ];
 
-const PromoImagesRender = ({uri}: {uri: string}) => {
+const PromoItemRender = ({uri}: {uri: string}) => {
   return (
     <View>
       <Image
@@ -30,7 +30,7 @@ export const PromoList = () => {
       <FlatList
         horizontal={true}
         data={images}
-        renderItem={({item}) => <PromoImagesRender uri={item.uri} />}
+        renderItem={({item}) => <PromoItemRender uri={item.uri} />}
         keyExtractor={item => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View style={{width: 12}}></View>}

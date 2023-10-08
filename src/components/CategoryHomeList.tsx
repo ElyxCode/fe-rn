@@ -41,7 +41,7 @@ const catList = [
   },
 ];
 
-const CategoryRender = ({
+const CategoryItemRender = ({
   imageUri,
   category,
 }: {
@@ -64,7 +64,7 @@ export const CategoryHomeList = () => {
         horizontal={true}
         data={catList}
         renderItem={({item}) => (
-          <CategoryRender imageUri={item.uri} category={item.category} />
+          <CategoryItemRender imageUri={item.uri} category={item.category} />
         )}
         keyExtractor={item => item.id.toString()}
         showsHorizontalScrollIndicator={false}
