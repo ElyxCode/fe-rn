@@ -10,7 +10,7 @@ type Props = {
   primaryColorDefault?: boolean;
 };
 
-export const BackButtonBar = ({
+export const CustomNavBar = ({
   titleText,
   primaryColorDefault = true,
 }: Props) => {

@@ -4,7 +4,7 @@ import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
 import {ThirdPartyButton} from '../components/ThirdPartyButton';
-import {BackButtonBar} from '../components/BackButtonBar';
+import {CustomNavBar} from '../components/CustomNavBar';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -17,7 +17,7 @@ import {colors} from '../styles/colors';
 export const LoginScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <BackButtonBar />
+      <CustomNavBar />
       <View style={styles.container}>
         <UserTickIcon height={'75'} fill={colors.DarkGrayColor} />
         <Text style={styles.titleText}>Inicia sesión</Text>
