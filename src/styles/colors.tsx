@@ -14,4 +14,5 @@ export const colors = {
   MenuTextColor: '#9B9B9B',
   MenuIconsColor: '#42bfdf',
   PrimaryLightColor: '#3947A3',
+  SwitchThumbColor: '#27AE60',
 };
