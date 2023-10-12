@@ -13,4 +13,5 @@ export const colors = {
   BlackTextColor: '#4E4E4E',
   MenuTextColor: '#9B9B9B',
   MenuIconsColor: '#42bfdf',
+  PrimaryLightColor: '#3947A3',
 };
