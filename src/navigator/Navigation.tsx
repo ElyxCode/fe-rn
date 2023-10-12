@@ -5,6 +5,7 @@ import {LoginScreen} from '../screens/LoginScreen';
 import {SignUpScreen} from '../screens/SignUpScreen';
 import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {HomeBranchScreen} from '../screens/HomeBranchScreen';
+import {UserOptionsMenuScreen} from '../screens/UserOptionsMenuScreen';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -12,6 +13,7 @@ export type RootStackParams = {
   SignUpScreen: undefined;
   OptionsUnLoggedScreen: undefined;
   HomeBranchScreen: undefined;
+  UserOptionsMenuScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParams>();
@@ -26,7 +28,11 @@ export const Navigation = () => {
         name="OptionsUnLoggedScreen"
         component={OptionsUnLoggedScreen}
       /> */}
-      <Stack.Screen name="HomeBranchScreen" component={HomeBranchScreen} />
+      {/* <Stack.Screen name="HomeBranchScreen" component={HomeBranchScreen} /> */}
+      <Stack.Screen
+        name="UserOptionsMenuScreen"
+        component={UserOptionsMenuScreen}
+      />
     </Stack.Navigator>
   );
 };
