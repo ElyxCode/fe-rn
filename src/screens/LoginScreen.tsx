@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, View, Text, StyleSheet} from 'react-native';
+import {SafeAreaView, View, Text, StyleSheet, Pressable} from 'react-native';
 
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
@@ -14,7 +14,7 @@ import AppleLogoIcon from '../assets/apple_logo.svg';
 
 import {colors} from '../styles/colors';
 
-export const LoginScreen = () => {
+export const LoginScreen = ({navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar />
@@ -41,7 +41,10 @@ export const LoginScreen = () => {
         </View>
         <Text style={styles.recoverPassword}>Recuperar Contraseña</Text>
         <View style={styles.buttonsContainer}>
-          <SubmitButton textButton="Iniciar Sesión" />
+          <SubmitButton
+            textButton="Iniciar Sesión"
+            onPress={() => navigation.navigate('UserOptionsMenuScreen')}
+          />
           <ThirdPartyButton
             textButton="Continuar con Google"
             ButtonIcon={GoogleLogoIcon}
@@ -63,9 +66,11 @@ export const LoginScreen = () => {
           <Text style={styles.noAccountMessage}>
             ¿Aún no tienes una cuenta?
           </Text>
-          <Text style={[styles.noAccountMessage, styles.registerMessage]}>
-            Registrarme
-          </Text>
+          <Pressable onPress={() => navigation.navigate('SignUpScreen')}>
+            <Text style={[styles.noAccountMessage, styles.registerMessage]}>
+              Registrarme
+            </Text>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>

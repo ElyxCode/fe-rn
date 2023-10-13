@@ -8,7 +8,7 @@ import UserTickIcon from '../assets/user_tick.svg';
 
 import {colors} from '../styles/colors';
 
-export const OptionsUnLoggedScreen = () => {
+export const OptionsUnLoggedScreen = ({navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
       <CustomNavBar titleText="Mis Opciones" primaryColorDefault={false} />
@@ -29,6 +29,7 @@ export const OptionsUnLoggedScreen = () => {
         <SubmitButton
           textButton="Comenzar"
           customStyles={{backgroundColor: colors.SecondaryColor}}
+          onPress={() => navigation.navigate('LoginScreen')}
         />
       </View>
     </SafeAreaView>
