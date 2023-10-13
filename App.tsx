@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler';
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 
 import SplashScreen from 'react-native-splash-screen';
 
 import {NavigationContainer} from '@react-navigation/native';
 
-import {Navigation} from './src/navigator/Navigation';
+import {MainNavigation} from './src/navigator/MainNavigation';
 
 const App = (): JSX.Element => {
   useEffect(() => {
@@ -14,7 +14,7 @@ const App = (): JSX.Element => {
 
   return (
     <NavigationContainer>
-      <Navigation />
+      <MainNavigation />
     </NavigationContainer>
   );
 };
