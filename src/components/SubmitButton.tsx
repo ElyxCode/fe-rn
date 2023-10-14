@@ -11,15 +11,12 @@ import {colors} from '../styles/colors';
 type Props = {
   textButton: string;
   customStyles?: StyleProp<ViewStyle>;
+  onPress?(): void;
 };
 
-export const SubmitButton = ({textButton, customStyles}: Props) => {
+export const SubmitButton = ({textButton, customStyles, onPress}: Props) => {
   return (
-    <TouchableHighlight
-      underlayColor={colors.White}
-      onPress={() => {
-        console.log('Presione el boton');
-      }}>
+    <TouchableHighlight underlayColor={colors.White} onPress={onPress}>
       <View style={[styles.buttonContainer, customStyles]}>
         <Text style={styles.textButton}>{textButton}</Text>
       </View>

@@ -7,7 +7,7 @@ import MenuHomeIcon from '../assets/menu_home_button.svg';
 
 const heightIcon = 25;
 
-export const CustomNavBarHome = () => {
+export const CustomNavBarHome = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <HomeTitleIcon />
@@ -15,7 +15,10 @@ export const CustomNavBarHome = () => {
         <Pressable>
           <SearchHomeIcon height={heightIcon} />
         </Pressable>
-        <Pressable>
+        <Pressable
+          onPress={() => {
+            navigation.navigate('ProfileNavigation');
+          }}>
           <MenuHomeIcon height={heightIcon} />
         </Pressable>
       </View>

@@ -11,7 +11,7 @@ import {colors} from '../styles/colors';
 
 const svgImageHeight = 75;
 
-export const WelcomeScreen = () => {
+export const WelcomeScreen = ({route, navigation}: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.LogoContainer}>
@@ -58,7 +58,10 @@ export const WelcomeScreen = () => {
         </View>
       </View>
       <View style={{margin: 30}}>
-        <SubmitButton textButton="Comenzar" />
+        <SubmitButton
+          textButton="Comenzar"
+          onPress={() => navigation.navigate('HomeBranchScreen')}
+        />
       </View>
     </SafeAreaView>
   );

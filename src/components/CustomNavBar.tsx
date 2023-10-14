@@ -1,4 +1,5 @@
 import {Pressable, StyleSheet, View, Text} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
 import BackArrowIcon from '../assets/arrow_left.svg';
 import BackArrowWhiteIcon from '../assets/arrow_left_white.svg';
@@ -14,9 +15,11 @@ export const CustomNavBar = ({
   titleText,
   primaryColorDefault = true,
 }: Props) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => console.log('back')}>
+      <Pressable onPress={() => navigation.goBack()}>
         {primaryColorDefault ? (
           <BackArrowIcon height={25} width={25} />
         ) : (

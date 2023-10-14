@@ -7,10 +7,10 @@ import {PromoList} from '../components/PromoList';
 import {CategoryHomeList} from '../components/CategoryHomeList';
 import {BranchHomeList} from '../components/BranchHomeList';
 
-export const HomeBranchScreen = () => {
+export const HomeBranchScreen = ({navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <CustomNavBarHome />
+      <CustomNavBarHome navigation={navigation} />
       <LocationBar />
       <ScrollView style={styles.scrollContainer}>
         <PromoList />

@@ -21,26 +21,38 @@ import SettingIcon from '../assets/settings.svg';
 import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
+import {useNavigation} from '@react-navigation/native';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
   optionName: string;
+  screenPath: string;
 };
 
 const menuOptions: MenuOptionItemProps[] = [
-  {optionName: 'Mis Ordenes', OptionButtonIcon: BoxIcon},
-  {optionName: 'Métodos de Pago', OptionButtonIcon: CardsIcon},
-  {optionName: 'Direcciones de envío', OptionButtonIcon: LocationIcon},
-  {optionName: 'Ayuda', OptionButtonIcon: MessageQuestionIcon},
-  {optionName: 'Ajustes de la app', OptionButtonIcon: SettingIcon},
+  {optionName: 'Mis Ordenes', OptionButtonIcon: BoxIcon, screenPath: ''},
+  {optionName: 'Métodos de Pago', OptionButtonIcon: CardsIcon, screenPath: ''},
+  {
+    optionName: 'Direcciones de envío',
+    OptionButtonIcon: LocationIcon,
+    screenPath: '',
+  },
+  {optionName: 'Ayuda', OptionButtonIcon: MessageQuestionIcon, screenPath: ''},
+  {
+    optionName: 'Ajustes de la app',
+    OptionButtonIcon: SettingIcon,
+    screenPath: 'SettingsScreen',
+  },
 ];
 
 const MenuOptionItem = ({
   OptionButtonIcon,
   optionName,
+  screenPath,
 }: MenuOptionItemProps) => {
+  const navigation = useNavigation();
   return (
-    <Pressable onPress={() => console.log(optionName)}>
+    <Pressable onPress={() => navigation.navigate(screenPath as never)}>
       <View style={styles.menuOptionsItemContainer}>
         <OptionButtonIcon height={21} fill={colors.SecondaryColor} />
         <View style={{flex: 1}}>
@@ -54,9 +66,9 @@ const MenuOptionItem = ({
 
 export const UserOptionsMenuScreen = () => {
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
+      <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
       <View style={styles.container}>
-        <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
         <UserInfo
           userName={'Ricardo'}
           userEmail="richi@mail.com"
@@ -69,6 +81,7 @@ export const UserOptionsMenuScreen = () => {
               <MenuOptionItem
                 OptionButtonIcon={item.OptionButtonIcon}
                 optionName={item.optionName}
+                screenPath={item.screenPath}
               />
             )}
             keyExtractor={item => item.optionName}
