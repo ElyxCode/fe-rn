@@ -3,62 +3,25 @@ import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 
 import RatingStarIcon from '../assets/Rating_Star.svg';
 import TruckIcon from '../assets/truck.svg';
+
+import {Branch} from '../model/Branch';
+
 import {colors} from '../styles/colors';
 
-const data = [
-  {
-    id: '1',
-    img: 'https://reactjs.org/logo-og.png',
-    icon: 'https://reactjs.org/logo-og.png',
-    name: 'La ferreteria ideal',
-    rate: '5',
-    deliveryTime: 'Entre 1-2 horas',
-  },
-  {
-    id: '2',
-    img: 'https://reactjs.org/logo-og.png',
-    icon: 'https://reactjs.org/logo-og.png',
-    name: 'La ferreteria ideal',
-    rate: '5',
-    deliveryTime: 'Entre 1-2 horas',
-  },
-  {
-    id: '3',
-    img: 'https://reactjs.org/logo-og.png',
-    icon: 'https://reactjs.org/logo-og.png',
-    name: 'La ferreteria ideal',
-    rate: '5',
-    deliveryTime: 'Entre 1-2 horas',
-  },
-  {
-    id: '4',
-    img: 'https://reactjs.org/logo-og.png',
-    icon: 'https://reactjs.org/logo-og.png',
-    name: 'La ferreteria ideal',
-    rate: '5',
-    deliveryTime: 'Entre 1-2 horas',
-  },
-  {
-    id: '5',
-    img: 'https://reactjs.org/logo-og.png',
-    icon: 'https://reactjs.org/logo-og.png',
-    name: 'La ferreteria ideal',
-    rate: '5',
-    deliveryTime: 'Entre 1-2 horas',
-  },
-];
+type BranchHomeListProps = {
+  branchs: Branch[];
+};
 
 type BranchItemProps = {
   id: string;
-  img: string;
-  icon: string;
-  name: string;
-  rate: string;
-  deliveryTime: string;
+  img?: string;
+  icon?: string;
+  name?: string;
+  rate?: string;
+  deliveryTime?: string;
 };
 
 const BranchItemRender = ({
-  id,
   img,
   icon,
   name,
@@ -68,7 +31,7 @@ const BranchItemRender = ({
   return (
     <View style={styles.BranchItemContainer}>
       <View style={styles.branchItemImageContainer}>
-        <Image source={{uri: icon}} height={61} style={styles.imageStyle} />
+        <Image source={{uri: img}} height={61} style={styles.imageStyle} />
       </View>
       <View style={styles.branchDescriptionItemContainer}>
         <View style={styles.iconContainer}>
@@ -76,7 +39,11 @@ const BranchItemRender = ({
             source={{uri: icon}}
             height={48}
             width={48}
-            style={{borderRadius: 25}}
+            style={{
+              borderRadius: 25,
+              borderColor: colors.LightGrayColor,
+              borderWidth: 0.5,
+            }}
           />
         </View>
 
@@ -100,23 +67,23 @@ const BranchItemRender = ({
   );
 };
 
-export const BranchHomeList = () => {
+export const BranchHomeList = ({branchs}: BranchHomeListProps) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={data}
+        data={branchs}
         renderItem={({item}) => (
           <BranchItemRender
-            id={item.id}
-            img={item.img}
-            icon={item.icon}
+            id={item.id.toString()}
+            img={item.banner}
+            icon={item.logo}
             name={item.name}
-            rate={item.rate}
-            deliveryTime={item.deliveryTime}
+            rate={item.rating}
+            deliveryTime={item.delivery_time?.toString()}
           />
         )}
         ItemSeparatorComponent={() => <View style={{height: 10}}></View>}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         scrollEnabled={false}
       />
     </View>
@@ -152,7 +119,7 @@ const styles = StyleSheet.create({
   nameContainer: {},
   branchDescriptionDeliveryRateItemContainer: {
     flexDirection: 'row',
-    columnGap: 10,
+    columnGap: 20,
   },
   branchDescriptionDeliveryRateItem: {
     flexDirection: 'row',
