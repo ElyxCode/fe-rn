@@ -14,14 +14,17 @@ import {Category} from '../model/Category';
 import {categoryServices} from '../services/category';
 import {promotionServices} from '../services/promotion';
 import {Promotion} from '../model/Promotion';
+import {LoaderScreen} from './LoaderScreen';
 
 export const HomeBranchScreen = ({navigation}: any) => {
   const [branchs, setBranchs] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [promotions, setPromotios] = useState<Promotion[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getBranchs = async () => {
+      setIsLoading(true);
       const {data} = await branchService();
       setBranchs(data as Branch[]);
     };
@@ -52,6 +55,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
     const getPromotions = async () => {
       const {data} = await promotionServices();
       setPromotios(data as Promotion[]);
+      setIsLoading(false);
     };
 
     getPromotions();
@@ -61,11 +65,15 @@ export const HomeBranchScreen = ({navigation}: any) => {
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBarHome navigation={navigation} />
       <LocationBar />
-      <ScrollView style={styles.scrollContainer}>
-        <PromoList promotions={promotions} />
-        <CategoryHomeList categories={categories} />
-        <BranchHomeList branchs={branchs} />
-      </ScrollView>
+      {isLoading ? (
+        <LoaderScreen />
+      ) : (
+        <ScrollView style={styles.scrollContainer}>
+          <PromoList promotions={promotions} />
+          <CategoryHomeList categories={categories} />
+          <BranchHomeList branchs={branchs} />
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
