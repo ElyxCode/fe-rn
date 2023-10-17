@@ -1,70 +1,47 @@
 import React from 'react';
 import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
 
+import {Category} from '../model/Category';
+
+import AllCategory from '../assets/allcategory_cyan.svg';
+
 import {colors} from '../styles/colors';
 
-const catList = [
-  {
-    id: 1,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Todos',
-  },
-  {
-    id: 2,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Cemento',
-  },
-  {
-    id: 3,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Herramientas',
-  },
-  {
-    id: 4,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-  {
-    id: 5,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-  {
-    id: 6,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-  {
-    id: 7,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-];
+type CategoryHomeListProps = {
+  categories: Category[];
+};
 
 const CategoryItemRender = ({
   imageUri,
   category,
 }: {
-  imageUri: string;
-  category: string;
+  imageUri?: string;
+  category?: string;
 }) => {
   return (
     <View style={styles.categoryContainer}>
-      <Image source={{uri: imageUri}} height={17} width={21} />
+      {imageUri === 'allCategory' ? (
+        <AllCategory height={17} width={21} />
+      ) : (
+        <Image source={{uri: imageUri}} height={17} width={21} />
+      )}
       <Text style={styles.categoryText}>{category}</Text>
     </View>
   );
 };
 
-export const CategoryHomeList = () => {
+export const CategoryHomeList = ({categories}: CategoryHomeListProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>Todo en un solo lugar</Text>
       <FlatList
         horizontal={true}
-        data={catList}
+        data={categories}
         renderItem={({item}) => (
-          <CategoryItemRender imageUri={item.uri} category={item.category} />
+          <CategoryItemRender
+            imageUri={item.avatar?.toString()}
+            category={item.name}
+          />
         )}
         keyExtractor={item => item.id.toString()}
         showsHorizontalScrollIndicator={false}
