@@ -14,7 +14,7 @@ export const AddressBox = ({textButton,customStyles}: Props) => {
     <>
     <View style={[styles.content, customStyles]}>
         <LocationIcon height={24} width={24} />
-        <Text style={styles.text}>{textButton}</Text>
+        <Text numberOfLines={1} lineBreakMode='tail' style={styles.text}>{textButton}</Text>
     </View>
     </>
     );
@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
     borderRadius:10
   },
   text:{
-     paddingLeft:15
+     paddingLeft:15,
+     fontSize:14,
+     fontFamily:'Poppins-Medium',
+     
   }
 })
