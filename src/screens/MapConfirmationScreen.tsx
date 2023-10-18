@@ -139,6 +139,7 @@ export const MapConfirmationScreen = () => {
                 }}
                 title={marker.title}
                 description={marker.title}
+                image={{uri: 'ic_location_pin'}}
               />
             ))}
           </MapView>
@@ -153,17 +154,13 @@ export const MapConfirmationScreen = () => {
           {isLoading  ? (
              <AddressBox
              customStyles={styles.addressBox}
-             textButton={'buscando...'}></AddressBox>
+             textButton={'Buscando...'}></AddressBox>
       ) : (
         <AddressBox
         customStyles={styles.addressBox}
         textButton={ currentLocation?.description == undefined ? 'no encontrado': currentLocation?.description}></AddressBox>
       )}
-          
-              
-        
-     
-          <SubmitButton textButton="Confirmar dirección" />
+         <SubmitButton textButton="Confirmar dirección" />
         </View>
       </View>
     </>
