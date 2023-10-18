@@ -29,11 +29,9 @@ import AppleLogoIcon from '../assets/apple_logo.svg';
 
 import {colors} from '../styles/colors';
 import Messages from '../constants/Messages';
-import {tokenState} from '../utils/store';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [, setToken] = useRecoilState(tokenState);
 
   const {
     control,
@@ -57,7 +55,6 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
-      setToken(response.data?.token);
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
