@@ -63,16 +63,18 @@ export const HomeBranchScreen = ({navigation}: any) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <CustomNavBarHome navigation={navigation} />
-      <LocationBar />
       {isLoading ? (
         <LoaderScreen />
       ) : (
-        <ScrollView style={styles.scrollContainer}>
-          <PromoList promotions={promotions} />
-          <CategoryHomeList categories={categories} />
-          <BranchHomeList branchs={branchs} />
-        </ScrollView>
+        <>
+          <CustomNavBarHome navigation={navigation} />
+          <LocationBar />
+          <ScrollView style={styles.scrollContainer}>
+            <PromoList promotions={promotions} />
+            <CategoryHomeList categories={categories} />
+            <BranchHomeList branchs={branchs} />
+          </ScrollView>
+        </>
       )}
     </SafeAreaView>
   );
