@@ -1,70 +1,68 @@
-import React from 'react';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+
+import {Category} from '../model/Category';
+
+import AllCategory from '../assets/allcategory_cyan.svg';
 
 import {colors} from '../styles/colors';
 
-const catList = [
-  {
-    id: 1,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Todos',
-  },
-  {
-    id: 2,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Cemento',
-  },
-  {
-    id: 3,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Herramientas',
-  },
-  {
-    id: 4,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-  {
-    id: 5,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-  {
-    id: 6,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-  {
-    id: 7,
-    uri: 'https://img.icons8.com/nolan/64/react-native.png',
-    category: 'Jardineria',
-  },
-];
-
-const CategoryItemRender = ({
-  imageUri,
-  category,
-}: {
-  imageUri: string;
-  category: string;
-}) => {
-  return (
-    <View style={styles.categoryContainer}>
-      <Image source={{uri: imageUri}} height={17} width={21} />
-      <Text style={styles.categoryText}>{category}</Text>
-    </View>
-  );
+type CategoryHomeListProps = {
+  categories: Category[];
 };
 
-export const CategoryHomeList = () => {
+export const CategoryHomeList = ({categories}: CategoryHomeListProps) => {
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+
+  const handleSelectionItem = (id: string) => {
+    let selectedItemId = categoryId;
+    if (selectedItemId === id) {
+      setCategoryId(null);
+    } else {
+      setCategoryId(id);
+    }
+  };
+
+  const CategoryItemRender = ({
+    id,
+    imageUri,
+    category,
+  }: {
+    id: string;
+    imageUri?: string;
+    category?: string;
+  }) => {
+    return (
+      <Pressable onPress={() => handleSelectionItem(id)}>
+        <View
+          style={[
+            styles.categoryContainer,
+            id === categoryId ? styles.categoryContainerSelected : null,
+          ]}>
+          {imageUri === 'allCategory' ? (
+            <AllCategory height={17} width={21} />
+          ) : (
+            <Image source={{uri: imageUri}} height={17} width={21} />
+          )}
+          <Text style={styles.categoryText}>{category}</Text>
+        </View>
+      </Pressable>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>Todo en un solo lugar</Text>
       <FlatList
         horizontal={true}
-        data={catList}
+        data={categories}
+        extraData={categoryId}
         renderItem={({item}) => (
-          <CategoryItemRender imageUri={item.uri} category={item.category} />
+          <CategoryItemRender
+            id={item.id.toString()}
+            imageUri={item.avatar?.toString()}
+            category={item.name}
+          />
         )}
         keyExtractor={item => item.id.toString()}
         showsHorizontalScrollIndicator={false}
@@ -92,6 +90,10 @@ const styles = StyleSheet.create({
     height: 40,
     paddingHorizontal: 12,
     columnGap: 8,
+  },
+  categoryContainerSelected: {
+    borderColor: colors.SecondaryColor,
+    borderWidth: 1,
   },
   categoryText: {
     fontSize: 12,

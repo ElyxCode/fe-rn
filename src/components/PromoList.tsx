@@ -1,14 +1,22 @@
 import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {colors} from '../styles/colors';
+
 import {FlatList} from 'react-native-gesture-handler';
 
-const images = [
-  {id: 1, uri: 'https://reactjs.org/logo-og.png'},
-  {id: 2, uri: 'https://reactjs.org/logo-og.png'},
-  {id: 3, uri: 'https://reactjs.org/logo-og.png'},
-  {id: 4, uri: 'https://reactjs.org/logo-og.png'},
-];
+import {Promotion} from '../model/Promotion';
+
+import {colors} from '../styles/colors';
+
+// const images = [
+//   {id: 1, uri: 'https://reactjs.org/logo-og.png'},
+//   {id: 2, uri: 'https://reactjs.org/logo-og.png'},
+//   {id: 3, uri: 'https://reactjs.org/logo-og.png'},
+//   {id: 4, uri: 'https://reactjs.org/logo-og.png'},
+// ];
+
+type PromoListProps = {
+  promotions: Promotion[];
+};
 
 const PromoItemRender = ({uri}: {uri: string}) => {
   return (
@@ -23,14 +31,14 @@ const PromoItemRender = ({uri}: {uri: string}) => {
   );
 };
 
-export const PromoList = () => {
+export const PromoList = ({promotions}: PromoListProps) => {
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>Promos</Text>
       <FlatList
         horizontal={true}
-        data={images}
-        renderItem={({item}) => <PromoItemRender uri={item.uri} />}
+        data={promotions}
+        renderItem={({item}) => <PromoItemRender uri={item.image} />}
         keyExtractor={item => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View style={{width: 12}}></View>}
