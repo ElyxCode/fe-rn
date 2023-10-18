@@ -12,6 +12,7 @@ import MapView, {
 } from 'react-native-maps';
 import GetLocation from 'react-native-get-location'
 import Geocoder from 'react-native-geocoding';
+import { navigateToScreen } from '../helpers/NavigateToScreen';
 
 interface Location  {
     latitude: number,
@@ -21,7 +22,7 @@ interface Location  {
 
 }
 
-export const MapConfirmationScreen = () => {
+export const MapConfirmationScreen = ({navigation}: any) => {
     
     const [isLoading, setLoading] = useState(true);
     const [currentLocation, setCurrentLocation] = useState<Location>();
@@ -153,12 +154,18 @@ export const MapConfirmationScreen = () => {
 
           {isLoading  ? (
              <AddressBox
+             onPress={() => navigation.navigate('SearchAddressScreen')}
              customStyles={styles.addressBox}
              textButton={'Buscando...'}></AddressBox>
       ) : (
         <AddressBox
+        onPress={() => { 
+            console.log('hola')
+            navigation.navigate('SearchAddressScreen')}}
         customStyles={styles.addressBox}
-        textButton={ currentLocation?.description == undefined ? 'no encontrado': currentLocation?.description}></AddressBox>
+        textButton={ currentLocation?.description == undefined ? 'no encontrado': currentLocation?.description}
+        
+        ></AddressBox>
       )}
          <SubmitButton textButton="Confirmar dirección" />
         </View>
