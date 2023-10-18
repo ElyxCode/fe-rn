@@ -8,11 +8,18 @@ import {
   Alert,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
+import {useRecoilState} from 'recoil';
+
+import {LoaderScreen} from './LoaderScreen';
 
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
 import {ThirdPartyButton} from '../components/ThirdPartyButton';
 import {CustomNavBar} from '../components/CustomNavBar';
+
+import {loginServices} from '../services/auth';
+
+import {User} from '../model/User';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -21,13 +28,12 @@ import GoogleLogoIcon from '../assets/google_logo.svg';
 import AppleLogoIcon from '../assets/apple_logo.svg';
 
 import {colors} from '../styles/colors';
-import {loginServices} from '../services/auth';
-import {User} from '../model/User';
-import {LoaderScreen} from './LoaderScreen';
 import Messages from '../constants/Messages';
+import {tokenState} from '../utils/store';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [, setToken] = useRecoilState(tokenState);
 
   const {
     control,
@@ -51,6 +57,7 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
+      setToken(response.data?.token);
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
