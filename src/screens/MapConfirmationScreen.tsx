@@ -11,6 +11,7 @@ import MapView, {
   Details,
 } from 'react-native-maps';
 import GetLocation from 'react-native-get-location'
+import Geocoder from 'react-native-geocoding';
 
 interface Location  {
     latitude: number,
@@ -21,11 +22,14 @@ interface Location  {
 }
 
 export const MapConfirmationScreen = () => {
+    
+    const [isLoading, setLoading] = useState(true);
+    const [currentLocation, setCurrentLocation] = useState<Location>();
    
 
   const [region, setRegion] = useState({
-    latitude: 13.7012696,
-    longitude: -89.2253804,
+    latitude: 13.701404423436982,
+    longitude: -89.2244389412076,
     latitudeDelta: 0.015,
     longitudeDelta: 0.0121,
   });
@@ -47,18 +51,21 @@ export const MapConfirmationScreen = () => {
 }
 
   const getCurrentLocation = async  () => {
-    try{ 
-   const location =  await  GetLocation.getCurrentPosition({ enableHighAccuracy:true, timeout:6000 });
-    console.log('location',location)
-   return location;
-     }catch (error )
-      {
-  console.log(error)
-     } 
+
+   let location =  await  GetLocation.getCurrentPosition({ enableHighAccuracy:true, timeout:6000 });
+   if(location !== null){
+    return location;
+   }
+  
+   return { latitude: 13.701404423436982, longitude:  -89.2244389412076 };
+ 
+    
   };
 
-  const setLocation =  (location: Location) => {
+  const setLocation = async (location: Location) => {
     console.log('settlocation')
+
+    setLoading(true);
     setMarkers([
         {
           latitude: location.latitude,
@@ -75,6 +82,19 @@ export const MapConfirmationScreen = () => {
         longitudeDelta: 0.0121,
       };
       setRegion(region);
+
+     const geoReponse = await Geocoder.from(location.latitude, location.longitude);
+  
+     const address =  geoReponse.results[0].formatted_address
+     
+     location.description= address.split(',')[0];
+     location.title = address.split(',')[0];
+     
+     setCurrentLocation(location)
+
+     setLoading(false)
+
+
       
   };
 
@@ -129,9 +149,20 @@ export const MapConfirmationScreen = () => {
           <Text style={styles.description}>
             Queremos mostrate los productos disponibles para tu zona
           </Text>
-          <AddressBox
-            customStyles={styles.addressBox}
-            textButton={markers[0]?.title}></AddressBox>
+
+          {isLoading  ? (
+             <AddressBox
+             customStyles={styles.addressBox}
+             textButton={'buscando...'}></AddressBox>
+      ) : (
+        <AddressBox
+        customStyles={styles.addressBox}
+        textButton={ currentLocation?.description == undefined ? 'no encontrado': currentLocation?.description}></AddressBox>
+      )}
+          
+              
+        
+     
           <SubmitButton textButton="Confirmar dirección" />
         </View>
       </View>
