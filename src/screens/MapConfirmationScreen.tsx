@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {AddressBox} from '../components/AddressBox';
@@ -10,8 +10,19 @@ import MapView, {
   Region,
   Details,
 } from 'react-native-maps';
+import GetLocation from 'react-native-get-location'
+
+interface Location  {
+    latitude: number,
+    longitude:number,
+    title?:string,
+    description?:string
+
+}
 
 export const MapConfirmationScreen = () => {
+   
+
   const [region, setRegion] = useState({
     latitude: 13.7012696,
     longitude: -89.2253804,
@@ -23,52 +34,91 @@ export const MapConfirmationScreen = () => {
     {
       latitude: 13.701404423436982,
       longitude: -89.2244389412076,
-      title:'',
-      description:''
+      title: '',
+      description: '',
     },
   ]);
 
   const onRegionChangeComplete = (region: Region, details: Details) => {
     console.log('onregion change');
+    if (!details.isGesture) {
+        return;
+  };
+}
+
+  const getCurrentLocation = async  () => {
+    try{ 
+   const location =  await  GetLocation.getCurrentPosition({ enableHighAccuracy:true, timeout:6000 });
+    console.log('location',location)
+   return location;
+     }catch (error )
+      {
+  console.log(error)
+     } 
   };
 
-  
+  const setLocation =  (location: Location) => {
+    console.log('settlocation')
+    setMarkers([
+        {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          title: location.title! ,
+          description: location.description!,
+        },
+      ]);
+
+      const region = {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.0121,
+      };
+      setRegion(region);
+      
+  };
+
+  useEffect(() => {
+    (async () => {
+      console.log('location');
+      const location = await getCurrentLocation();
+      setLocation({ latitude: location.latitude, longitude: location.longitude });
+    })();
+  }, []);
 
   return (
     <>
       <View style={{flex: 1}}>
         <View style={styles.headerContainer}>
           <MapView
-            onPoiClick={e => {
-              setMarkers([
-                {
-                  latitude: e.nativeEvent.coordinate.latitude,
-                  longitude: e.nativeEvent.coordinate.longitude,
-                  title:e.nativeEvent.name,
-                  description: e.nativeEvent.name
-                },
-              ]);
-              const region = {
+          
+           
+          onPress={e => {
+           
+            const location : Location = {
                 latitude: e.nativeEvent.coordinate.latitude,
                 longitude: e.nativeEvent.coordinate.longitude,
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
-              };
-              setRegion(region);
-            }}
+                title: '',
+                description:''
+
+             }
+            
+              setLocation(location)
+          }}
             style={styles.map}
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             region={region}
             onRegionChangeComplete={onRegionChangeComplete}>
             {markers.map((marker, index) => (
               <Marker
+            
                 key={index}
                 coordinate={{
                   latitude: marker.latitude,
                   longitude: marker.longitude,
                 }}
-                title={'generico'}
-                description={'generico'}
+                title={marker.title}
+                description={marker.title}
               />
             ))}
           </MapView>
@@ -81,13 +131,14 @@ export const MapConfirmationScreen = () => {
           </Text>
           <AddressBox
             customStyles={styles.addressBox}
-            textButton="mi aaddress skdjmnk;asnd sd;masl;dkma"></AddressBox>
+            textButton={markers[0]?.title}></AddressBox>
           <SubmitButton textButton="Confirmar dirección" />
         </View>
       </View>
     </>
   );
 };
+
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -122,3 +173,4 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 });
+
