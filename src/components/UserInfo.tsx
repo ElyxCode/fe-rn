@@ -7,9 +7,9 @@ import PencilEditIcon from '../assets/pencil_edit.svg';
 import {colors} from '../styles/colors';
 
 type Props = {
-  userName: string;
-  userEmail: string;
-  userTelNumber: string;
+  userName?: string;
+  userEmail?: string;
+  userTelNumber?: string;
 };
 
 export const UserInfo = ({userName, userEmail, userTelNumber}: Props) => {

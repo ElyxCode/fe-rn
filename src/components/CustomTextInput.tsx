@@ -16,6 +16,9 @@ type Props = {
   placeHolder?: string;
   fill?: ColorValue;
   isPassword?: boolean;
+  onChangeText: any;
+  onBlur: any;
+  value: string;
 };
 
 export const CustomTextInput = ({
@@ -24,6 +27,9 @@ export const CustomTextInput = ({
   placeHolder,
   fill,
   isPassword = false,
+  value,
+  onChangeText,
+  onBlur,
 }: Props) => {
   return (
     <View style={styles.container}>
@@ -33,6 +39,9 @@ export const CustomTextInput = ({
         keyboardType={keyboardType}
         placeholder={placeHolder}
         secureTextEntry={isPassword}
+        value={value}
+        onChangeText={onChangeText}
+        onBlur={onBlur}
       />
     </View>
   );

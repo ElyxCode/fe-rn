@@ -1,4 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
+import {useAppSelector} from '../hooks/useRedux';
 
 import {LoginScreen} from '../screens/LoginScreen';
 import {SignUpScreen} from '../screens/SignUpScreen';
@@ -17,20 +18,31 @@ export type ProfileStackParams = {
 const ProfileStack = createStackNavigator<ProfileStackParams>();
 
 export const ProfileNavigation = () => {
+  const token = useAppSelector(state => state.authToken.token);
+
   return (
     <ProfileStack.Navigator screenOptions={{headerShown: false}}>
-      <ProfileStack.Screen
-        name="OptionsUnLoggedScreen"
-        component={OptionsUnLoggedScreen}
-      />
-      <ProfileStack.Screen name="LoginScreen" component={LoginScreen} />
-      <ProfileStack.Screen name="SignUpScreen" component={SignUpScreen} />
-
-      <ProfileStack.Screen
-        name="UserOptionsMenuScreen"
-        component={UserOptionsMenuScreen}
-      />
-      <ProfileStack.Screen name="SettingsScreen" component={SettingsScreen} />
+      {token ? (
+        <>
+          <ProfileStack.Screen
+            name="UserOptionsMenuScreen"
+            component={UserOptionsMenuScreen}
+          />
+          <ProfileStack.Screen
+            name="SettingsScreen"
+            component={SettingsScreen}
+          />
+        </>
+      ) : (
+        <>
+          <ProfileStack.Screen
+            name="OptionsUnLoggedScreen"
+            component={OptionsUnLoggedScreen}
+          />
+          <ProfileStack.Screen name="LoginScreen" component={LoginScreen} />
+          <ProfileStack.Screen name="SignUpScreen" component={SignUpScreen} />
+        </>
+      )}
     </ProfileStack.Navigator>
   );
 };

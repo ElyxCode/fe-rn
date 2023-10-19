@@ -1,15 +1,10 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {WelcomeScreen} from '../screens/WelcomeScreen';
-import {LoginScreen} from '../screens/LoginScreen';
-import {SignUpScreen} from '../screens/SignUpScreen';
-import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {HomeBranchScreen} from '../screens/HomeBranchScreen';
-import {UserOptionsMenuScreen} from '../screens/UserOptionsMenuScreen';
-import {SettingsScreen} from '../screens/SettingsScreen';
 import {ProfileNavigation} from './ProfileNavigation';
-import {CustomNavBarHome} from '../components/CustomNavBarHome';
 import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
+import {useAppSelector} from '../hooks/useRedux';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -21,10 +16,15 @@ export type RootStackParams = {
 const MainStack = createStackNavigator<RootStackParams>();
 
 export const MainNavigation = () => {
+  const token = useAppSelector(state => state.authToken.token);
+
   return (
     <MainStack.Navigator screenOptions={{headerShown: false}}>
       <MainStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-      <MainStack.Screen name="MapConfirmationScreen" component={MapConfirmationScreen} />
+      <MainStack.Screen
+        name="MapConfirmationScreen"
+        component={MapConfirmationScreen}
+      />
       <MainStack.Screen name="HomeBranchScreen" component={HomeBranchScreen} />
       <MainStack.Screen
         name="ProfileNavigation"
