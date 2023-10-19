@@ -22,6 +22,7 @@ import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
+import {useAppSelector} from '../hooks/useRedux';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -65,14 +66,15 @@ const MenuOptionItem = ({
 };
 
 export const UserOptionsMenuScreen = () => {
+  const user = useAppSelector(state => state.user.userData);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
       <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
       <View style={styles.container}>
         <UserInfo
-          userName={'Ricardo'}
-          userEmail="richi@mail.com"
-          userTelNumber="12345678"
+          userName={user.name}
+          userEmail={user.email}
+          userTelNumber={user.phone}
         />
         <View style={styles.menuOptionsContainer}>
           <FlatList

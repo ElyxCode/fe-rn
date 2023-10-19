@@ -19,7 +19,6 @@ const ProfileStack = createStackNavigator<ProfileStackParams>();
 
 export const ProfileNavigation = () => {
   const token = useAppSelector(state => state.authToken.token);
-  console.log(token);
 
   return (
     <ProfileStack.Navigator screenOptions={{headerShown: false}}>
