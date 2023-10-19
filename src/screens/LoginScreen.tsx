@@ -8,7 +8,10 @@ import {
   Alert,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
-import {useRecoilState} from 'recoil';
+
+import {useAppSelector, useAppDispatch} from '../hooks/useRedux';
+
+import {setToken} from '../services/auth/authSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 
@@ -17,9 +20,7 @@ import {SubmitButton} from '../components/SubmitButton';
 import {ThirdPartyButton} from '../components/ThirdPartyButton';
 import {CustomNavBar} from '../components/CustomNavBar';
 
-import {loginServices} from '../services/auth';
-
-import {User} from '../model/User';
+import {loginServices} from '../services/auth/auth';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -32,6 +33,7 @@ import Messages from '../constants/Messages';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const {
     control,
@@ -55,6 +57,7 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
+      dispatch(setToken(response.data?.token ?? ''));
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
