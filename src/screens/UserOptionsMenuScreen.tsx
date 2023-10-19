@@ -12,6 +12,9 @@ import {SvgProps} from 'react-native-svg';
 import {UserInfo} from '../components/UserInfo';
 import {CustomNavBar} from '../components/CustomNavBar';
 
+import {clearUserData} from '../services/user/userSlice';
+import {clearToken} from '../services/auth/authSlice';
+
 import ArrowRightIcon from '../assets/arrow_right.svg';
 import BoxIcon from '../assets/box.svg';
 import CardsIcon from '../assets/cards.svg';
@@ -22,7 +25,7 @@ import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -46,27 +49,29 @@ const menuOptions: MenuOptionItemProps[] = [
   },
 ];
 
-const MenuOptionItem = ({
-  OptionButtonIcon,
-  optionName,
-  screenPath,
-}: MenuOptionItemProps) => {
-  const navigation = useNavigation();
-  return (
-    <Pressable onPress={() => navigation.navigate(screenPath as never)}>
-      <View style={styles.menuOptionsItemContainer}>
-        <OptionButtonIcon height={21} fill={colors.SecondaryColor} />
-        <View style={{flex: 1}}>
-          <Text style={styles.optionNameText}>{optionName}</Text>
-        </View>
-        <ArrowRightIcon height={16} />
-      </View>
-    </Pressable>
-  );
-};
-
 export const UserOptionsMenuScreen = () => {
   const user = useAppSelector(state => state.user.userData);
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+
+  const MenuOptionItem = ({
+    OptionButtonIcon,
+    optionName,
+    screenPath,
+  }: MenuOptionItemProps) => {
+    return (
+      <Pressable onPress={() => navigation.navigate(screenPath as never)}>
+        <View style={styles.menuOptionsItemContainer}>
+          <OptionButtonIcon height={21} fill={colors.SecondaryColor} />
+          <View style={{flex: 1}}>
+            <Text style={styles.optionNameText}>{optionName}</Text>
+          </View>
+          <ArrowRightIcon height={16} />
+        </View>
+      </Pressable>
+    );
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
       <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
@@ -92,7 +97,12 @@ export const UserOptionsMenuScreen = () => {
           />
         </View>
         <View style={styles.signoutContainer}>
-          <Pressable onPress={() => console.log('signout')}>
+          <Pressable
+            onPress={() => {
+              dispatch(clearUserData());
+              dispatch(clearToken());
+              navigation.navigate('WelcomeScreen' as never);
+            }}>
             <View style={styles.signoutItemcontainer}>
               <SignoutIcon height={24} />
               <Text style={styles.logoutText}>Cerrar sesión</Text>
