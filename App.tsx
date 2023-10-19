@@ -1,7 +1,9 @@
 import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
 
-import {RecoilRoot} from 'recoil';
+import {Provider} from 'react-redux';
+
+import {store} from './src/utils/store';
 
 import SplashScreen from 'react-native-splash-screen';
 
@@ -24,11 +26,11 @@ const App = (): JSX.Element => {
   }, []);
 
   return (
-    <RecoilRoot>
+    <Provider store={store}>
       <NavigationContainer>
         <MainNavigation />
       </NavigationContainer>
-    </RecoilRoot>
+    </Provider>
   );
 };
 
