@@ -6,6 +6,7 @@ import {SignUpScreen} from '../screens/SignUpScreen';
 import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {UserOptionsMenuScreen} from '../screens/UserOptionsMenuScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
+import {EditProfileScreen} from '../screens/EditProfileScreen';
 
 export type ProfileStackParams = {
   LoginScreen: undefined;
@@ -13,6 +14,7 @@ export type ProfileStackParams = {
   OptionsUnLoggedScreen: undefined;
   UserOptionsMenuScreen: undefined;
   SettingsScreen: undefined;
+  EditProfileScreen: undefined;
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParams>();
@@ -31,6 +33,10 @@ export const ProfileNavigation = () => {
           <ProfileStack.Screen
             name="SettingsScreen"
             component={SettingsScreen}
+          />
+          <ProfileStack.Screen
+            name="EditProfileScreen"
+            component={EditProfileScreen}
           />
         </>
       ) : (
