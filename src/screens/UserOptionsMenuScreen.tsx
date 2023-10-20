@@ -76,11 +76,14 @@ export const UserOptionsMenuScreen = () => {
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
       <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
       <View style={styles.container}>
-        <UserInfo
-          userName={user.name}
-          userEmail={user.email}
-          userTelNumber={user.phone}
-        />
+        <Pressable
+          onPress={() => navigation.navigate('EditProfileScreen' as never)}>
+          <UserInfo
+            userName={user.name}
+            userEmail={user.email}
+            userTelNumber={user.phone}
+          />
+        </Pressable>
         <View style={styles.menuOptionsContainer}>
           <FlatList
             data={menuOptions}
