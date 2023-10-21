@@ -73,8 +73,8 @@ export const LoginScreen = ({navigation}: any) => {
 
   const handleOnError = (errors: any) => {
     if (errors.email) {
-      return Alert.alert('Ferreplace', errors.email.message, [
-        {text: 'Aceptar'},
+      return Alert.alert(Messages.titleMessage, errors.email.message, [
+        {text: Messages.okButton},
       ]);
     }
 
