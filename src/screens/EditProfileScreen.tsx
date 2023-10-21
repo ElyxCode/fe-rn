@@ -1,16 +1,30 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import {Dropdown} from 'react-native-element-dropdown';
+import {useForm, Controller} from 'react-hook-form';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
+import {SwitchControlButton} from '../components/SwitchControlButton';
+import {SubmitButton} from '../components/SubmitButton';
 
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
 import SmsTrackingIcon from '../assets/sms_tracking.svg';
 import CallIcon from '../assets/call.svg';
 import Profile2UserIcon from '../assets/profile-2user.svg';
 import CalendarIcon from '../assets/calendar.svg';
+
+import Messages from '../constants/Messages';
+
+import {colors} from '../styles/colors';
 
 const dropListItem = [
   {value: 'Albañil', label: 'Albañil'},
@@ -27,13 +41,64 @@ const dropListItem = [
   {value: 'Pintor', label: 'Pintor'},
 ];
 
-import {colors} from '../styles/colors';
-import {SwitchControlButton} from '../components/SwitchControlButton';
-import {SubmitButton} from '../components/SubmitButton';
-
 export const EditProfileScreen = () => {
   const [value, setValue] = useState<string>('');
-  // const [isFocus, setIsFocus] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [dui, setDui] = useState<string>('');
+  const [fiscal, setFiscal] = useState<string>('');
+  const [billing, setBilling] = useState<string>('');
+  const [typePerson, setTypePerson] = useState<string>('');
+
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      occupation: '',
+      birthday: '',
+    },
+  });
+
+  const handleOnSubmit = async ({
+    name,
+    email,
+    phone,
+    occupation: value,
+    birthday,
+  }: any) => {
+    setIsLoading(true);
+    console.log({
+      name,
+      email,
+      phone,
+      occupation: value,
+      birthday,
+      dui,
+      fiscal,
+      billing,
+      typePerson,
+    });
+
+    setIsLoading(false);
+  };
+
+  const handleOnError = (errors: any) => {
+    if (errors.email) {
+      return Alert.alert(Messages.titleMessage, errors.email.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+
+    if (errors.password) {
+      Alert.alert(Messages.titleMessage, errors.password.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -44,43 +109,94 @@ export const EditProfileScreen = () => {
           <View style={styles.inputsContainer}>
             <View>
               <Text style={styles.inputTitleText}>Nombre</Text>
-              <CustomTextInput InputIcon={UserEditIcon} />
+              <Controller
+                control={control}
+                rules={{required: Messages.requireNameProfile}}
+                render={({field: {onChange, value, onBlur}}) => (
+                  <CustomTextInput
+                    InputIcon={UserEditIcon}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                  />
+                )}
+                name="name"
+              />
             </View>
             <View>
               <Text style={styles.inputTitleText}>Correo electrónico</Text>
-              <CustomTextInput InputIcon={SmsTrackingIcon} />
+              <Controller
+                control={control}
+                render={({field: {onChange, value, onBlur}}) => (
+                  <CustomTextInput
+                    InputIcon={SmsTrackingIcon}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                  />
+                )}
+                name="email"
+              />
             </View>
             <View>
               <Text style={styles.inputTitleText}>Celular</Text>
-              <CustomTextInput InputIcon={CallIcon} keyboardType="numeric" />
+              <Controller
+                control={control}
+                render={({field: {onChange, value, onBlur}}) => (
+                  <CustomTextInput
+                    InputIcon={CallIcon}
+                    keyboardType="numeric"
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                  />
+                )}
+                name="phone"
+              />
             </View>
             <View>
               <Text style={styles.inputTitleText}>Rol en la construcción</Text>
-              <Dropdown
-                style={[styles.roleContainer]}
-                mode="modal"
-                data={dropListItem}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={'Elige un rol'}
-                search={false}
-                value={value}
-                onChange={item => {
-                  setValue(item.value);
-                }}
-                renderLeftIcon={() => (
-                  <Profile2UserIcon
-                    height={25}
-                    width={25}
-                    style={{marginRight: 10}}
+              <Controller
+                control={control}
+                render={({field: {onChange, value, onBlur}}) => (
+                  <Dropdown
+                    style={[styles.roleContainer]}
+                    mode="modal"
+                    data={dropListItem}
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={'Elige un rol'}
+                    search={false}
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={({value}) => onChange(value)}
+                    renderLeftIcon={() => (
+                      <Profile2UserIcon
+                        height={25}
+                        width={25}
+                        style={{marginRight: 10}}
+                      />
+                    )}
                   />
                 )}
+                name="occupation"
               />
             </View>
             <View>
               <Text style={styles.inputTitleText}>Fecha de nacimiento</Text>
-              <CustomTextInput InputIcon={CalendarIcon} />
+              <Controller
+                control={control}
+                render={({field: {onChange, value, onBlur}}) => (
+                  <CustomTextInput
+                    InputIcon={CalendarIcon}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    value={value}
+                  />
+                )}
+                name="birthday"
+              />
             </View>
           </View>
           <View style={styles.billingContainer}>
@@ -90,9 +206,17 @@ export const EditProfileScreen = () => {
             <Text style={styles.billingSubtitleText}>
               ¿Que tipo de facturación deseas?
             </Text>
-            <SwitchControlButton />
+            <SwitchControlButton
+              personTypeSelected={value => setTypePerson(value)}
+              billingSelected={value => setBilling(value)}
+              duiNumber={value => setDui(value)}
+              fiscalNumber={value => setFiscal(value)}
+            />
           </View>
-          <SubmitButton textButton="Guardar" />
+          <SubmitButton
+            textButton="Guardar"
+            onPress={handleSubmit(handleOnSubmit, handleOnError)}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
