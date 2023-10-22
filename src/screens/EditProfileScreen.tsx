@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -13,7 +13,10 @@ import {useForm, Controller} from 'react-hook-form';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
-import {SwitchControlButton} from '../components/SwitchControlButton';
+import {
+  BillingInfo,
+  SwitchControlButton,
+} from '../components/SwitchControlButton';
 import {SubmitButton} from '../components/SubmitButton';
 
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
@@ -41,6 +44,8 @@ const dropListItem = [
   {value: 'Pintor', label: 'Pintor'},
 ];
 
+const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
+
 export const EditProfileScreen = () => {
   const [value, setValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -59,7 +64,7 @@ export const EditProfileScreen = () => {
       email: '',
       phone: '',
       occupation: '',
-      birthday: '',
+      birthDate: '',
     },
   });
 
@@ -68,15 +73,16 @@ export const EditProfileScreen = () => {
     email,
     phone,
     occupation: value,
-    birthday,
+    birthDate,
   }: any) => {
     setIsLoading(true);
+    if (!dataBillingValidation(billing, typePerson, dui, fiscal)) return;
     console.log({
       name,
       email,
       phone,
       occupation: value,
-      birthday,
+      birthDate: transformBirthDate(birthDate),
       dui,
       fiscal,
       billing,
@@ -87,17 +93,81 @@ export const EditProfileScreen = () => {
   };
 
   const handleOnError = (errors: any) => {
+    if (errors.name) {
+      return Alert.alert(Messages.titleMessage, errors.name.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+
     if (errors.email) {
       return Alert.alert(Messages.titleMessage, errors.email.message, [
         {text: Messages.okButton},
       ]);
     }
 
-    if (errors.password) {
-      Alert.alert(Messages.titleMessage, errors.password.message, [
+    if (errors.phone) {
+      return Alert.alert(Messages.titleMessage, errors.phone.message, [
         {text: Messages.okButton},
       ]);
     }
+
+    if (errors.role) {
+      return Alert.alert(Messages.titleMessage, errors.role.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+
+    if (errors.occupation) {
+      return Alert.alert(Messages.titleMessage, errors.occupation.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+
+    if (errors.birthDate) {
+      return Alert.alert(Messages.titleMessage, errors.birthDate.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+  };
+
+  const dataBillingValidation = (
+    billing: string,
+    typePerson: string,
+    dui: string,
+    fiscal: string,
+  ): boolean => {
+    if (billing === BillingInfo.billing.finalConsumer && dui === '') {
+      Alert.alert(Messages.titleMessage, Messages.requireDuiProfile, [
+        {text: Messages.okButton},
+      ]);
+      return false;
+    }
+
+    if (billing === BillingInfo.billing.fiscalCredit && fiscal === '') {
+      Alert.alert(Messages.titleMessage, Messages.requireFiscalNumber, [
+        {text: Messages.okButton},
+      ]);
+      return false;
+    }
+
+    if (
+      billing === BillingInfo.billing.fiscalCredit &&
+      typePerson === BillingInfo.Person.natural &&
+      dui === ''
+    ) {
+      Alert.alert(Messages.titleMessage, Messages.requireDuiProfile, [
+        {text: Messages.okButton},
+      ]);
+      return false;
+    }
+
+    return true;
+  };
+
+  const transformBirthDate = (dateFormat: string): string => {
+    let date: string[] = dateFormat.split('/');
+    // console.log(date[2] + '-' + date[1] + '-' + date[0]);
+    return date[2] + '-' + date[1] + '-' + date[0];
   };
 
   return (
@@ -114,6 +184,7 @@ export const EditProfileScreen = () => {
                 rules={{required: Messages.requireNameProfile}}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
+                    placeHolder="Nombre"
                     InputIcon={UserEditIcon}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -127,8 +198,10 @@ export const EditProfileScreen = () => {
               <Text style={styles.inputTitleText}>Correo electrónico</Text>
               <Controller
                 control={control}
+                rules={{required: Messages.requireEmailProfile}}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
+                    placeHolder="Correo Electrónico"
                     InputIcon={SmsTrackingIcon}
                     onChangeText={onChange}
                     onBlur={onBlur}
@@ -142,8 +215,10 @@ export const EditProfileScreen = () => {
               <Text style={styles.inputTitleText}>Celular</Text>
               <Controller
                 control={control}
+                rules={{required: Messages.requirePhoneProfile}}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
+                    placeHolder="Telefono"
                     InputIcon={CallIcon}
                     keyboardType="numeric"
                     onChangeText={onChange}
@@ -158,6 +233,7 @@ export const EditProfileScreen = () => {
               <Text style={styles.inputTitleText}>Rol en la construcción</Text>
               <Controller
                 control={control}
+                rules={{required: Messages.requireRoleProfile}}
                 render={({field: {onChange, value, onBlur}}) => (
                   <Dropdown
                     style={[styles.roleContainer]}
@@ -187,15 +263,23 @@ export const EditProfileScreen = () => {
               <Text style={styles.inputTitleText}>Fecha de nacimiento</Text>
               <Controller
                 control={control}
+                rules={{
+                  required: Messages.requireBirthDayProfile,
+                  pattern: {
+                    value: dateFormatPattern,
+                    message: 'Ingresa formato de fecha correcto',
+                  },
+                }}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
+                    placeHolder="DD/MM/YYYY"
                     InputIcon={CalendarIcon}
                     onChangeText={onChange}
                     onBlur={onBlur}
                     value={value}
                   />
                 )}
-                name="birthday"
+                name="birthDate"
               />
             </View>
           </View>
@@ -209,8 +293,10 @@ export const EditProfileScreen = () => {
             <SwitchControlButton
               personTypeSelected={value => setTypePerson(value)}
               billingSelected={value => setBilling(value)}
-              duiNumber={value => setDui(value)}
-              fiscalNumber={value => setFiscal(value)}
+              setDuiNumber={setDui}
+              setFiscalNumber={setFiscal}
+              dui={dui}
+              fiscal={fiscal}
             />
           </View>
           <SubmitButton
