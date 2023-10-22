@@ -11,13 +11,18 @@ import {
 import {Dropdown} from 'react-native-element-dropdown';
 import {useForm, Controller} from 'react-hook-form';
 
+import {useAppSelector} from '../hooks/useRedux';
+
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
+import {LoaderScreen} from './LoaderScreen';
 import {
   BillingInfo,
   SwitchControlButton,
 } from '../components/SwitchControlButton';
 import {SubmitButton} from '../components/SubmitButton';
+
+import {getUserService} from '../services/user/user';
 
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
 import SmsTrackingIcon from '../assets/sms_tracking.svg';
@@ -25,11 +30,16 @@ import CallIcon from '../assets/call.svg';
 import Profile2UserIcon from '../assets/profile-2user.svg';
 import CalendarIcon from '../assets/calendar.svg';
 
+import {UserProfile} from '../model/User';
+
 import Messages from '../constants/Messages';
+import {isAndroid} from '../constants/Platform';
 
 import {colors} from '../styles/colors';
-import {transformBirthDate} from '../utils/utilities';
-import {isAndroid} from '../constants/Platform';
+import {
+  transformBirthDateToSend,
+  transformBirthDateUTCTtoDDMMYYYY,
+} from '../utils/utilities';
 
 const dropListItem = [
   {value: 'Albañil', label: 'Albañil'},
@@ -52,24 +62,48 @@ const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const EditProfileScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserProfile>({});
   const [dui, setDui] = useState<string>('');
   const [fiscal, setFiscal] = useState<string>('');
   const [billing, setBilling] = useState<string>('');
   const [typePerson, setTypePerson] = useState<string>('');
+  const token = useAppSelector(state => state.authToken.token);
 
   const {
     control,
     handleSubmit,
+    setValue,
     formState: {errors},
-  } = useForm({
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      occupation: '',
-      birthDate: '',
-    },
-  });
+  } = useForm({mode: 'onBlur'});
+
+  useEffect(() => {
+    const getUserData = async () => {
+      setIsLoading(true);
+      const response = await getUserService(token);
+      if (response.ok) {
+        console.log(response.data);
+        setUserData(response.data as UserProfile);
+      } else {
+        console.log({errorStatus: response.status});
+        console.log({error: response.data?.error});
+      }
+      setIsLoading(false);
+    };
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      setValue('name', userData.name);
+      setValue('email', userData.email);
+      setValue('phone', userData.phone);
+      setValue('occupation', userData.occupation?.name);
+      setValue(
+        'birthDate',
+        transformBirthDateUTCTtoDDMMYYYY(userData.birthday ?? ''),
+      );
+    }
+  }, [userData]);
 
   const handleOnSubmit = async ({
     name,
@@ -79,19 +113,21 @@ export const EditProfileScreen = () => {
     birthDate,
   }: any) => {
     setIsLoading(true);
-    if (!dataBillingValidation()) return;
+    if (!dataBillingValidation()) {
+      setIsLoading(false);
+      return;
+    }
     console.log({
       name,
       email,
       phone,
       occupation: value,
-      birthDate: transformBirthDate(birthDate),
+      birthDate: transformBirthDateToSend(birthDate),
       dui,
       fiscal,
       billing,
       typePerson,
     });
-
     setIsLoading(false);
   };
 
@@ -164,152 +200,160 @@ export const EditProfileScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <CustomNavBar />
-      <ScrollView style={{flex: 1}}>
-        <View style={styles.container}>
-          <Text style={styles.titleText}>Editar perfil</Text>
-          <View style={styles.inputsContainer}>
-            <View>
-              <Text style={styles.inputTitleText}>Nombre</Text>
-              <Controller
-                control={control}
-                rules={{required: Messages.requireNameProfile}}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <CustomTextInput
-                    placeHolder="Nombre"
-                    InputIcon={UserEditIcon}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                  />
-                )}
-                name="name"
-              />
-            </View>
-            <View>
-              <Text style={styles.inputTitleText}>Correo electrónico</Text>
-              <Controller
-                control={control}
-                rules={{
-                  required: Messages.requireEmailProfile,
-                  pattern: {
-                    value: emailFormatPattern,
-                    message: Messages.requireEmailProfile,
-                  },
-                }}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <CustomTextInput
-                    keyboardType="email-address"
-                    placeHolder="Correo Electrónico"
-                    InputIcon={SmsTrackingIcon}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                  />
-                )}
-                name="email"
-              />
-            </View>
-            <View>
-              <Text style={styles.inputTitleText}>Celular</Text>
-              <Controller
-                control={control}
-                rules={{
-                  required: Messages.requirePhoneProfile,
-                  pattern: {
-                    value: phoneFormatPattern,
-                    message: Messages.phoneNumberFormatPatternMessage,
-                  },
-                }}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <CustomTextInput
-                    placeHolder="Telefono"
-                    InputIcon={CallIcon}
-                    keyboardType={isAndroid ? 'numeric' : 'number-pad'}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                  />
-                )}
-                name="phone"
-              />
-            </View>
-            <View>
-              <Text style={styles.inputTitleText}>Rol en la construcción</Text>
-              <Controller
-                control={control}
-                rules={{required: Messages.requireRoleProfile}}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <Dropdown
-                    style={[styles.roleContainer]}
-                    mode="modal"
-                    data={dropListItem}
-                    maxHeight={300}
-                    labelField="label"
-                    valueField="value"
-                    placeholder={'Elige un rol'}
-                    search={false}
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={({value}) => onChange(value)}
-                    renderLeftIcon={() => (
-                      <Profile2UserIcon
-                        height={25}
-                        width={25}
-                        style={{marginRight: 10}}
+      {isLoading ? (
+        <LoaderScreen />
+      ) : (
+        <>
+          <CustomNavBar />
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.container}>
+              <Text style={styles.titleText}>Editar perfil</Text>
+              <View style={styles.inputsContainer}>
+                <View>
+                  <Text style={styles.inputTitleText}>Nombre</Text>
+                  <Controller
+                    control={control}
+                    rules={{required: Messages.requireNameProfile}}
+                    render={({field: {onChange, value, onBlur}}) => (
+                      <CustomTextInput
+                        placeHolder="Nombre"
+                        InputIcon={UserEditIcon}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
                       />
                     )}
+                    name="name"
                   />
-                )}
-                name="occupation"
+                </View>
+                <View>
+                  <Text style={styles.inputTitleText}>Correo electrónico</Text>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: Messages.requireEmailProfile,
+                      pattern: {
+                        value: emailFormatPattern,
+                        message: Messages.requireEmailProfile,
+                      },
+                    }}
+                    render={({field: {onChange, value, onBlur}}) => (
+                      <CustomTextInput
+                        keyboardType="email-address"
+                        placeHolder="Correo Electrónico"
+                        InputIcon={SmsTrackingIcon}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                      />
+                    )}
+                    name="email"
+                  />
+                </View>
+                <View>
+                  <Text style={styles.inputTitleText}>Celular</Text>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: Messages.requirePhoneProfile,
+                      pattern: {
+                        value: phoneFormatPattern,
+                        message: Messages.phoneNumberFormatPatternMessage,
+                      },
+                    }}
+                    render={({field: {onChange, value, onBlur}}) => (
+                      <CustomTextInput
+                        placeHolder="Telefono"
+                        InputIcon={CallIcon}
+                        keyboardType={isAndroid ? 'numeric' : 'number-pad'}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                      />
+                    )}
+                    name="phone"
+                  />
+                </View>
+                <View>
+                  <Text style={styles.inputTitleText}>
+                    Rol en la construcción
+                  </Text>
+                  <Controller
+                    control={control}
+                    rules={{required: Messages.requireRoleProfile}}
+                    render={({field: {onChange, value, onBlur}}) => (
+                      <Dropdown
+                        style={[styles.roleContainer]}
+                        mode="modal"
+                        data={dropListItem}
+                        maxHeight={300}
+                        labelField="label"
+                        valueField="value"
+                        placeholder={'Elige un rol'}
+                        search={false}
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={({value}) => onChange(value)}
+                        renderLeftIcon={() => (
+                          <Profile2UserIcon
+                            height={25}
+                            width={25}
+                            style={{marginRight: 10}}
+                          />
+                        )}
+                      />
+                    )}
+                    name="occupation"
+                  />
+                </View>
+                <View>
+                  <Text style={styles.inputTitleText}>Fecha de nacimiento</Text>
+                  <Controller
+                    control={control}
+                    rules={{
+                      required: Messages.requireBirthDayProfile,
+                      pattern: {
+                        value: dateFormatPattern,
+                        message: 'Ingresa formato de fecha correcto',
+                      },
+                    }}
+                    render={({field: {onChange, value, onBlur}}) => (
+                      <CustomTextInput
+                        placeHolder="DD/MM/YYYY"
+                        InputIcon={CalendarIcon}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                      />
+                    )}
+                    name="birthDate"
+                  />
+                </View>
+              </View>
+              <View style={styles.billingContainer}>
+                <Text style={styles.billingTitleText}>
+                  Información de facturación
+                </Text>
+                <Text style={styles.billingSubtitleText}>
+                  ¿Que tipo de facturación deseas?
+                </Text>
+                <SwitchControlButton
+                  personTypeSelected={value => setTypePerson(value)}
+                  billingSelected={value => setBilling(value)}
+                  setDuiNumber={setDui}
+                  setFiscalNumber={setFiscal}
+                  dui={dui}
+                  fiscal={fiscal}
+                />
+              </View>
+              <SubmitButton
+                textButton="Guardar"
+                onPress={handleSubmit(handleOnSubmit, handleOnError)}
               />
             </View>
-            <View>
-              <Text style={styles.inputTitleText}>Fecha de nacimiento</Text>
-              <Controller
-                control={control}
-                rules={{
-                  required: Messages.requireBirthDayProfile,
-                  pattern: {
-                    value: dateFormatPattern,
-                    message: 'Ingresa formato de fecha correcto',
-                  },
-                }}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <CustomTextInput
-                    placeHolder="DD/MM/YYYY"
-                    InputIcon={CalendarIcon}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                  />
-                )}
-                name="birthDate"
-              />
-            </View>
-          </View>
-          <View style={styles.billingContainer}>
-            <Text style={styles.billingTitleText}>
-              Información de facturación
-            </Text>
-            <Text style={styles.billingSubtitleText}>
-              ¿Que tipo de facturación deseas?
-            </Text>
-            <SwitchControlButton
-              personTypeSelected={value => setTypePerson(value)}
-              billingSelected={value => setBilling(value)}
-              setDuiNumber={setDui}
-              setFiscalNumber={setFiscal}
-              dui={dui}
-              fiscal={fiscal}
-            />
-          </View>
-          <SubmitButton
-            textButton="Guardar"
-            onPress={handleSubmit(handleOnSubmit, handleOnError)}
-          />
-        </View>
-      </ScrollView>
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 };
