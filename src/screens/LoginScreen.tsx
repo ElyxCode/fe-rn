@@ -61,7 +61,6 @@ export const LoginScreen = ({navigation}: any) => {
     if (response.ok) {
       console.log({user: response.data?.user});
       dispatch(setToken(response.data?.token ?? '')); // guardo el token
-      dispatch(setUser(response.data?.user as UserProfile)); // guardo perfil de usuario
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
