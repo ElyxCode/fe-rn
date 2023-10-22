@@ -7,6 +7,7 @@ import PersonalCardIcon from '../assets/personalcard.svg';
 import ReceiptEditIcon from '../assets/receipt_edit.svg';
 
 import {colors} from '../styles/colors';
+import {isAndroid} from '../constants/Platform';
 
 type SwitchControlButtonProps = {
   billingSelected: (value: string) => void;
@@ -24,7 +25,7 @@ type BillingButtonProps = {
   setSelected: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const BillingInfo = {
+export const BillingInfoLabel = {
   billing: {
     finalConsumer: 'Consumidor final',
     fiscalCredit: 'Crédito fiscal',
@@ -32,6 +33,17 @@ export const BillingInfo = {
   Person: {
     natural: 'Natural',
     juridico: 'Jurídico',
+  },
+};
+
+export const BillingInfo = {
+  billing: {
+    finalConsumer: 'final',
+    fiscalCredit: 'credit',
+  },
+  Person: {
+    natural: 'natural',
+    juridico: 'juridica',
   },
 };
 
@@ -114,7 +126,7 @@ export const SwitchControlButton = ({
           setSelected={setSelectedBilling}
         />
         <BillingButton
-          name={BillingInfo.billing.fiscalCredit}
+          name={BillingInfoLabel.billing.fiscalCredit}
           value={BillingInfo.billing.fiscalCredit}
           selected={selectedBilling}
           setSelected={setSelectedBilling}
@@ -122,6 +134,7 @@ export const SwitchControlButton = ({
       </View>
       <View style={styles.inputDocumentNumberContainer}>
         <CustomTextInput
+          keyboardType={isAndroid ? 'numeric' : 'number-pad'}
           onChangeText={(value: any) => {
             selectedBilling === BillingInfo.billing.finalConsumer
               ? setDuiNumber(value)
@@ -142,13 +155,13 @@ export const SwitchControlButton = ({
           <Text style={styles.inputTitleText}>Tipo de Persona</Text>
           <View style={styles.buttonsContainer}>
             <BillingButton
-              name={BillingInfo.Person.natural}
+              name={BillingInfoLabel.Person.natural}
               value={BillingInfo.Person.natural}
               selected={selectedTypePerson}
               setSelected={setSelectedTypePerson}
             />
             <BillingButton
-              name={BillingInfo.Person.juridico}
+              name={BillingInfoLabel.Person.juridico}
               value={BillingInfo.Person.juridico}
               selected={selectedTypePerson}
               setSelected={setSelectedTypePerson}
@@ -157,6 +170,7 @@ export const SwitchControlButton = ({
           {selectedTypePerson === BillingInfo.Person.natural ? (
             <View style={styles.inputDocumentNumberContainer}>
               <CustomTextInput
+                keyboardType={isAndroid ? 'numeric' : 'number-pad'}
                 InputIcon={PersonalCardIcon}
                 onChangeText={setDuiNumber}
                 value={dui}
