@@ -10,8 +10,10 @@ import {
 
 import {Dropdown} from 'react-native-element-dropdown';
 import {useForm, Controller} from 'react-hook-form';
+import {useNavigation} from '@react-navigation/native';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+import {setUser} from '../services/user/userSlice';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
@@ -22,7 +24,8 @@ import {
 } from '../components/SwitchControlButton';
 import {SubmitButton} from '../components/SubmitButton';
 
-import {getUserService} from '../services/user/user';
+import {updateUserService} from '../services/user/user';
+import {occupationsService} from '../services/occupation';
 
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
 import SmsTrackingIcon from '../assets/sms_tracking.svg';
@@ -30,7 +33,7 @@ import CallIcon from '../assets/call.svg';
 import Profile2UserIcon from '../assets/profile-2user.svg';
 import CalendarIcon from '../assets/calendar.svg';
 
-import {UserProfile} from '../model/User';
+import {Occupation, UserProfile} from '../model/User';
 
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
@@ -41,20 +44,9 @@ import {
   transformBirthDateUTCTtoDDMMYYYY,
 } from '../utils/utilities';
 
-const dropListItem = [
-  {value: 'Albañil', label: 'Albañil'},
-  {value: 'Ama de casa', label: 'Ama de casa'},
-  {value: 'Arquitecto', label: 'Arquitecto'},
-  {value: 'Carpintería', label: 'Carpintería'},
-  {value: 'Cerrajería', label: 'Cerrajería'},
-  {value: 'Decorador', label: 'Decorador'},
-  {value: 'Diseñador de interiores', label: 'Diseñador de interiores'},
-  {value: 'Electricista', label: 'Electricista'},
-  {value: 'Ingeniero Civil', label: 'Ingeniero Civil'},
-  {value: 'Maestro de obra', label: 'Maestro de obra'},
-  {value: 'Otros', label: 'Otros'},
-  {value: 'Pintor', label: 'Pintor'},
-];
+// type EditProfileScreenProps = {
+//   userData: UserProfile;
+// };
 
 const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
 const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
@@ -62,12 +54,16 @@ const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const EditProfileScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [userData, setUserData] = useState<UserProfile>({});
+  // const [userData, setUserData] = useState<UserProfile>({});
+  const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [dui, setDui] = useState<string>('');
   const [fiscal, setFiscal] = useState<string>('');
   const [billing, setBilling] = useState<string>('');
   const [typePerson, setTypePerson] = useState<string>('');
+  const navigation = useNavigation();
   const token = useAppSelector(state => state.authToken.token);
+  const userData = useAppSelector(state => state.user.userData);
+  const dispatch = useAppDispatch();
 
   const {
     control,
@@ -76,32 +72,34 @@ export const EditProfileScreen = () => {
     formState: {errors},
   } = useForm({mode: 'onBlur'});
 
+  // llama servicio de ocupaciones para llenar el droplist
   useEffect(() => {
-    const getUserData = async () => {
-      setIsLoading(true);
-      const response = await getUserService(token);
+    const getOccupationData = async () => {
+      const response = await occupationsService();
       if (response.ok) {
-        console.log(response.data);
-        setUserData(response.data as UserProfile);
-      } else {
-        console.log({errorStatus: response.status});
-        console.log({error: response.data?.error});
+        // console.log({occupations: response.data});
+        setOccupations(response.data ?? []);
       }
-      setIsLoading(false);
     };
-    getUserData();
+
+    getOccupationData();
   }, []);
 
+  // setea los valores del usuario en los campos
   useEffect(() => {
     if (userData) {
-      setValue('name', userData.name);
-      setValue('email', userData.email);
-      setValue('phone', userData.phone);
-      setValue('occupation', userData.occupation?.name);
+      setValue('name', userData.name ?? '');
+      setValue('email', userData.email ?? '');
+      setValue('phone', userData.phone ?? '');
+      setValue('occupation', userData.occupation?.id ?? '');
       setValue(
         'birthDate',
         transformBirthDateUTCTtoDDMMYYYY(userData.birthday ?? ''),
       );
+      setBilling(userData.bill_type ?? '');
+      setTypePerson(userData.bill_entity ?? '');
+      setDui(userData.dui ?? '');
+      setFiscal(userData.iva ?? '');
     }
   }, [userData]);
 
@@ -117,18 +115,46 @@ export const EditProfileScreen = () => {
       setIsLoading(false);
       return;
     }
-    console.log({
+
+    // prepara objeto usuario para enviar
+    const userDataRequest: UserProfile = {
+      id: userData.id,
       name,
       email,
-      phone,
       occupation: value,
-      birthDate: transformBirthDateToSend(birthDate),
-      dui,
-      fiscal,
-      billing,
-      typePerson,
-    });
+      dui: dui,
+      birthday: transformBirthDateToSend(birthDate ?? ''),
+      phone,
+      nit: userData.nit,
+      iva: fiscal ?? null,
+      bill_type: billing !== '' ? billing : null,
+      bill_entity: typePerson !== '' ? typePerson : null,
+      notifications: userData.notifications,
+    };
+
+    await userModifyRequest(userDataRequest);
+
     setIsLoading(false);
+  };
+
+  const userModifyRequest = async (userData: UserProfile) => {
+    const response = await updateUserService(token, userData);
+    if (response.ok) {
+      console.log({userModi: response.data});
+      dispatch(setUser(response.data as UserProfile));
+      navigation.goBack();
+    } else {
+      if (response.data?.error) {
+        return Alert.alert(Messages.titleMessage, response.data?.error, [
+          {text: Messages.okButton},
+        ]);
+      }
+      return Alert.alert(
+        Messages.titleMessage,
+        Messages.UnAvailableServerMessage,
+        [{text: Messages.okButton}],
+      );
+    }
   };
 
   const handleOnError = (errors: any) => {
@@ -285,15 +311,15 @@ export const EditProfileScreen = () => {
                       <Dropdown
                         style={[styles.roleContainer]}
                         mode="modal"
-                        data={dropListItem}
+                        data={occupations}
                         maxHeight={300}
-                        labelField="label"
-                        valueField="value"
+                        labelField="name"
+                        valueField="id"
                         placeholder={'Elige un rol'}
                         search={false}
                         value={value}
                         onBlur={onBlur}
-                        onChange={({value}) => onChange(value)}
+                        onChange={item => onChange(item.id)}
                         renderLeftIcon={() => (
                           <Profile2UserIcon
                             height={25}
