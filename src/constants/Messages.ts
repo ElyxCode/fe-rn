@@ -12,5 +12,6 @@ export default {
     requireDuiProfile: 'El campo DUI es requerido',
     requireFiscalNumber: 'El registro de IVA es requerido',
     phoneNumberFormatPatternMessage: 'Ingrese 8 dígitos sin espacio o guión correcto en el campo número de teléfono',
+    UnAvailableServerMessage: "Acción no disponible, por favor intenta más tarde",
 
 }
