@@ -18,8 +18,8 @@ export interface UserProfile {
     occupation?:    Occupation;
     birthday?:      string;
     notifications?: boolean;
-    bill_type?:     string;
-    bill_entity?:   string;
+    bill_type?:     string|null;
+    bill_entity?:   string|null;
 }
 
 export interface Occupation {
