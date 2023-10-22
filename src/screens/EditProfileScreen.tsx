@@ -47,7 +47,6 @@ const dropListItem = [
 const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
 
 export const EditProfileScreen = () => {
-  const [value, setValue] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dui, setDui] = useState<string>('');
   const [fiscal, setFiscal] = useState<string>('');
@@ -76,7 +75,7 @@ export const EditProfileScreen = () => {
     birthDate,
   }: any) => {
     setIsLoading(true);
-    if (!dataBillingValidation(billing, typePerson, dui, fiscal)) return;
+    if (!dataBillingValidation()) return;
     console.log({
       name,
       email,
@@ -130,12 +129,7 @@ export const EditProfileScreen = () => {
     }
   };
 
-  const dataBillingValidation = (
-    billing: string,
-    typePerson: string,
-    dui: string,
-    fiscal: string,
-  ): boolean => {
+  const dataBillingValidation = (): boolean => {
     if (billing === BillingInfo.billing.finalConsumer && dui === '') {
       Alert.alert(Messages.titleMessage, Messages.requireDuiProfile, [
         {text: Messages.okButton},
