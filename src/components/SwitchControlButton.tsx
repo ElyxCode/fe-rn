@@ -10,8 +10,10 @@ import {colors} from '../styles/colors';
 
 type SwitchControlButtonProps = {
   billingSelected: (value: string) => void;
-  duiNumber: (value: string) => void;
-  fiscalNumber: (value: string) => void;
+  setDuiNumber: (value: string) => void;
+  setFiscalNumber: (value: string) => void;
+  dui: string;
+  fiscal: string;
   personTypeSelected: (value: string) => void;
 };
 
@@ -22,7 +24,7 @@ type BillingButtonProps = {
   setSelected: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const BillingInfo = {
+export const BillingInfo = {
   billing: {
     finalConsumer: 'Consumidor final',
     fiscalCredit: 'Crédito fiscal',
@@ -35,27 +37,31 @@ const BillingInfo = {
 
 export const SwitchControlButton = ({
   billingSelected,
-  duiNumber,
-  fiscalNumber,
+  setDuiNumber,
+  setFiscalNumber,
+  dui,
+  fiscal,
   personTypeSelected,
 }: SwitchControlButtonProps) => {
-  const [selectedBilling, setSelectedBilling] = useState<string>('');
-  const [selectedTypePerson, setSelectedTypePerson] = useState<string>('');
-  const [dui, setDui] = useState<string>('');
-  const [fiscal, setFiscal] = useState<string>('');
+  const [selectedBilling, setSelectedBilling] = useState<string>(
+    BillingInfo.billing.finalConsumer,
+  );
+  const [selectedTypePerson, setSelectedTypePerson] = useState<string>(
+    BillingInfo.Person.natural,
+  );
 
   useEffect(() => {
     if (selectedBilling === BillingInfo.billing.finalConsumer) {
       billingSelected(selectedBilling);
       personTypeSelected('');
-      fiscalNumber('');
-      duiNumber(dui);
+      setFiscalNumber('');
+      setDuiNumber(dui);
     } else {
       billingSelected(selectedBilling);
-      fiscalNumber(fiscal);
+      setFiscalNumber(fiscal);
       personTypeSelected(selectedTypePerson);
       if (selectedTypePerson === BillingInfo.Person.juridico) {
-        duiNumber('');
+        setDuiNumber('');
       }
     }
   }, [selectedBilling, selectedTypePerson]);
@@ -118,8 +124,8 @@ export const SwitchControlButton = ({
         <CustomTextInput
           onChangeText={(value: any) => {
             selectedBilling === BillingInfo.billing.finalConsumer
-              ? setDui(value)
-              : setFiscal(value);
+              ? setDuiNumber(value)
+              : setFiscalNumber(value);
           }}
           value={
             selectedBilling === BillingInfo.billing.finalConsumer ? dui : fiscal
@@ -152,7 +158,7 @@ export const SwitchControlButton = ({
             <View style={styles.inputDocumentNumberContainer}>
               <CustomTextInput
                 InputIcon={PersonalCardIcon}
-                onChangeText={setDui}
+                onChangeText={setDuiNumber}
                 value={dui}
               />
             </View>
