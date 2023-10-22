@@ -28,6 +28,8 @@ import CalendarIcon from '../assets/calendar.svg';
 import Messages from '../constants/Messages';
 
 import {colors} from '../styles/colors';
+import {transformBirthDate} from '../utils/utilities';
+import {isAndroid} from '../constants/Platform';
 
 const dropListItem = [
   {value: 'Albañil', label: 'Albañil'},
@@ -45,6 +47,8 @@ const dropListItem = [
 ];
 
 const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
+const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
+const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const EditProfileScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -158,12 +162,6 @@ export const EditProfileScreen = () => {
     return true;
   };
 
-  const transformBirthDate = (dateFormat: string): string => {
-    let date: string[] = dateFormat.split('/');
-    // console.log(date[2] + '-' + date[1] + '-' + date[0]);
-    return date[2] + '-' + date[1] + '-' + date[0];
-  };
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar />
@@ -192,9 +190,16 @@ export const EditProfileScreen = () => {
               <Text style={styles.inputTitleText}>Correo electrónico</Text>
               <Controller
                 control={control}
-                rules={{required: Messages.requireEmailProfile}}
+                rules={{
+                  required: Messages.requireEmailProfile,
+                  pattern: {
+                    value: emailFormatPattern,
+                    message: Messages.requireEmailProfile,
+                  },
+                }}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
+                    keyboardType="email-address"
                     placeHolder="Correo Electrónico"
                     InputIcon={SmsTrackingIcon}
                     onChangeText={onChange}
@@ -209,12 +214,18 @@ export const EditProfileScreen = () => {
               <Text style={styles.inputTitleText}>Celular</Text>
               <Controller
                 control={control}
-                rules={{required: Messages.requirePhoneProfile}}
+                rules={{
+                  required: Messages.requirePhoneProfile,
+                  pattern: {
+                    value: phoneFormatPattern,
+                    message: Messages.phoneNumberFormatPatternMessage,
+                  },
+                }}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
                     placeHolder="Telefono"
                     InputIcon={CallIcon}
-                    keyboardType="numeric"
+                    keyboardType={isAndroid ? 'numeric' : 'number-pad'}
                     onChangeText={onChange}
                     onBlur={onBlur}
                     value={value}
