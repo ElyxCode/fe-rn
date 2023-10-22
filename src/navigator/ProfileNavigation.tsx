@@ -7,14 +7,15 @@ import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {UserOptionsMenuScreen} from '../screens/UserOptionsMenuScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
 import {EditProfileScreen} from '../screens/EditProfileScreen';
+import {UserProfile} from '../model/User';
 
 export type ProfileStackParams = {
-  LoginScreen: undefined;
-  SignUpScreen: undefined;
-  OptionsUnLoggedScreen: undefined;
-  UserOptionsMenuScreen: undefined;
-  SettingsScreen: undefined;
-  EditProfileScreen: undefined;
+  LoginScreen: any;
+  SignUpScreen: any;
+  OptionsUnLoggedScreen: any;
+  UserOptionsMenuScreen: any;
+  SettingsScreen: any;
+  EditProfileScreen: any;
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParams>();
