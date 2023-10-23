@@ -16,6 +16,8 @@ type SwitchControlButtonProps = {
   dui: string;
   fiscal: string;
   personTypeSelected: (value: string) => void;
+  billing: string;
+  typePerson: string;
 };
 
 type BillingButtonProps = {
@@ -54,13 +56,12 @@ export const SwitchControlButton = ({
   dui,
   fiscal,
   personTypeSelected,
+  billing,
+  typePerson,
 }: SwitchControlButtonProps) => {
-  const [selectedBilling, setSelectedBilling] = useState<string>(
-    BillingInfo.billing.finalConsumer,
-  );
-  const [selectedTypePerson, setSelectedTypePerson] = useState<string>(
-    BillingInfo.Person.natural,
-  );
+  const [selectedBilling, setSelectedBilling] = useState<string>(billing);
+  const [selectedTypePerson, setSelectedTypePerson] =
+    useState<string>(typePerson);
 
   useEffect(() => {
     if (selectedBilling === BillingInfo.billing.finalConsumer) {
@@ -68,14 +69,18 @@ export const SwitchControlButton = ({
       personTypeSelected('');
       setFiscalNumber('');
       setDuiNumber(dui);
-    } else {
+    } else if (selectedBilling === BillingInfo.billing.fiscalCredit) {
       billingSelected(selectedBilling);
       setFiscalNumber(fiscal);
       personTypeSelected(selectedTypePerson);
       if (selectedTypePerson === BillingInfo.Person.juridico) {
         setDuiNumber('');
+      } else {
+        setDuiNumber(dui);
       }
     }
+    console.log({selectedBilling});
+    console.log({selectedTypePerson});
   }, [selectedBilling, selectedTypePerson]);
 
   const BillingButton = ({
