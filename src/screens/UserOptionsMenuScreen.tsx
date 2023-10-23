@@ -19,8 +19,6 @@ import {CustomNavBar} from '../components/CustomNavBar';
 
 import {getUserService} from '../services/user/user';
 
-import {UserProfile} from '../model/User';
-
 import ArrowRightIcon from '../assets/arrow_right.svg';
 import BoxIcon from '../assets/box.svg';
 import CardsIcon from '../assets/cards.svg';
@@ -31,7 +29,6 @@ import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
 import {LoaderScreen} from './LoaderScreen';
-import {useSelector} from 'react-redux';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -57,7 +54,6 @@ const menuOptions: MenuOptionItemProps[] = [
 
 export const UserOptionsMenuScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [userData, setUserData] = useState<UserProfile>({});
   const token = useAppSelector(state => state.authToken.token);
   const user = useAppSelector(state => state.user.userData);
   const navigation = useNavigation();
@@ -69,9 +65,7 @@ export const UserOptionsMenuScreen = () => {
       setIsLoading(true);
       const response = await getUserService(token);
       if (response.ok) {
-        // console.log({data: response.data});
-        // setUserData(response.data as UserProfile);
-        dispatch(setUser(response.data as UserProfile));
+        dispatch(setUser({...response.data}));
       } else {
         console.log({errorStatus: response.status});
         console.log({error: response.data?.error});
