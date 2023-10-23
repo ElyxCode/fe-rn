@@ -44,17 +44,12 @@ import {
   transformBirthDateUTCTtoDDMMYYYY,
 } from '../utils/utilities';
 
-// type EditProfileScreenProps = {
-//   userData: UserProfile;
-// };
-
 const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
 const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
 const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
 export const EditProfileScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [userData, setUserData] = useState<UserProfile>({});
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [dui, setDui] = useState<string>('');
   const [fiscal, setFiscal] = useState<string>('');
@@ -77,7 +72,6 @@ export const EditProfileScreen = () => {
     const getOccupationData = async () => {
       const response = await occupationsService();
       if (response.ok) {
-        // console.log({occupations: response.data});
         setOccupations(response.data ?? []);
       }
     };
@@ -96,10 +90,6 @@ export const EditProfileScreen = () => {
         'birthDate',
         transformBirthDateUTCTtoDDMMYYYY(userData.birthday ?? ''),
       );
-      setBilling(userData.bill_type ?? '');
-      setTypePerson(userData.bill_entity ?? '');
-      setDui(userData.dui ?? '');
-      setFiscal(userData.iva ?? '');
     }
   }, [userData]);
 
@@ -117,7 +107,7 @@ export const EditProfileScreen = () => {
     }
 
     // prepara objeto usuario para enviar
-    const userDataRequest: UserProfile = {
+    const data: UserProfile = {
       id: userData.id,
       name,
       email,
@@ -127,12 +117,11 @@ export const EditProfileScreen = () => {
       phone,
       nit: userData.nit,
       iva: fiscal ?? null,
-      bill_type: billing !== '' ? billing : null,
-      bill_entity: typePerson !== '' ? typePerson : null,
+      bill_type: billing !== '' ? billing : '',
+      bill_entity: typePerson !== '' ? typePerson : '',
       notifications: userData.notifications,
     };
-
-    await userModifyRequest(userDataRequest);
+    await userModifyRequest(data);
 
     setIsLoading(false);
   };
@@ -140,8 +129,8 @@ export const EditProfileScreen = () => {
   const userModifyRequest = async (userData: UserProfile) => {
     const response = await updateUserService(token, userData);
     if (response.ok) {
-      console.log({userModi: response.data});
-      dispatch(setUser(response.data as UserProfile));
+      const {user} = clearObjectData(response.data);
+      dispatch(setUser({...user}));
       navigation.goBack();
     } else {
       if (response.data?.error) {
@@ -155,6 +144,11 @@ export const EditProfileScreen = () => {
         [{text: Messages.okButton}],
       );
     }
+  };
+
+  const clearObjectData = (user: any): any => {
+    const {message, ...userProp} = user;
+    return userProp;
   };
 
   const handleOnError = (errors: any) => {
@@ -368,8 +362,10 @@ export const EditProfileScreen = () => {
                   billingSelected={value => setBilling(value)}
                   setDuiNumber={setDui}
                   setFiscalNumber={setFiscal}
-                  dui={dui}
-                  fiscal={fiscal}
+                  dui={userData.dui ?? ''}
+                  fiscal={userData.iva ?? ''}
+                  billing={userData.bill_type ?? ''}
+                  typePerson={userData.bill_entity ?? ''}
                 />
               </View>
               <SubmitButton
