@@ -10,23 +10,20 @@ import MapView, {
   Region,
   Details,
 } from 'react-native-maps';
-import GetLocation from 'react-native-get-location'
+import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
-import { navigateToScreen } from '../helpers/NavigateToScreen';
+import {getPlaceDetails} from '../services/google/maps';
 
-interface Location  {
-    latitude: number,
-    longitude:number,
-    title?:string,
-    description?:string
-
+export interface Location {
+  latitude: number;
+  longitude: number;
+  title?: string;
+  description?: string;
 }
 
 export const MapConfirmationScreen = ({navigation}: any) => {
-    
-    const [isLoading, setLoading] = useState(true);
-    const [currentLocation, setCurrentLocation] = useState<Location>();
-   
+  const [isLoading, setLoading] = useState(true);
+  const [currentLocation, setCurrentLocation] = useState<Location>();
 
   const [region, setRegion] = useState({
     latitude: 13.701404423436982,
@@ -47,63 +44,66 @@ export const MapConfirmationScreen = ({navigation}: any) => {
   const onRegionChangeComplete = (region: Region, details: Details) => {
     console.log('onregion change');
     if (!details.isGesture) {
-        return;
-  };
-}
-
-  const getCurrentLocation = async  () => {
-
-   let location =  await  GetLocation.getCurrentPosition({ enableHighAccuracy:true, timeout:6000 });
-   if(location !== null){
-    return location;
-   }
-  
-   return { latitude: 13.701404423436982, longitude:  -89.2244389412076 };
- 
-    
+      return;
+    }
   };
 
-  const setLocation = async (location: Location) => {
-    console.log('settlocation')
+  const getCurrentLocation = async () => {
+    let location = await GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 6000,
+    });
+    if (location !== null) {
+      return location;
+    }
 
+    return {latitude: 13.701404423436982, longitude: -89.2244389412076};
+  };
+
+  const setLocation = async (location: Location, addressString?: string) => {
     setLoading(true);
     setMarkers([
-        {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          title: location.title! ,
-          description: location.description!,
-        },
-      ]);
-
-      const region = {
+      {
         latitude: location.latitude,
         longitude: location.longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
-      };
-      setRegion(region);
+        title: location.title!,
+        description: location.description!,
+      },
+    ]);
 
-     const geoReponse = await Geocoder.from(location.latitude, location.longitude);
-  
-     const address =  geoReponse.results[0].formatted_address
-     
-     location.description= address.split(',')[0];
-     location.title = address.split(',')[0];
-     
-     setCurrentLocation(location)
+    const region = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    };
+    setRegion(region);
 
-     setLoading(false)
+    console.log(location.latitude, location.longitude);
 
+    if (addressString === undefined || addressString === '') {
+      const geoResponse = await Geocoder.from(location);
 
-      
+      // Toma la dirección del primer resultado
+      const streetAddress =
+        geoResponse.results[0].formatted_address.split(', ')[0];
+      location.description = streetAddress;
+      location.title = streetAddress;
+    } else {
+      location.description = addressString;
+      location.title = addressString;
+    }
+
+    setCurrentLocation(location);
+
+    setLoading(false);
   };
 
   useEffect(() => {
     (async () => {
       console.log('location');
       const location = await getCurrentLocation();
-      setLocation({ latitude: location.latitude, longitude: location.longitude });
+      setLocation({latitude: location.latitude, longitude: location.longitude});
     })();
   }, []);
 
@@ -112,27 +112,18 @@ export const MapConfirmationScreen = ({navigation}: any) => {
       <View style={{flex: 1}}>
         <View style={styles.headerContainer}>
           <MapView
-          
-           
-          onPress={e => {
-           
-            const location : Location = {
-                latitude: e.nativeEvent.coordinate.latitude,
-                longitude: e.nativeEvent.coordinate.longitude,
-                title: '',
-                description:''
-
-             }
-            
-              setLocation(location)
-          }}
+            onPoiClick={e =>
+              setLocation(e.nativeEvent.coordinate, e.nativeEvent.name)
+            }
+            onPress={e => {
+              setLocation(e.nativeEvent.coordinate);
+            }}
             style={styles.map}
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             region={region}
             onRegionChangeComplete={onRegionChangeComplete}>
             {markers.map((marker, index) => (
               <Marker
-            
                 key={index}
                 coordinate={{
                   latitude: marker.latitude,
@@ -152,28 +143,32 @@ export const MapConfirmationScreen = ({navigation}: any) => {
             Queremos mostrate los productos disponibles para tu zona
           </Text>
 
-          {isLoading  ? (
-             <AddressBox
-             onPress={() => navigation.navigate('SearchAddressScreen')}
-             customStyles={styles.addressBox}
-             textButton={'Buscando...'}></AddressBox>
-      ) : (
-        <AddressBox
-        onPress={() => { 
-            console.log('hola')
-            navigation.navigate('SearchAddressScreen')}}
-        customStyles={styles.addressBox}
-        textButton={ currentLocation?.description == undefined ? 'no encontrado': currentLocation?.description}
-        
-        ></AddressBox>
-      )}
-         <SubmitButton textButton="Confirmar dirección" />
+          {isLoading ? (
+            <AddressBox
+              onPress={() =>
+                navigation.navigate('SearchAddressScreen', {setLocation})
+              }
+              customStyles={styles.addressBox}
+              textButton={'Buscando...'}></AddressBox>
+          ) : (
+            <AddressBox
+              onPress={() => {
+                console.log('hola');
+                navigation.navigate('SearchAddressScreen', {setLocation});
+              }}
+              customStyles={styles.addressBox}
+              textButton={
+                currentLocation?.description == undefined
+                  ? 'no encontrado'
+                  : currentLocation?.description
+              }></AddressBox>
+          )}
+          <SubmitButton textButton="Confirmar dirección" />
         </View>
       </View>
     </>
   );
 };
-
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -208,4 +203,3 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 });
-

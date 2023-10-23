@@ -31,7 +31,9 @@ const styles = StyleSheet.create({
     borderRadius:10
   },
   text:{
+    flex:1,
      paddingLeft:15,
+     marginRight:0,
      fontSize:14,
      fontFamily:'Poppins-Medium',
      
