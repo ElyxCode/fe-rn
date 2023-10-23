@@ -16,9 +16,9 @@ type Props = {
   placeHolder?: string;
   fill?: ColorValue;
   isPassword?: boolean;
-  onChangeText: any;
-  onBlur: any;
-  value: string;
+  onChangeText?: any;
+  onBlur?: any;
+  value?: string;
 };
 
 export const CustomTextInput = ({

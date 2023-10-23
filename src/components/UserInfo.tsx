@@ -14,21 +14,19 @@ type Props = {
 
 export const UserInfo = ({userName, userEmail, userTelNumber}: Props) => {
   return (
-    <Pressable onPress={() => console.log('editar')}>
-      <View style={styles.container}>
-        <View style={styles.profileIconContainer}>
-          <ProfileCircleIcon height={25} />
-        </View>
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.userInfoText}>{userName}</Text>
-          <Text style={styles.userInfoText}>{userEmail}</Text>
-          <Text style={styles.userInfoText}>{userTelNumber}</Text>
-        </View>
-        <View style={styles.pencilIconContainer}>
-          <PencilEditIcon height={24} />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.profileIconContainer}>
+        <ProfileCircleIcon height={25} />
       </View>
-    </Pressable>
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.userInfoText}>{userName}</Text>
+        <Text style={styles.userInfoText}>{userEmail}</Text>
+        <Text style={styles.userInfoText}>{userTelNumber}</Text>
+      </View>
+      <View style={styles.pencilIconContainer}>
+        <PencilEditIcon height={24} />
+      </View>
+    </View>
   );
 };
 

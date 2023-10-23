@@ -18,13 +18,12 @@ export const userSlice = createSlice({
     initialState: initialState,
     reducers: {
         setUser: (state, action: PayloadAction<UserProfile>) => {
-            state.userData = action.payload;
+            state.userData = { ...action.payload};
         },
         clearUserData: (state) => {
             state.userData = initialState.userData;
             persistConfig.storage.removeItem('persist:root')
-        }
-        
+        },
     },
   });
 
