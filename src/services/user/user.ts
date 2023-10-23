@@ -10,15 +10,11 @@ export const getUserService = async (token: string) : Promise<ApiResponse<UserPr
 };
 
 export const updateUserService = async (token: string, user: UserProfile) : Promise<ApiResponse<UserProfile, ErrorMessageLogin>> => {
-  console.log({user});
-    api.setHeader(
-        'Authorization', "Bearer "+token
-      )
-    return api.post('/me', {
+    const userDataRequest = {     
         id: user.id,
         name: user.name,
         email: user.email,
-        occupation_id: user?.occupation?.id,
+        occupation_id: user?.occupation,
         dui: user.dui,
         birthday: user.birthday,
         phone: user.phone,
@@ -27,5 +23,10 @@ export const updateUserService = async (token: string, user: UserProfile) : Prom
         bill_type: user.bill_type,
         bill_entity: user.bill_entity,
         notifications: user.notifications,
-    });
+    }
+    console.log({request:userDataRequest});
+    api.setHeader(
+        'Authorization', "Bearer "+token
+      )
+    return api.post('/me', {...userDataRequest});
 };
