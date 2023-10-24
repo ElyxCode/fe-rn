@@ -15,39 +15,46 @@ import {categoryServices} from '../services/category';
 import {promotionServices} from '../services/promotion';
 import {Promotion} from '../model/Promotion';
 import {LoaderScreen} from './LoaderScreen';
-import { useAppSelector } from '../hooks/useRedux';
+import {useAppSelector} from '../hooks/useRedux';
 
 export const HomeBranchScreen = ({navigation}: any) => {
   const [branchs, setBranchs] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [promotions, setPromotios] = useState<Promotion[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [categoryId, setCategoryId] = useState<string >('-1');
-  const currentLocation = useAppSelector(state => state.currentLocation.currentLocation);
+  const [categoryId, setCategoryId] = useState<string>('-1');
+  const currentLocation = useAppSelector(
+    state => state.currentLocation.currentLocation,
+  );
 
   const getBranchs = async () => {
     try {
-      console.log(categoryId)
-      console.log(currentLocation.title)
-    if(categoryId === '-1'){
-      const {data} = await branchService();
-    setBranchs(data as Branch[]);
-    }else{
-      const response = await filterBranchesByCategory({ latitude: currentLocation.latitude, longitude: currentLocation.longitude }, categoryId);
-      setBranchs(response.data!);
-    }
-     
+      console.log(categoryId);
+      console.log(currentLocation.title);
+      if (categoryId === '-1') {
+        const {data} = await branchService();
+        setBranchs(data as Branch[]);
+      } else {
+        const response = await filterBranchesByCategory(
+          {
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+          },
+          categoryId,
+        );
+        setBranchs(response.data!);
+      }
     } catch (error) {
       // Manejar errores aquí
       console.error(error);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-     setIsLoading(true);
-     getBranchs();
+    setIsLoading(true);
+    getBranchs();
   }, [categoryId, currentLocation]);
 
   useEffect(() => {
@@ -72,12 +79,9 @@ export const HomeBranchScreen = ({navigation}: any) => {
   useEffect(() => {
     const getPromotions = async () => {
       const response = await promotionServices();
-      console.log(response)
-      if(response.ok){
+      if (response.ok) {
         setPromotios(response.data as Promotion[]);
-        }
-   
-     
+      }
     };
 
     getPromotions();
@@ -92,8 +96,12 @@ export const HomeBranchScreen = ({navigation}: any) => {
           <CustomNavBarHome navigation={navigation} />
           <LocationBar name={currentLocation.title!} />
           <ScrollView style={styles.scrollContainer}>
-            <PromoList promotions={promotions}  />
-            <CategoryHomeList categories={categories} categoryId={categoryId} setCategoryId={setCategoryId}/>
+            <PromoList promotions={promotions} />
+            <CategoryHomeList
+              categories={categories}
+              categoryId={categoryId}
+              setCategoryId={setCategoryId}
+            />
             <BranchHomeList branchs={branchs} />
           </ScrollView>
         </>
