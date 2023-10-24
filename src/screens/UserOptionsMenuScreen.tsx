@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,9 +8,16 @@ import {
   Pressable,
 } from 'react-native';
 import {SvgProps} from 'react-native-svg';
+import {useNavigation} from '@react-navigation/native';
+
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+import {clearUserData, setUser} from '../services/user/userSlice';
+import {clearToken} from '../services/auth/authSlice';
 
 import {UserInfo} from '../components/UserInfo';
 import {CustomNavBar} from '../components/CustomNavBar';
+
+import {getUserService} from '../services/user/user';
 
 import ArrowRightIcon from '../assets/arrow_right.svg';
 import BoxIcon from '../assets/box.svg';
@@ -21,7 +28,7 @@ import SettingIcon from '../assets/settings.svg';
 import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
-import {useNavigation} from '@react-navigation/native';
+import {LoaderScreen} from './LoaderScreen';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -45,59 +52,96 @@ const menuOptions: MenuOptionItemProps[] = [
   },
 ];
 
-const MenuOptionItem = ({
-  OptionButtonIcon,
-  optionName,
-  screenPath,
-}: MenuOptionItemProps) => {
-  const navigation = useNavigation();
-  return (
-    <Pressable onPress={() => navigation.navigate(screenPath as never)}>
-      <View style={styles.menuOptionsItemContainer}>
-        <OptionButtonIcon height={21} fill={colors.SecondaryColor} />
-        <View style={{flex: 1}}>
-          <Text style={styles.optionNameText}>{optionName}</Text>
-        </View>
-        <ArrowRightIcon height={16} />
-      </View>
-    </Pressable>
-  );
-};
-
 export const UserOptionsMenuScreen = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const token = useAppSelector(state => state.authToken.token);
+  const user = useAppSelector(state => state.user.userData);
+  const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+
+  // llama servicio para obtener usuario
+  useEffect(() => {
+    const getUserData = async () => {
+      setIsLoading(true);
+      const response = await getUserService(token);
+      if (response.ok) {
+        dispatch(setUser({...response.data}));
+      } else {
+        console.log({errorStatus: response.status});
+        console.log({error: response.data?.error});
+      }
+      setIsLoading(false);
+    };
+    getUserData();
+  }, []);
+
+  const MenuOptionItem = ({
+    OptionButtonIcon,
+    optionName,
+    screenPath,
+  }: MenuOptionItemProps) => {
+    return (
+      <Pressable onPress={() => navigation.navigate(screenPath as never)}>
+        <View style={styles.menuOptionsItemContainer}>
+          <OptionButtonIcon height={21} fill={colors.SecondaryColor} />
+          <View style={{flex: 1}}>
+            <Text style={styles.optionNameText}>{optionName}</Text>
+          </View>
+          <ArrowRightIcon height={16} />
+        </View>
+      </Pressable>
+    );
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
-      <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
-      <View style={styles.container}>
-        <UserInfo
-          userName={'Ricardo'}
-          userEmail="richi@mail.com"
-          userTelNumber="12345678"
-        />
-        <View style={styles.menuOptionsContainer}>
-          <FlatList
-            data={menuOptions}
-            renderItem={({item}) => (
-              <MenuOptionItem
-                OptionButtonIcon={item.OptionButtonIcon}
-                optionName={item.optionName}
-                screenPath={item.screenPath}
+      {isLoading ? (
+        <LoaderScreen />
+      ) : (
+        <>
+          <CustomNavBar primaryColorDefault={false} titleText="Mis Opciones" />
+          <View style={styles.container}>
+            <Pressable
+              onPress={() => navigation.navigate('EditProfileScreen' as never)}>
+              <UserInfo
+                userName={user.name}
+                userEmail={user.email}
+                userTelNumber={user.phone}
               />
-            )}
-            keyExtractor={item => item.optionName}
-            ItemSeparatorComponent={() => <View style={{height: 20}}></View>}
-            scrollEnabled={false}
-          />
-        </View>
-        <View style={styles.signoutContainer}>
-          <Pressable onPress={() => console.log('signout')}>
-            <View style={styles.signoutItemcontainer}>
-              <SignoutIcon height={24} />
-              <Text style={styles.logoutText}>Cerrar sesión</Text>
+            </Pressable>
+            <View style={styles.menuOptionsContainer}>
+              <FlatList
+                data={menuOptions}
+                renderItem={({item}) => (
+                  <MenuOptionItem
+                    OptionButtonIcon={item.OptionButtonIcon}
+                    optionName={item.optionName}
+                    screenPath={item.screenPath}
+                  />
+                )}
+                keyExtractor={item => item.optionName}
+                ItemSeparatorComponent={() => (
+                  <View style={{height: 20}}></View>
+                )}
+                scrollEnabled={false}
+              />
             </View>
-          </Pressable>
-        </View>
-      </View>
+            <View style={styles.signoutContainer}>
+              <Pressable
+                onPress={() => {
+                  dispatch(clearUserData());
+                  dispatch(clearToken());
+                  navigation.navigate('WelcomeScreen' as never);
+                }}>
+                <View style={styles.signoutItemcontainer}>
+                  <SignoutIcon height={24} />
+                  <Text style={styles.logoutText}>Cerrar sesión</Text>
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };

@@ -2,33 +2,33 @@
 
 export interface User {
     token: string;
-    user:  UserClass;
+    user:  UserProfile;
 }
 
-export interface UserClass {
-    id:            number;
-    name:          string;
-    avatar:        string;
-    email:         string;
-    created_at:    string;
-    phone:         string;
-    dui:           string;
-    nit:           null;
-    iva:           string;
-    occupation:    Occupation;
-    birthday:      string;
-    notifications: boolean;
-    bill_type:     string;
-    bill_entity:   string;
+export interface UserProfile {
+    id?:            number;
+    name?:          string;
+    avatar?:        string;
+    email?:         string;
+    created_at?:    string;
+    phone?:         string;
+    dui?:           string;
+    nit?:           null;
+    iva?:           string;
+    occupation?:    Occupation;
+    birthday?:      string;
+    notifications?: boolean;
+    bill_type?:     string|null;
+    bill_entity?:   string|null;
 }
 
 export interface Occupation {
-    id:         number;
-    name:       string;
-    created_at: string;
-    updated_at: string;
+    id?:         number;
+    name?:       string;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface ErrorMessageLogin {
-    error: string;
+    error?: string;
 }

@@ -6,20 +6,22 @@ import {SignUpScreen} from '../screens/SignUpScreen';
 import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {UserOptionsMenuScreen} from '../screens/UserOptionsMenuScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
+import {EditProfileScreen} from '../screens/EditProfileScreen';
+import {UserProfile} from '../model/User';
 
 export type ProfileStackParams = {
-  LoginScreen: undefined;
-  SignUpScreen: undefined;
-  OptionsUnLoggedScreen: undefined;
-  UserOptionsMenuScreen: undefined;
-  SettingsScreen: undefined;
+  LoginScreen: any;
+  SignUpScreen: any;
+  OptionsUnLoggedScreen: any;
+  UserOptionsMenuScreen: any;
+  SettingsScreen: any;
+  EditProfileScreen: any;
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParams>();
 
 export const ProfileNavigation = () => {
   const token = useAppSelector(state => state.authToken.token);
-  console.log(token);
 
   return (
     <ProfileStack.Navigator screenOptions={{headerShown: false}}>
@@ -32,6 +34,10 @@ export const ProfileNavigation = () => {
           <ProfileStack.Screen
             name="SettingsScreen"
             component={SettingsScreen}
+          />
+          <ProfileStack.Screen
+            name="EditProfileScreen"
+            component={EditProfileScreen}
           />
         </>
       ) : (

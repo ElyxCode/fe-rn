@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 
-import {useAppSelector, useAppDispatch} from '../hooks/useRedux';
+import {useAppDispatch} from '../hooks/useRedux';
 
 import {setToken} from '../services/auth/authSlice';
+import {setUser} from '../services/user/userSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 
@@ -21,6 +22,8 @@ import {ThirdPartyButton} from '../components/ThirdPartyButton';
 import {CustomNavBar} from '../components/CustomNavBar';
 
 import {loginServices} from '../services/auth/auth';
+
+import {UserProfile} from '../model/User';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -57,7 +60,7 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
-      dispatch(setToken(response.data?.token ?? ''));
+      dispatch(setToken(response.data?.token ?? '')); // guardo el token
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
@@ -69,8 +72,8 @@ export const LoginScreen = ({navigation}: any) => {
 
   const handleOnError = (errors: any) => {
     if (errors.email) {
-      return Alert.alert('Ferreplace', errors.email.message, [
-        {text: 'Aceptar'},
+      return Alert.alert(Messages.titleMessage, errors.email.message, [
+        {text: Messages.okButton},
       ]);
     }
 

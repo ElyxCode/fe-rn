@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit'
-// import type { RootState } from '../../utils/store'
+import { persistConfig } from '../../utils/store'
 
 type AuthToken = {
     token: string;
@@ -17,12 +17,12 @@ export const authSlice = createSlice({
         setToken: (state, action: PayloadAction<string>) => {
             state.token = action.payload
         },
-        deleteToken: (state) => {
+        clearToken: (state) => {
             state.token = '';
         }
     },
   });
 
-  export const { setToken, deleteToken } = authSlice.actions;
+  export const { setToken, clearToken } = authSlice.actions;
 
   export default authSlice.reducer;
