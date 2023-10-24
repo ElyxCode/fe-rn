@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../services/auth/authSlice';
-
+import locationReducer from '../services/google/locationSlice'
 export const store = configureStore({
   reducer: {
-    authToken: authReducer
+    authToken: authReducer,
+    currentLocation : locationReducer
   },
 });
 

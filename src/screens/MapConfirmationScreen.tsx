@@ -13,17 +13,19 @@ import MapView, {
 import GetLocation from 'react-native-get-location';
 import Geocoder from 'react-native-geocoding';
 import {getPlaceDetails} from '../services/google/maps';
+import { Location } from '../model/Location';
+import { useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
+import { setCurrentLocationGlobal } from '../services/google/locationSlice';
 
-export interface Location {
-  latitude: number;
-  longitude: number;
-  title?: string;
-  description?: string;
-}
+
+
 
 export const MapConfirmationScreen = ({navigation}: any) => {
   const [isLoading, setLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState<Location>();
+  const dispatch = useAppDispatch();
+  const currentLocationGlobal = useAppSelector(state => state.currentLocation.currentLocation);
 
   const [region, setRegion] = useState({
     latitude: 13.701404423436982,
@@ -90,6 +92,7 @@ export const MapConfirmationScreen = ({navigation}: any) => {
       location.description = streetAddress;
       location.title = streetAddress;
     } else {
+      console.log('else')
       location.description = addressString;
       location.title = addressString;
     }
@@ -99,6 +102,11 @@ export const MapConfirmationScreen = ({navigation}: any) => {
     setLoading(false);
   };
 
+  const confirm = async () => {
+    dispatch(setCurrentLocationGlobal({...currentLocation!}))
+    await  navigation.navigate('HomeBranchScreen');
+  }
+
   useEffect(() => {
     (async () => {
       console.log('location');
@@ -106,6 +114,8 @@ export const MapConfirmationScreen = ({navigation}: any) => {
       setLocation({latitude: location.latitude, longitude: location.longitude});
     })();
   }, []);
+
+  
 
   return (
     <>
@@ -163,7 +173,13 @@ export const MapConfirmationScreen = ({navigation}: any) => {
                   : currentLocation?.description
               }></AddressBox>
           )}
-          <SubmitButton textButton="Confirmar dirección" />
+          <SubmitButton textButton="Confirmar dirección" onPress={() => {
+            
+            confirm();
+          
+          }
+        
+        }  />
         </View>
       </View>
     </>
