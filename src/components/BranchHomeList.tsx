@@ -1,5 +1,12 @@
 import React from 'react';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import RatingStarIcon from '../assets/Rating_Star.svg';
 import TruckIcon from '../assets/truck.svg';
@@ -10,6 +17,7 @@ import {colors} from '../styles/colors';
 
 type BranchHomeListProps = {
   branchs: Branch[];
+  navigation: any;
 };
 
 type BranchItemProps = {
@@ -21,53 +29,59 @@ type BranchItemProps = {
   deliveryTime?: string;
 };
 
-const BranchItemRender = ({
-  img,
-  icon,
-  name,
-  rate,
-  deliveryTime,
-}: BranchItemProps) => {
-  return (
-    <View style={styles.BranchItemContainer}>
-      <View style={styles.branchItemImageContainer}>
-        <Image source={{uri: img}} height={61} style={styles.imageStyle} />
-      </View>
-      <View style={styles.branchDescriptionItemContainer}>
-        <View style={styles.iconContainer}>
-          <Image
-            source={{uri: icon}}
-            height={48}
-            width={48}
-            style={{
-              borderRadius: 25,
-              borderColor: colors.LightGrayColor,
-              borderWidth: 0.5,
-            }}
-          />
-        </View>
-
-        <View style={styles.branchItemDescription}>
-          <View style={styles.nameContainer}>
-            <Text style={styles.nameBranchText}>{name}</Text>
+export const BranchHomeList = ({branchs, navigation}: BranchHomeListProps) => {
+  const BranchItemRender = ({
+    id,
+    img,
+    icon,
+    name,
+    rate,
+    deliveryTime,
+  }: BranchItemProps) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('BranchDetailScreen', {branchId: id});
+        }}>
+        <View style={styles.BranchItemContainer}>
+          <View style={styles.branchItemImageContainer}>
+            <Image source={{uri: img}} height={61} style={styles.imageStyle} />
           </View>
-          <View style={styles.branchDescriptionDeliveryRateItemContainer}>
-            <View style={styles.branchDescriptionDeliveryRateItem}>
-              <RatingStarIcon height={14} />
-              <Text style={styles.ratingText}>{rate}</Text>
+          <View style={styles.branchDescriptionItemContainer}>
+            <View style={styles.iconContainer}>
+              <Image
+                source={{uri: icon}}
+                height={48}
+                width={48}
+                style={{
+                  borderRadius: 25,
+                  borderColor: colors.LightGrayColor,
+                  borderWidth: 0.5,
+                }}
+              />
             </View>
-            <View style={styles.branchDescriptionDeliveryRateItem}>
-              <TruckIcon height={16} />
-              <Text style={styles.deliveryTimeText}>{deliveryTime}</Text>
+
+            <View style={styles.branchItemDescription}>
+              <View style={styles.nameContainer}>
+                <Text style={styles.nameBranchText}>{name}</Text>
+              </View>
+              <View style={styles.branchDescriptionDeliveryRateItemContainer}>
+                <View style={styles.branchDescriptionDeliveryRateItem}>
+                  <RatingStarIcon height={14} />
+                  <Text style={styles.ratingText}>{rate}</Text>
+                </View>
+                <View style={styles.branchDescriptionDeliveryRateItem}>
+                  <TruckIcon height={16} />
+                  <Text style={styles.deliveryTimeText}>{deliveryTime}</Text>
+                </View>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-    </View>
-  );
-};
+      </TouchableOpacity>
+    );
+  };
 
-export const BranchHomeList = ({branchs}: BranchHomeListProps) => {
   return (
     <View style={styles.container}>
       <FlatList
