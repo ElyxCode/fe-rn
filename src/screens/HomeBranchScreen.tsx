@@ -103,6 +103,8 @@ export const HomeBranchScreen = ({navigation}: any) => {
               setCategoryId={setCategoryId}
             />
             <BranchHomeList branchs={branchs} />
+            <CategoryHomeList categories={categories} />
+            <BranchHomeList branchs={branchs} navigation={navigation} />
           </ScrollView>
         </>
       )}
