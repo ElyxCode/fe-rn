@@ -16,13 +16,25 @@ import {enableLatestRenderer} from 'react-native-maps';
 
 import {MainNavigation} from './src/navigator/MainNavigation';
 
+
 const App = (): JSX.Element => {
   enableLatestRenderer();
   Geocoder.init('AIzaSyCytD23EG5zvcDjToXFyAYnvWcVd-e0ETw');
 
+  
+
+  
+
   useEffect(() => {
     SplashScreen.hide();
   }, []);
+
+  
+
+  
+
+
+  
 
   return (
     <Provider store={store}>

@@ -60,7 +60,7 @@ export const WelcomeScreen = ({route, navigation}: any) => {
       <View style={{margin: 30}}>
         <SubmitButton
           textButton="Comenzar"
-          onPress={() => navigation.navigate('HomeBranchScreen')}
+          onPress={() => navigation.navigate('MapConfirmationScreen')}
         />
       </View>
     </SafeAreaView>

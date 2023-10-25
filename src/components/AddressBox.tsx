@@ -1,21 +1,22 @@
 import React from "react";
 import LocationIcon from '../assets/location.svg';
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
 import {colors} from '../styles/colors'
 
 
 type Props = {
     textButton: string;
     customStyles?: StyleProp<ViewStyle>;
+    onPress: () => void;
   };
 
-export const AddressBox = ({textButton,customStyles}: Props) => {
+export const AddressBox = ({textButton,customStyles, onPress}: Props) => {
     return(
     <>
-    <View style={[styles.content, customStyles]}>
+    <TouchableOpacity onPress={onPress}  style={[styles.content, customStyles]}> 
         <LocationIcon height={24} width={24} />
         <Text numberOfLines={1} lineBreakMode='tail' style={styles.text}>{textButton}</Text>
-    </View>
+    </TouchableOpacity>
     </>
     );
 }
@@ -30,7 +31,9 @@ const styles = StyleSheet.create({
     borderRadius:10
   },
   text:{
+    flex:1,
      paddingLeft:15,
+     marginRight:0,
      fontSize:14,
      fontFamily:'Poppins-Medium',
      

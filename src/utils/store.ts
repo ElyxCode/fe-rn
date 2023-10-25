@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import authReducer from '../services/auth/authSlice';
 import userReducer from '../services/user/userSlice';
+import locationReducer from '../services/google/locationSlice'
+
 
 // adding our persist configs
 export const persistConfig = {
@@ -17,6 +19,7 @@ export const persistConfig = {
 const rootReducer = combineReducers({
     authToken: authReducer,
     user: userReducer,
+    currentLocation : locationReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

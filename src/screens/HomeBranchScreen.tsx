@@ -53,9 +53,14 @@ export const HomeBranchScreen = ({navigation}: any) => {
 
   useEffect(() => {
     const getPromotions = async () => {
-      const {data} = await promotionServices();
-      setPromotios(data as Promotion[]);
+      const response = await promotionServices();
+      console.log(response)
+      if(response.ok){
+        setPromotios(response.data as Promotion[]);
+        
+      }
       setIsLoading(false);
+     
     };
 
     getPromotions();
