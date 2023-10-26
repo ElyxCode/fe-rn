@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
     FlatList,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -14,8 +15,8 @@ import {colors} from '../styles/colors';
 import { getPlaceDetails, getPlaces } from '../services/google/maps';
 import { GooglePlaceAutoCompletePrediction, GooglePlaceAutoCompleteResult } from '../model/GooglePlaceAutoCompleteResult';
 import { PlaceCell } from '../components/PlaceCell';
-import { Location } from './MapConfirmationScreen';
 import { useNavigation } from '@react-navigation/native';
+import { Location } from '../model/Location';
 
 
 
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     marginVertical:21,
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 0,
+    paddingVertical: Platform.OS === 'ios' ? 10: 5,
     borderColor: colors.PrimaryColor,
     borderWidth: 1,
     borderRadius: 10,
