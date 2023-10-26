@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 
 import {Category} from '../model/Category';
@@ -6,21 +6,23 @@ import {Category} from '../model/Category';
 import AllCategory from '../assets/allcategory_cyan.svg';
 
 import {colors} from '../styles/colors';
+import {branchService, filterBranchesByCategory} from '../services/branch';
+import {Branch} from '../model/Branch';
+import {useAppSelector} from '../hooks/useRedux';
 
 type CategoryHomeListProps = {
   categories: Category[];
+  categoryId: string;
+  setCategoryId: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const CategoryHomeList = ({categories}: CategoryHomeListProps) => {
-  const [categoryId, setCategoryId] = useState<string | null>(null);
-
-  const handleSelectionItem = (id: string) => {
-    let selectedItemId = categoryId;
-    if (selectedItemId === id) {
-      setCategoryId(null);
-    } else {
-      setCategoryId(id);
-    }
+export const CategoryHomeList = ({
+  categories,
+  categoryId,
+  setCategoryId,
+}: CategoryHomeListProps) => {
+  const handleSelectionItem = async (id: string) => {
+    setCategoryId(id);
   };
 
   const CategoryItemRender = ({

@@ -7,7 +7,7 @@ import {PromoList} from '../components/PromoList';
 import {CategoryHomeList} from '../components/CategoryHomeList';
 import {BranchHomeList} from '../components/BranchHomeList';
 
-import {branchService} from '../services/branch';
+import {branchService, filterBranchesByCategory} from '../services/branch';
 
 import {Branch} from '../model/Branch';
 import {Category} from '../model/Category';
@@ -15,29 +15,47 @@ import {categoryServices} from '../services/category';
 import {promotionServices} from '../services/promotion';
 import {Promotion} from '../model/Promotion';
 import {LoaderScreen} from './LoaderScreen';
+import { useAppSelector } from '../hooks/useRedux';
 
 export const HomeBranchScreen = ({navigation}: any) => {
   const [branchs, setBranchs] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [promotions, setPromotios] = useState<Promotion[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [categoryId, setCategoryId] = useState<string >('-1');
+  const currentLocation = useAppSelector(state => state.currentLocation.currentLocation);
+
+  const getBranchs = async () => {
+    try {
+      console.log(categoryId)
+      console.log(currentLocation.title)
+    if(categoryId === '-1'){
+      const {data} = await branchService();
+    setBranchs(data as Branch[]);
+    }else{
+      const response = await filterBranchesByCategory({ latitude: currentLocation.latitude, longitude: currentLocation.longitude }, categoryId);
+      setBranchs(response.data!);
+    }
+     
+    } catch (error) {
+      // Manejar errores aquí
+      console.error(error);
+    }finally{
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getBranchs = async () => {
-      setIsLoading(true);
-      const {data} = await branchService();
-      setBranchs(data as Branch[]);
-    };
-
-    getBranchs();
-  }, []);
+     setIsLoading(true);
+     getBranchs();
+  }, [categoryId, currentLocation]);
 
   useEffect(() => {
     const getCategories = async () => {
       const {data} = await categoryServices();
       setCategories([
         {
-          id: 9999,
+          id: -1,
           avatar: 'allCategory',
           name: 'Todas las categorias',
           description: '',
@@ -57,9 +75,8 @@ export const HomeBranchScreen = ({navigation}: any) => {
       console.log(response)
       if(response.ok){
         setPromotios(response.data as Promotion[]);
-        
-      }
-      setIsLoading(false);
+        }
+   
      
     };
 
@@ -75,8 +92,8 @@ export const HomeBranchScreen = ({navigation}: any) => {
           <CustomNavBarHome navigation={navigation} />
           <LocationBar />
           <ScrollView style={styles.scrollContainer}>
-            <PromoList promotions={promotions} />
-            <CategoryHomeList categories={categories} />
+            <PromoList promotions={promotions}  />
+            <CategoryHomeList categories={categories} categoryId={categoryId} setCategoryId={setCategoryId}/>
             <BranchHomeList branchs={branchs} />
           </ScrollView>
         </>
