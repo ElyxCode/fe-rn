@@ -104,7 +104,7 @@ export const MapConfirmationScreen = ({navigation}: any) => {
 
   const confirm = async () => {
     dispatch(setCurrentLocationGlobal({...currentLocation!}))
-    await  navigation.navigate('HomeBranchScreen');
+    await  navigation.navigate('HomeNavigation');
   }
 
   useEffect(() => {
