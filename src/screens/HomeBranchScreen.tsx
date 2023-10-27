@@ -102,8 +102,6 @@ export const HomeBranchScreen = ({navigation}: any) => {
               categoryId={categoryId}
               setCategoryId={setCategoryId}
             />
-            <BranchHomeList branchs={branchs} />
-            <CategoryHomeList categories={categories} />
             <BranchHomeList branchs={branchs} navigation={navigation} />
           </ScrollView>
         </>
@@ -116,7 +114,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  scrollContainer: {
-    paddingHorizontal: 20,
-  },
+  scrollContainer: {},
 });

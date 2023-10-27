@@ -56,6 +56,7 @@ export const CategoryHomeList = ({
     <View style={styles.container}>
       <Text style={styles.titleText}>Todo en un solo lugar</Text>
       <FlatList
+        contentContainerStyle={{paddingHorizontal: 20}}
         horizontal={true}
         data={categories}
         extraData={categoryId}
@@ -83,6 +84,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: colors.PrimaryTextColor,
     paddingBottom: 20,
+    paddingHorizontal: 20,
   },
   categoryContainer: {
     backgroundColor: colors.PrimaryColor,

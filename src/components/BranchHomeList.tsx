@@ -107,6 +107,7 @@ export const BranchHomeList = ({branchs, navigation}: BranchHomeListProps) => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 25,
+    paddingHorizontal: 20,
   },
   BranchItemContainer: {
     backgroundColor: colors.White,

@@ -36,6 +36,7 @@ export const PromoList = ({promotions}: PromoListProps) => {
     <View style={styles.container}>
       <Text style={styles.titleText}>Promos</Text>
       <FlatList
+        contentContainerStyle={{paddingHorizontal: 20}}
         horizontal={true}
         data={promotions}
         renderItem={({item}) => <PromoItemRender uri={item.image} />}
@@ -56,5 +57,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: colors.PrimaryTextColor,
     paddingBottom: 20,
+    paddingHorizontal: 20,
   },
 });
