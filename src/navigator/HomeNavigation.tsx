@@ -18,7 +18,7 @@ export const HomeNavigation = () => {
     return (
       <HomeStack.Navigator screenOptions={{headerShown: false}} initialRouteName="HomeBranchScreen">
         <HomeStack.Screen name="HomeBranchScreen" component={HomeBranchScreen} />
-        <HomeStack.Screen name="MapConfirmationScreen" component={MapConfirmationScreen} />
+        <HomeStack.Screen name="MapConfirmationScreen" component={MapConfirmationScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}/>
       <HomeStack.Screen name="SearchAddressScreen" component={SearchAddressScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}  />
       </HomeStack.Navigator>
 
