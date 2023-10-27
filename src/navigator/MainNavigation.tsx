@@ -7,13 +7,16 @@ import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
 import { SearchAddressScreen } from '../screens/SearchAddressScreen';
 import { CustomNavBar } from '../components/CustomNavBar';
 import {useAppSelector} from '../hooks/useRedux';
+import { HomeNavigation } from './HomeNavigation';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
   HomeBranchScreen: undefined;
   ProfileNavigation: undefined;
   MapConfirmationScreen: undefined;
-  SearchAddressScreen:undefined
+  SearchAddressScreen:undefined;
+  SearchAddressScreenn:undefined
+  HomeNavigation:undefined;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -22,11 +25,16 @@ export const MainNavigation = () => {
   const token = useAppSelector(state => state.authToken.token);
 
   return (
-    <MainStack.Navigator screenOptions={{headerShown: false}}>
+    <MainStack.Navigator screenOptions={{headerShown: false}} >
       <MainStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-      <MainStack.Screen name="MapConfirmationScreen" component={MapConfirmationScreen}  />
+      <MainStack.Screen name="MapConfirmationScreen" component={MapConfirmationScreen} />
       <MainStack.Screen name="SearchAddressScreen" component={SearchAddressScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}  />
-      <MainStack.Screen name="HomeBranchScreen" component={HomeBranchScreen} />
+      
+      <MainStack.Screen
+        name="HomeNavigation"
+        component={HomeNavigation}
+      />
+   
       <MainStack.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}

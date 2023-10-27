@@ -1,20 +1,27 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import GpsIcon from '../assets/location.svg';
 
 import {colors} from '../styles/colors';
+import { useNavigation } from '@react-navigation/native';
 
-export const LocationBar = () => {
+type locationProps={
+    name:string
+}
+
+export const LocationBar = ({name}:locationProps) => {
+ const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.addressContainer}>
         <GpsIcon fill={colors.PrimaryColor} />
-        <Text style={styles.addressText}>San salvador</Text>
+        <Text style={styles.addressText}>{name}</Text>
       </View>
-      <View style={styles.changeAddressContainer}>
+      <TouchableOpacity style={styles.changeAddressContainer} onPress={() => {navigation.navigate('MapConfirmationScreen' as never) }}>
         <Text style={styles.changeAddressText}>Cambiar</Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
