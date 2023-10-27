@@ -7,6 +7,7 @@ import {
   Text,
   View,
   ScrollView,
+  FlatList,
 } from 'react-native';
 
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -15,9 +16,11 @@ import {LoaderScreen} from './LoaderScreen';
 
 import {branchByIdService} from '../services/branch';
 import {promotionByBranchServices} from '../services/promotion';
+import {productsService} from '../services/product';
 
 import {Branch} from '../model/Branch';
 import {Promotion} from '../model/Promotion';
+import {Product} from '../model/product';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 import RatingStarIcon from '../assets/Rating_Star.svg';
@@ -26,13 +29,19 @@ import ArrowDownIcon from '../assets/arrow_down.svg';
 
 import {colors} from '../styles/colors';
 
-type BranchDetailScreenProps = {
-  branchId?: string;
+type ProductProps = {
+  id: string;
+  image?: string;
+  productName?: string;
+  normalPrice?: string | null;
+  specialPrice?: string | null;
+  brandProduct?: string | null;
 };
 
 export const BranchDetailScreen = ({route}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {branchId} = route.params;
@@ -64,10 +73,77 @@ export const BranchDetailScreen = ({route}: any) => {
       } else {
         console.log({error: response.originalError});
       }
-      setIsLoading(false);
     };
     getPromotionsData();
   }, []);
+
+  useEffect(() => {
+    const getProductData = async () => {
+      const response = await productsService(branchId);
+      if (response.ok) {
+        setProducts(response.data?.data as Product[]);
+      } else {
+        console.log({error: response.originalError});
+      }
+      setIsLoading(false);
+    };
+
+    getProductData();
+  }, []);
+
+  const ProductItemRender = ({
+    id,
+    image,
+    productName,
+    normalPrice,
+    specialPrice,
+    brandProduct,
+  }: ProductProps) => {
+    return (
+      <View style={styles.productContainer}>
+        <View style={styles.imageProductContainer}>
+          <Image source={{uri: image}} style={{height: 80, width: 80}} />
+        </View>
+        <View style={styles.productInfoContainer}>
+          <Text
+            style={styles.productNameText}
+            numberOfLines={1}
+            lineBreakMode="tail">
+            {productName}
+          </Text>
+          <View style={styles.priceProductContainer}>
+            <Text
+              style={[
+                styles.priceText,
+                {
+                  textDecorationLine: specialPrice ? 'line-through' : 'none',
+                  color: specialPrice
+                    ? colors.DarkGrayColor
+                    : colors.PrimaryTextColor,
+                },
+              ]}>
+              ${normalPrice}
+            </Text>
+            {specialPrice ? (
+              <Text
+                style={[
+                  styles.priceText,
+                  {
+                    textDecorationLine: specialPrice ? 'none' : 'line-through',
+                    color: specialPrice
+                      ? colors.PrimaryTextColor
+                      : colors.DarkGrayColor,
+                  },
+                ]}>
+                ${specialPrice}
+              </Text>
+            ) : null}
+          </View>
+          <Text style={styles.brandText}>{brandProduct}</Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -118,6 +194,27 @@ export const BranchDetailScreen = ({route}: any) => {
                 </View>
               </Pressable>
             </View>
+            <View style={styles.productListContainer}>
+              <FlatList
+                scrollEnabled={false}
+                data={products}
+                contentContainerStyle={{paddingBottom: 20}}
+                renderItem={({item}) => (
+                  <ProductItemRender
+                    id={item.id.toString()}
+                    image={item.image}
+                    productName={item.name}
+                    normalPrice={item.price}
+                    specialPrice={item.price_with_discount}
+                    brandProduct={item.brand.name}
+                  />
+                )}
+                ItemSeparatorComponent={() => (
+                  <View style={{height: 15}}></View>
+                )}
+                keyExtractor={item => item.id.toString()}
+              />
+            </View>
           </ScrollView>
         </>
       )}
@@ -129,11 +226,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 10,
-    paddingHorizontal: 22,
   },
   imageContainer: {
     height: 92,
     borderRadius: 10,
+    paddingHorizontal: 20,
   },
   image: {
     height: 92,
@@ -148,7 +245,7 @@ const styles = StyleSheet.create({
   },
   branchInfoContainer: {
     paddingTop: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: 35,
   },
   TitleInfoContainer: {
     flexDirection: 'row',
@@ -188,6 +285,7 @@ const styles = StyleSheet.create({
   },
   productsCategoryContainer: {
     paddingTop: 35,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -213,5 +311,44 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.PrimaryTextColor,
     fontFamily: 'Poppins-SemiBold',
+  },
+  productListContainer: {
+    paddingTop: 40,
+    paddingHorizontal: 20,
+  },
+  productContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.White,
+    borderRadius: 10,
+    padding: 5,
+  },
+  imageProductContainer: {
+    height: 80,
+  },
+  productInfoContainer: {
+    justifyContent: 'space-between',
+    paddingLeft: 20,
+    paddingVertical: 5,
+    width: 250,
+  },
+  productNameText: {
+    fontSize: 12,
+    color: colors.DarkGrayColor,
+    fontFamily: 'Poppins-Medium',
+  },
+  priceProductContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
+  },
+  priceText: {
+    fontSize: 12,
+    color: colors.DarkGrayColor,
+    fontFamily: 'Poppins-Medium',
+  },
+  brandText: {
+    fontSize: 12,
+    color: colors.PrimaryTextColor,
+    fontFamily: 'Poppins-Medium',
   },
 });
