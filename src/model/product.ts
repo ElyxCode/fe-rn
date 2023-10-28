@@ -63,10 +63,10 @@ export interface Brand {
 }
 
 export interface Links {
-    first: string;
-    last:  string;
-    prev:  null;
-    next:  null;
+    first: string|null;
+    last:  string|null;
+    prev:  string|null;
+    next:  string|null;
 }
 
 export interface Meta {
