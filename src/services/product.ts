@@ -11,7 +11,6 @@ export const nextPageProductsService = async (branchId: string, page: string, ca
 
     // extrae de la url el numero de pagina TODO: se debe poder mejorar esto
     let extractNumberPage = page.split('=')[1] ?? '';
-    console.log({ extractNUmverService: extractNumberPage})
 
     return api.get(`/products?branch_id=${branchId}&page=${extractNumberPage}&category_id=${categoryId}`)
 };

@@ -114,7 +114,6 @@ export const BranchDetailScreen = ({route}: any) => {
     );
 
     if (response.ok) {
-      console.log({hasNextPageMOre: response.data?.links.next});
       setNextPageProduct(response.data?.links.next);
       setProducts([...products, ...(response.data?.data ?? [])]);
     } else {
