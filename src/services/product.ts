@@ -9,6 +9,7 @@ export const productsService = async (branchId: string): Promise<ApiResponse<Pro
 
 export const nextPageProductsService = async (branchId: string, page: string, categoryId: string): Promise<ApiResponse<Products>> => {
 
+    // extrae de la url el numero de pagina TODO: se debe poder mejorar esto
     let extractNumberPage = page.split('=')[1] ?? '';
     console.log({ extractNUmverService: extractNumberPage})
 
