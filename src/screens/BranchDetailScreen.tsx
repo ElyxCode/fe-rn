@@ -8,6 +8,9 @@ import {
   View,
   ScrollView,
   FlatList,
+  ActivityIndicator,
+  Platform,
+  Dimensions,
 } from 'react-native';
 
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -16,7 +19,7 @@ import {LoaderScreen} from './LoaderScreen';
 
 import {branchByIdService} from '../services/branch';
 import {promotionByBranchServices} from '../services/promotion';
-import {productsService} from '../services/product';
+import {productsService, nextPageProductsService} from '../services/product';
 
 import {Branch} from '../model/Branch';
 import {Promotion} from '../model/Promotion';
@@ -41,11 +44,16 @@ type ProductProps = {
 export const BranchDetailScreen = ({route}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [categoryId, setCategoryId] = useState<string>('');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [nextPageProduct, setNextPageProduct] = useState<
+    string | null | undefined
+  >('');
   const {branchId} = route.params;
 
+  // Carga servicio de info de branch
   useEffect(() => {
     const getBranchData = async () => {
       setIsLoading(true);
@@ -60,6 +68,7 @@ export const BranchDetailScreen = ({route}: any) => {
     getBranchData();
   }, []);
 
+  //carga servicio de promociones
   useEffect(() => {
     const getPromotionsData = async () => {
       const response = await promotionByBranchServices(
@@ -77,10 +86,13 @@ export const BranchDetailScreen = ({route}: any) => {
     getPromotionsData();
   }, []);
 
+  // servicio qu obtiene los productos
   useEffect(() => {
     const getProductData = async () => {
       const response = await productsService(branchId);
       if (response.ok) {
+        // console.log({GetProductHasNextPageProduct: response.data?.links.next});
+        setNextPageProduct(response.data?.links.next);
         setProducts(response.data?.data as Product[]);
       } else {
         console.log({error: response.originalError});
@@ -90,6 +102,27 @@ export const BranchDetailScreen = ({route}: any) => {
 
     getProductData();
   }, []);
+
+  // carga mas productos
+  const loadMoreProducts = async () => {
+    setLoadMore(true);
+    console.log('loadmore');
+    const response = await nextPageProductsService(
+      branchId,
+      nextPageProduct ?? '',
+      categoryId,
+    );
+
+    if (response.ok) {
+      console.log({hasNextPageMOre: response.data?.links.next});
+      setNextPageProduct(response.data?.links.next);
+      setProducts([...products, ...(response.data?.data ?? [])]);
+    } else {
+      console.log({error: response.originalError});
+    }
+
+    setLoadMore(false);
+  };
 
   const ProductItemRender = ({
     id,
@@ -145,77 +178,121 @@ export const BranchDetailScreen = ({route}: any) => {
     );
   };
 
+  const HeaderBranchDetail = () => {
+    return (
+      <>
+        <View style={styles.imageContainer}>
+          <Image source={{uri: branchData.banner}} style={styles.image} />
+          <Image source={{uri: branchData.logo}} style={styles.logo} />
+        </View>
+        <View style={styles.branchInfoContainer}>
+          <View style={styles.TitleInfoContainer}>
+            <Text style={styles.titleText}>{branchData.name}</Text>
+            <Pressable>
+              <InfoCircleIcon height={30} />
+            </Pressable>
+          </View>
+          <View style={styles.ratingDeliveryContainer}>
+            <View style={styles.ratingDeliveryItem}>
+              <RatingStarIcon height={14} />
+              <Text style={styles.ratingDeliveryText}>{branchData.rating}</Text>
+            </View>
+            <View style={styles.ratingDeliveryItem}>
+              <TruckIcon height={14} />
+              <Text style={styles.ratingDeliveryText}>
+                {branchData.delivery_time}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.descriptionBranchContainer}>
+            <Text style={styles.descriptionText}>{branchData.description}</Text>
+          </View>
+        </View>
+        {promotions.length !== 0 && <PromoList promotions={promotions} />}
+        <View style={styles.productsCategoryContainer}>
+          <Text style={styles.productsText}>Productos</Text>
+          <Pressable>
+            <View style={styles.categoryButtonContainer}>
+              <Text style={styles.categoryTextButton}>Categorias</Text>
+              <ArrowDownIcon height={16} />
+            </View>
+          </Pressable>
+        </View>
+      </>
+    );
+  };
+
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.container}>
       {isLoading ? (
         <LoaderScreen />
       ) : (
         <>
           <CustomNavBar />
-          <ScrollView style={styles.container}>
-            <View style={styles.imageContainer}>
-              <Image source={{uri: branchData.banner}} style={styles.image} />
-              <Image source={{uri: branchData.logo}} style={styles.logo} />
-            </View>
-            <View style={styles.branchInfoContainer}>
-              <View style={styles.TitleInfoContainer}>
-                <Text style={styles.titleText}>{branchData.name}</Text>
-                <Pressable>
-                  <InfoCircleIcon height={30} />
-                </Pressable>
-              </View>
-              <View style={styles.ratingDeliveryContainer}>
-                <View style={styles.ratingDeliveryItem}>
-                  <RatingStarIcon height={14} />
-                  <Text style={styles.ratingDeliveryText}>
-                    {branchData.rating}
-                  </Text>
-                </View>
-                <View style={styles.ratingDeliveryItem}>
-                  <TruckIcon height={14} />
-                  <Text style={styles.ratingDeliveryText}>
-                    {branchData.delivery_time}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.descriptionBranchContainer}>
-                <Text style={styles.descriptionText}>
-                  {branchData.description}
-                </Text>
-              </View>
-            </View>
-            {promotions.length !== 0 && <PromoList promotions={promotions} />}
-            <View style={styles.productsCategoryContainer}>
-              <Text style={styles.productsText}>Productos</Text>
-              <Pressable>
-                <View style={styles.categoryButtonContainer}>
-                  <Text style={styles.categoryTextButton}>Categorias</Text>
-                  <ArrowDownIcon height={16} />
-                </View>
-              </Pressable>
-            </View>
-            <View style={styles.productListContainer}>
-              <FlatList
-                scrollEnabled={false}
-                data={products}
-                contentContainerStyle={{paddingBottom: 20}}
-                renderItem={({item}) => (
-                  <ProductItemRender
-                    id={item.id.toString()}
-                    image={item.image}
-                    productName={item.name}
-                    normalPrice={item.price}
-                    specialPrice={item.price_with_discount}
-                    brandProduct={item.brand.name}
-                  />
-                )}
-                ItemSeparatorComponent={() => (
-                  <View style={{height: 15}}></View>
-                )}
-                keyExtractor={item => item.id.toString()}
-              />
-            </View>
-          </ScrollView>
+          <View style={styles.productListContainer}>
+            <FlatList
+              ListHeaderComponent={<HeaderBranchDetail />}
+              data={products}
+              contentContainerStyle={{
+                paddingBottom: 20,
+              }}
+              renderItem={({item}) => (
+                <ProductItemRender
+                  id={item.id.toString()}
+                  image={item.image}
+                  productName={item.name}
+                  normalPrice={item.price}
+                  specialPrice={item.price_with_discount}
+                  brandProduct={item.brand.name}
+                />
+              )}
+              scrollEnabled={!loadMore}
+              ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
+              keyExtractor={item => item.id.toString() + Math.random() * 3}
+              initialNumToRender={20}
+              onEndReachedThreshold={
+                Platform.OS === 'ios'
+                  ? 0.001
+                  : Dimensions.get('window').height / 2
+              }
+              onEndReached={() => {
+                // console.log('-----------');
+                // console.log('onReacch');
+                // console.log({linkProductOnENd: nextPageProduct});
+                // setNextPageProduct(nextPageProduct?.split('=')[1]);
+                // console.log({linkProducConvertonENd: nextPageProduct});
+                // console.log('-----------');
+
+                if (
+                  nextPageProduct !== null &&
+                  nextPageProduct !== '' &&
+                  nextPageProduct !== undefined
+                ) {
+                  loadMoreProducts();
+                } else {
+                  console.log('No hay mas items');
+                }
+              }}
+              ListFooterComponent={
+                loadMore ? (
+                  <>
+                    <View
+                      style={{
+                        height: 25,
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <ActivityIndicator
+                        size={25}
+                        color={colors.PrimaryColor}
+                      />
+                    </View>
+                  </>
+                ) : null
+              }
+            />
+          </View>
         </>
       )}
     </SafeAreaView>
@@ -225,7 +302,6 @@ export const BranchDetailScreen = ({route}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
   },
   imageContainer: {
     height: 92,
@@ -285,6 +361,7 @@ const styles = StyleSheet.create({
   },
   productsCategoryContainer: {
     paddingTop: 35,
+    paddingBottom: 40,
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -313,13 +390,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
   },
   productListContainer: {
-    paddingTop: 40,
-    paddingHorizontal: 20,
+    flex: 1,
   },
   productContainer: {
     flexDirection: 'row',
     backgroundColor: colors.White,
     borderRadius: 10,
+    marginHorizontal: 20,
     padding: 5,
   },
   imageProductContainer: {
