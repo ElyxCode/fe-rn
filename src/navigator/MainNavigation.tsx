@@ -2,6 +2,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {WelcomeScreen} from '../screens/WelcomeScreen';
 import {HomeBranchScreen} from '../screens/HomeBranchScreen';
+import {BranchDetailScreen} from '../screens/BranchDetailScreen';
 import {ProfileNavigation} from './ProfileNavigation';
 import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
 import { SearchAddressScreen } from '../screens/SearchAddressScreen';
@@ -12,6 +13,7 @@ import { HomeNavigation } from './HomeNavigation';
 export type RootStackParams = {
   WelcomeScreen: undefined;
   HomeBranchScreen: undefined;
+  BranchDetailScreen: any;
   ProfileNavigation: undefined;
   MapConfirmationScreen: undefined;
   SearchAddressScreen:undefined;
@@ -35,6 +37,10 @@ export const MainNavigation = () => {
         component={HomeNavigation}
       />
    
+      <MainStack.Screen
+        name="BranchDetailScreen"
+        component={BranchDetailScreen}
+      />
       <MainStack.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}
