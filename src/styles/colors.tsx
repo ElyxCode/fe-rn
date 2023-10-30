@@ -15,4 +15,5 @@ export const colors = {
   MenuIconsColor: '#42bfdf',
   PrimaryLightColor: '#3947A3',
   SwitchThumbColor: '#27AE60',
+  PopUpBackground: 'rgba(0, 0, 0, 0.8)',
 };
