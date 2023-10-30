@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
   },
   popUpContainer: {
     backgroundColor: colors.White,
-    padding: 10,
-    borderRadius: 10,
+    padding: 15,
+    borderRadius: 20,
     marginHorizontal: 20,
   },
   closeButtonContainer: {
