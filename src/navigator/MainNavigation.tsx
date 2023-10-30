@@ -5,10 +5,11 @@ import {HomeBranchScreen} from '../screens/HomeBranchScreen';
 import {BranchDetailScreen} from '../screens/BranchDetailScreen';
 import {ProfileNavigation} from './ProfileNavigation';
 import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
-import { SearchAddressScreen } from '../screens/SearchAddressScreen';
-import { CustomNavBar } from '../components/CustomNavBar';
+import {SearchAddressScreen} from '../screens/SearchAddressScreen';
+import {CustomNavBar} from '../components/CustomNavBar';
 import {useAppSelector} from '../hooks/useRedux';
-import { HomeNavigation } from './HomeNavigation';
+import {HomeNavigation} from './HomeNavigation';
+import {BranchInfoModal} from '../components/BranchInfoModal';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -16,9 +17,10 @@ export type RootStackParams = {
   BranchDetailScreen: any;
   ProfileNavigation: undefined;
   MapConfirmationScreen: undefined;
-  SearchAddressScreen:undefined;
-  SearchAddressScreenn:undefined
-  HomeNavigation:undefined;
+  SearchAddressScreen: undefined;
+  SearchAddressScreenn: undefined;
+  HomeNavigation: undefined;
+  BranchInfoModal: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -27,20 +29,30 @@ export const MainNavigation = () => {
   const token = useAppSelector(state => state.authToken.token);
 
   return (
-    <MainStack.Navigator screenOptions={{headerShown: false}} >
+    <MainStack.Navigator screenOptions={{headerShown: false}}>
       <MainStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-      <MainStack.Screen name="MapConfirmationScreen" component={MapConfirmationScreen} />
-      <MainStack.Screen name="SearchAddressScreen" component={SearchAddressScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}  />
-      
       <MainStack.Screen
-        name="HomeNavigation"
-        component={HomeNavigation}
+        name="MapConfirmationScreen"
+        component={MapConfirmationScreen}
       />
-   
       <MainStack.Screen
+        name="SearchAddressScreen"
+        component={SearchAddressScreen}
+        options={{headerShown: true, header: () => <CustomNavBar />}}
+      />
+
+      <MainStack.Screen name="HomeNavigation" component={HomeNavigation} />
+      <MainStack.Group screenOptions={{presentation: 'modal'}}>
+        <MainStack.Screen
+          name="BranchDetailScreen"
+          component={BranchDetailScreen}
+        />
+        <MainStack.Screen name="BranchInfoModal" component={BranchInfoModal} />
+      </MainStack.Group>
+      {/* <MainStack.Screen
         name="BranchDetailScreen"
         component={BranchDetailScreen}
-      />
+      /> */}
       <MainStack.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}

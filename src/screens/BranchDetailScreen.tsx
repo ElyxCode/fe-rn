@@ -41,7 +41,7 @@ type ProductProps = {
   brandProduct?: string | null;
 };
 
-export const BranchDetailScreen = ({route}: any) => {
+export const BranchDetailScreen = ({route, navigation}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [categoryId, setCategoryId] = useState<string>('');
@@ -187,7 +187,12 @@ export const BranchDetailScreen = ({route}: any) => {
         <View style={styles.branchInfoContainer}>
           <View style={styles.TitleInfoContainer}>
             <Text style={styles.titleText}>{branchData.name}</Text>
-            <Pressable>
+            <Pressable
+              onPress={() =>
+                navigation.navigate('BranchInfoModal', {
+                  ...branchData,
+                } as Branch)
+              }>
               <InfoCircleIcon height={30} />
             </Pressable>
           </View>
