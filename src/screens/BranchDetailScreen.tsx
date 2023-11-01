@@ -26,6 +26,8 @@ import {
   getProductByCategoryService,
 } from '../services/product';
 
+import {clearCategorySelected} from '../services/category/categorySlice';
+
 import {Branch} from '../model/Branch';
 import {Promotion} from '../model/Promotion';
 import {Product} from '../model/product';
@@ -37,7 +39,6 @@ import ArrowDownIcon from '../assets/arrow_down.svg';
 import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {colors} from '../styles/colors';
-import {clearCategorySelected} from '../services/category/categorySlice';
 
 type ProductProps = {
   id: string;
