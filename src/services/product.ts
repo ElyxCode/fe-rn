@@ -15,3 +15,7 @@ export const nextPageProductsService = async (branchId: string, page: string, ca
     return api.get(`/products?branch_id=${branchId}&page=${extractNumberPage}&category_id=${categoryId}`)
 };
 
+export const getProductByCategoryService = async (branchId: string, categoryId: string): Promise<ApiResponse<Products>> => {
+
+    return api.get(`/products?branch_id=${branchId}&category_id=${categoryId}`)
+};
