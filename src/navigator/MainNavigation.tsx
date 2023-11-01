@@ -10,6 +10,7 @@ import {CustomNavBar} from '../components/CustomNavBar';
 import {useAppSelector} from '../hooks/useRedux';
 import {HomeNavigation} from './HomeNavigation';
 import {BranchInfoModal} from '../components/BranchInfoModal';
+import {CategoryListModal} from '../components/CategoryListModal';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -21,6 +22,7 @@ export type RootStackParams = {
   SearchAddressScreenn: undefined;
   HomeNavigation: undefined;
   BranchInfoModal: any;
+  CategoryListModal: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -48,6 +50,10 @@ export const MainNavigation = () => {
           component={BranchDetailScreen}
         />
         <MainStack.Screen name="BranchInfoModal" component={BranchInfoModal} />
+        <MainStack.Screen
+          name="CategoryListModal"
+          component={CategoryListModal}
+        />
       </MainStack.Group>
       {/* <MainStack.Screen
         name="BranchDetailScreen"
