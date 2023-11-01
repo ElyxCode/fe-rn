@@ -6,12 +6,15 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   FlatList,
   ActivityIndicator,
   Platform,
   Dimensions,
 } from 'react-native';
+
+import {useIsFocused} from '@react-navigation/native';
+
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {PromoList} from '../components/PromoList';
@@ -19,7 +22,13 @@ import {LoaderScreen} from './LoaderScreen';
 
 import {branchByIdService} from '../services/branch';
 import {promotionByBranchServices} from '../services/promotion';
-import {productsService, nextPageProductsService} from '../services/product';
+import {
+  productsService,
+  nextPageProductsService,
+  getProductByCategoryService,
+} from '../services/product';
+
+import {clearCategorySelected} from '../services/category/categorySlice';
 
 import {Branch} from '../model/Branch';
 import {Promotion} from '../model/Promotion';
@@ -29,6 +38,7 @@ import InfoCircleIcon from '../assets/info_circle.svg';
 import RatingStarIcon from '../assets/Rating_Star.svg';
 import TruckIcon from '../assets/truck.svg';
 import ArrowDownIcon from '../assets/arrow_down.svg';
+import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {colors} from '../styles/colors';
 
@@ -44,14 +54,48 @@ type ProductProps = {
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
-  const [categoryId, setCategoryId] = useState<string>('');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
   const [nextPageProduct, setNextPageProduct] = useState<
     string | null | undefined
   >('');
+  const category = useAppSelector(state => state.categorySelected);
+  const dispatch = useAppDispatch();
+  // hook que devueleve bool si estas o no en esta pantalla
+  const isFocused = useIsFocused();
+
   const {branchId} = route.params;
+
+  // es llamado cuando se selecciona una categoria
+  useEffect(() => {
+    const getProductByCategory = async () => {
+      if (category.categoryId !== '' && category.categoryName !== '') {
+        setIsLoading(true);
+        console.log({
+          branchId,
+          nextPageProduct,
+          categoryId: category.categoryId,
+        });
+        // console.log('entre servicio producto por categoria');
+        const response = await getProductByCategoryService(
+          branchId,
+          category.categoryId,
+        );
+
+        if (response.ok) {
+          console.log('respuesta ok por cate prod');
+          // setNextPageProduct(response.data?.links.next);
+          setProducts(response.data?.data as Product[]);
+        } else {
+          console.log({error: response.originalError});
+        }
+        setIsLoading(false);
+      }
+    };
+
+    getProductByCategory();
+  }, [category]);
 
   // Carga servicio de info de branch
   useEffect(() => {
@@ -89,19 +133,22 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   // servicio qu obtiene los productos
   useEffect(() => {
     const getProductData = async () => {
-      const response = await productsService(branchId);
-      if (response.ok) {
-        // console.log({GetProductHasNextPageProduct: response.data?.links.next});
-        setNextPageProduct(response.data?.links.next);
-        setProducts(response.data?.data as Product[]);
-      } else {
-        console.log({error: response.originalError});
+      if (category.categoryId === '' && category.categoryName === '') {
+        setIsLoading(true);
+        const response = await productsService(branchId);
+        if (response.ok) {
+          // console.log({GetProductHasNextPageProduct: response.data?.links.next});
+          setNextPageProduct(response.data?.links.next);
+          setProducts(response.data?.data as Product[]);
+        } else {
+          console.log({error: response.originalError});
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     getProductData();
-  }, []);
+  }, [category]);
 
   // carga mas productos
   const loadMoreProducts = async () => {
@@ -110,7 +157,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     const response = await nextPageProductsService(
       branchId,
       nextPageProduct ?? '',
-      categoryId,
+      category.categoryId,
     );
 
     if (response.ok) {
@@ -122,6 +169,17 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
 
     setLoadMore(false);
   };
+
+  // limpia el estado global de categoria
+  useEffect(() => {
+    if (
+      !isFocused &&
+      category.categoryId !== '' &&
+      category.categoryName !== ''
+    ) {
+      dispatch(clearCategorySelected());
+    }
+  }, [isFocused]);
 
   const ProductItemRender = ({
     id,
@@ -215,13 +273,39 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         {promotions.length !== 0 && <PromoList promotions={promotions} />}
         <View style={styles.productsCategoryContainer}>
           <Text style={styles.productsText}>Productos</Text>
-          <Pressable>
+          <Pressable
+            onPress={() =>
+              navigation.navigate('CategoryListModal', {branchId})
+            }>
             <View style={styles.categoryButtonContainer}>
-              <Text style={styles.categoryTextButton}>Categorias</Text>
+              <Text
+                style={styles.categoryTextButton}
+                lineBreakMode="tail"
+                numberOfLines={1}>
+                {category.categoryName !== ''
+                  ? category.categoryName
+                  : 'Categorias'}
+              </Text>
               <ArrowDownIcon height={16} />
             </View>
           </Pressable>
         </View>
+        {category.categoryName !== '' ? (
+          <View style={styles.categorySelectedContainer}>
+            <Text
+              style={styles.categorySelectedText}
+              lineBreakMode="tail"
+              numberOfLines={1}>
+              {category.categoryName}
+            </Text>
+            <Pressable
+              onPress={() => {
+                dispatch(clearCategorySelected());
+              }}>
+              <CloseCircleIcon height={21} width={21} />
+            </Pressable>
+          </View>
+        ) : null}
       </>
     );
   };
@@ -365,7 +449,7 @@ const styles = StyleSheet.create({
   },
   productsCategoryContainer: {
     paddingTop: 35,
-    paddingBottom: 40,
+    paddingBottom: 30,
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -431,5 +515,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.PrimaryTextColor,
     fontFamily: 'Poppins-Medium',
+  },
+  categorySelectedContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: colors.White,
+    marginBottom: 30,
+    marginHorizontal: 20,
+  },
+  categorySelectedText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
+    color: colors.PrimaryTextColor,
   },
 });

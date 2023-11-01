@@ -2,15 +2,17 @@ import React from 'react';
 import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
+import {useAppSelector} from '../hooks/useRedux';
+
 import CloseCircleIcon from '../assets/close_circle.svg';
 import RatingIcon from '../assets/Rating_Star.svg';
 import TruckIcon from '../assets/truck.svg';
 import LocationIcon from '../assets/location.svg';
 
-import {colors} from '../styles/colors';
 import {Branch} from '../model/Branch';
+
 import {getDistanceUserToBranch} from '../utils/utilities';
-import {useAppSelector} from '../hooks/useRedux';
+import {colors} from '../styles/colors';
 
 export const BranchInfoModal = ({route}: any) => {
   const {
