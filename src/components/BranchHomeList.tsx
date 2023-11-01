@@ -30,6 +30,7 @@ type BranchItemProps = {
 };
 
 export const BranchHomeList = ({branchs, navigation}: BranchHomeListProps) => {
+  
   const BranchItemRender = ({
     id,
     img,
