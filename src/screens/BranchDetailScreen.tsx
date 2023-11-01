@@ -12,6 +12,8 @@ import {
   Dimensions,
 } from 'react-native';
 
+import {useIsFocused} from '@react-navigation/native';
+
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -60,6 +62,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   >('');
   const category = useAppSelector(state => state.categorySelected);
   const dispatch = useAppDispatch();
+  // hook que devueleve bool si estas o no en esta pantalla
+  const isFocused = useIsFocused();
 
   const {branchId} = route.params;
 
@@ -73,7 +77,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
           nextPageProduct,
           categoryId: category.categoryId,
         });
-        console.log('entre servicio producto por categoria');
+        // console.log('entre servicio producto por categoria');
         const response = await getProductByCategoryService(
           branchId,
           category.categoryId,
@@ -165,6 +169,17 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
 
     setLoadMore(false);
   };
+
+  // limpia el estado global de categoria
+  useEffect(() => {
+    if (
+      !isFocused &&
+      category.categoryId !== '' &&
+      category.categoryName !== ''
+    ) {
+      dispatch(clearCategorySelected());
+    }
+  }, [isFocused]);
 
   const ProductItemRender = ({
     id,
