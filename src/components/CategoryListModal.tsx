@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-
 import {LoaderScreen} from '../screens/LoaderScreen';
 import {NestedListExt} from './NestedListExtended/NestedListExt';
 
-import {categoryByBranchServices} from '../services/category';
+import {categoryByBranchServices} from '../services/category/category';
 
 import {Category} from '../model/Category';
 
@@ -14,10 +12,10 @@ import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {colors} from '../styles/colors';
 
-export const CategoryListModal = ({route}: any) => {
+export const CategoryListModal = ({route, navigation}: any) => {
   const [categories, setCategories] = useState<Category[]>([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const navigation = useNavigation();
 
   const {branchId} = route.params;
 
@@ -64,6 +62,7 @@ export const CategoryListModal = ({route}: any) => {
               itemKey={(item: any) => item.id}
               onItemPressed={() => {}}
               onLastItemPressed={() => {}}
+              navigation={navigation}
             />
           </View>
         </>
