@@ -6,15 +6,22 @@ import ArrowUpIcon from '../assets/arrow_up.svg';
 
 import {colors} from '../styles/colors';
 
+import {useAppDispatch} from '../hooks/useRedux';
+import {setCategory} from '../services/category/categorySlice';
+
 type CategoryItemRenderProps = {
   item: any;
   updateActiveSection: any;
+  navigation: any;
 };
 
 export const CategoryItem = ({
   item,
   updateActiveSection,
+  navigation,
 }: CategoryItemRenderProps) => {
+  // const navigation = useNavigation<StackNavigationProp<RootStackParams>>();
+  const dispatch = useAppDispatch();
   return (
     <View>
       <View style={styles.categoryItemContainer}>
@@ -27,7 +34,13 @@ export const CategoryItem = ({
           {item.avatar !== null ? (
             <Image source={{uri: item.avatar ?? ''}} height={17} width={17} />
           ) : null}
-          <Pressable onPress={() => console.log(item.name)}>
+          <Pressable
+            onPress={() => {
+              dispatch(
+                setCategory({categoryId: item.id, categoryName: item.name}),
+              );
+              navigation.goBack();
+            }}>
             <Text style={styles.categoryItemText}>{item.name}</Text>
           </Pressable>
         </View>

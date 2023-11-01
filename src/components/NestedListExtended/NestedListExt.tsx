@@ -17,6 +17,7 @@ type NestedListExtProps = {
   onLastItemPressed: any;
   itemKey: any;
   keyboardShouldPersistTaps?: any;
+  navigation: any;
 };
 
 export const NestedListExt = ({
@@ -30,6 +31,7 @@ export const NestedListExt = ({
   onItemPressed = (item: any) => {},
   onLastItemPressed = (item: any) => {},
   itemKey,
+  navigation,
   keyboardShouldPersistTaps = 'never',
 }: NestedListExtProps) => {
   const [activeSections, setActiveSections] = useState([]);
@@ -88,6 +90,7 @@ export const NestedListExt = ({
             // contentView={contentView}
             opacity={opacity}
             itemKey={itemKey}
+            navigation={navigation}
             keyboardShouldPersistTaps={keyboardShouldPersistTaps}
           />
         </View>

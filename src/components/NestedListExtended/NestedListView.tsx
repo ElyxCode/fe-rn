@@ -10,6 +10,7 @@ type NestedListViewProp = {
   updateActiveSection: any;
   isNodeActive: any;
   childrenPath: any;
+  navigation: any;
   // headerView?: any;
   // contentView?: any;
   opacity: any;
@@ -24,6 +25,7 @@ export const NestedListView = ({
   childrenPath,
   // headerView,
   // contentView,
+  navigation,
   opacity,
   itemKey,
   keyboardShouldPersistTaps,
@@ -35,6 +37,7 @@ export const NestedListView = ({
       updateActiveSection={updateActiveSection}
       isNodeActive={isNodeActive}
       childrenPath={childrenPath}
+      navigation={navigation}
       // headerView={headerView}
       // contentView={contentView}
       opacity={opacity}

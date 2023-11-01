@@ -12,6 +12,7 @@ type NestedListItemProps = {
   isNodeActive: any;
   updateActiveSection: any;
   childrenPath: any;
+  navigation: any;
   // headerView?: any;
   // contentView?: any;
   opacity: any;
@@ -23,6 +24,7 @@ export const Item = ({
   isNodeActive,
   updateActiveSection,
   childrenPath,
+  navigation,
   // headerView,
   // contentView,
   opacity,
@@ -39,13 +41,18 @@ export const Item = ({
           {item.type === 'header' ? headerView(item) : contentView(item)}
         </View>
       </TouchableOpacity> */}
-      <CategoryItem item={item} updateActiveSection={updateActiveSection} />
+      <CategoryItem
+        item={item}
+        updateActiveSection={updateActiveSection}
+        navigation={navigation}
+      />
       {item[childrenPath] && isNodeActive(item) && (
         <NestedListView
           items={item[childrenPath]}
           updateActiveSection={updateActiveSection}
           isNodeActive={isNodeActive}
           childrenPath={childrenPath}
+          navigation={navigation}
           // headerView={headerView}
           // contentView={contentView}
           opacity={opacity}
