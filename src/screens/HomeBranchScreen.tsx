@@ -11,7 +11,7 @@ import {branchService, filterBranchesByCategory} from '../services/branch';
 
 import {Branch} from '../model/Branch';
 import {Category} from '../model/Category';
-import {categoryServices} from '../services/category';
+import {categoryServices} from '../services/category/category';
 import {promotionServices} from '../services/promotion';
 import {Promotion} from '../model/Promotion';
 import {LoaderScreen} from './LoaderScreen';
@@ -68,6 +68,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
           description: '',
           count: null,
           categories: [],
+          isExpanded: false,
         },
         ...(data as Category[]),
       ]);
