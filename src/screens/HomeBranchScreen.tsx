@@ -97,7 +97,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
           <CustomNavBarHome navigation={navigation} />
           <LocationBar name={currentLocation.title!} />
           <ScrollView style={styles.scrollContainer}>
-            <PromoList promotions={promotions} />
+            <PromoList promotions={promotions}  navigation={navigation}/>
             <CategoryHomeList
               categories={categories}
               categoryId={categoryId}
