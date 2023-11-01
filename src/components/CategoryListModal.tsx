@@ -10,7 +10,7 @@ import {categoryByBranchServices} from '../services/category';
 
 import {Category} from '../model/Category';
 
-import CloseCircleIcon from '../assets/close_circle.svg';
+import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {colors} from '../styles/colors';
 
