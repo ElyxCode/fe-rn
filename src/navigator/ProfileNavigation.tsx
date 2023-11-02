@@ -7,6 +7,7 @@ import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {UserOptionsMenuScreen} from '../screens/UserOptionsMenuScreen';
 import {SettingsScreen} from '../screens/SettingsScreen';
 import {EditProfileScreen} from '../screens/EditProfileScreen';
+import {OrderListScreen} from '../screens/OrderListScreen';
 import {UserProfile} from '../model/User';
 
 export type ProfileStackParams = {
@@ -16,6 +17,7 @@ export type ProfileStackParams = {
   UserOptionsMenuScreen: any;
   SettingsScreen: any;
   EditProfileScreen: any;
+  OrderListScreen: any;
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParams>();
@@ -38,6 +40,10 @@ export const ProfileNavigation = () => {
           <ProfileStack.Screen
             name="EditProfileScreen"
             component={EditProfileScreen}
+          />
+          <ProfileStack.Screen
+            name="OrderListScreen"
+            component={OrderListScreen}
           />
         </>
       ) : (
