@@ -270,7 +270,9 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
             <Text style={styles.descriptionText}>{branchData.description}</Text>
           </View>
         </View>
-        {promotions.length !== 0 && <PromoList promotions={promotions} />}
+        {promotions.length !== 0 && (
+          <PromoList promotions={promotions} navigation={navigation} />
+        )}
         <View style={styles.productsCategoryContainer}>
           <Text style={styles.productsText}>Productos</Text>
           <Pressable
