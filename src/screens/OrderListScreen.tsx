@@ -18,6 +18,8 @@ import {getOrdersService} from '../services/Order';
 
 import {Order} from '../model/Order';
 
+import {getOrderState} from '../utils/utilities';
+
 import {colors} from '../styles/colors';
 
 type OrderItemProps = {
@@ -29,7 +31,7 @@ type OrderItemProps = {
   orderStatus: string;
 };
 
-export const OrderListScreen = ({router, navigation}: any) => {
+export const OrderListScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const token = useAppSelector(state => state.authToken.token);
@@ -64,18 +66,34 @@ export const OrderListScreen = ({router, navigation}: any) => {
             style={{
               height: 48,
               width: 48,
-              borderRadius: 100,
+              borderRadius: 50,
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Image source={{uri: branchImage}} height={48} width={48} />
+            <Image
+              source={{uri: branchImage}}
+              height={48}
+              width={48}
+              style={{
+                borderRadius: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
           </View>
           <View style={styles.orderItemDescriptionContainer}>
-            <Text style={styles.nameText}>{branchName}</Text>
+            <Text
+              style={styles.nameText}
+              lineBreakMode="tail"
+              numberOfLines={1}>
+              {branchName}
+            </Text>
             <Text style={styles.amountItemTotalText}>
               {amountProduct} Productos · ${totalPrice}
             </Text>
-            <Text style={styles.orderStatusText}>{orderStatus}</Text>
+            <Text style={styles.orderStatusText}>
+              {getOrderState(orderStatus)}
+            </Text>
           </View>
         </View>
       </Pressable>
@@ -124,8 +142,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   orderItemDescriptionContainer: {
-    justifyContent: 'space-between',
-    paddingLeft: 10,
+    rowGap: 10,
+    paddingLeft: 20,
   },
   nameText: {
     fontSize: 12,
