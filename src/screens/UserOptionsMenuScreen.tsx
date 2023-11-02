@@ -37,7 +37,11 @@ type MenuOptionItemProps = {
 };
 
 const menuOptions: MenuOptionItemProps[] = [
-  {optionName: 'Mis Ordenes', OptionButtonIcon: BoxIcon, screenPath: ''},
+  {
+    optionName: 'Mis Ordenes',
+    OptionButtonIcon: BoxIcon,
+    screenPath: 'OrderListScreen',
+  },
   {optionName: 'Métodos de Pago', OptionButtonIcon: CardsIcon, screenPath: ''},
   {
     optionName: 'Direcciones de envío',
