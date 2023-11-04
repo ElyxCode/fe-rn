@@ -3,6 +3,7 @@ import {
   SafeAreaView,
   View,
   Text,
+  ScrollView,
   StyleSheet,
   Pressable,
   Alert,
@@ -138,7 +139,7 @@ export const LoginScreen = ({navigation}: any) => {
       ) : (
         <>
           <CustomNavBar />
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <UserTickIcon height={'75'} fill={colors.DarkGrayColor} />
             <Text style={styles.titleText}>Inicia sesión</Text>
             <View style={styles.descriptionContainer}>
@@ -205,6 +206,7 @@ export const LoginScreen = ({navigation}: any) => {
                 marginTop: 15,
                 flexDirection: 'row',
                 justifyContent: 'center',
+                paddingBottom: 15,
               }}>
               <Text style={styles.noAccountMessage}>
                 ¿Aún no tienes una cuenta?
@@ -215,7 +217,7 @@ export const LoginScreen = ({navigation}: any) => {
                 </Text>
               </Pressable>
             </View>
-          </View>
+          </ScrollView>
         </>
       )}
     </SafeAreaView>
@@ -225,7 +227,7 @@ export const LoginScreen = ({navigation}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 35,
+    paddingHorizontal: 35,
   },
   titleText: {
     fontSize: 24,
