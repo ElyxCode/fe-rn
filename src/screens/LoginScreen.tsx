@@ -37,6 +37,7 @@ import {colors} from '../styles/colors';
 import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
 import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
+import {isAndroid} from '../constants/Platform';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -192,13 +193,14 @@ export const LoginScreen = ({navigation}: any) => {
                 ButtonIcon={GoogleLogoIcon}
                 onPress={() => googleSignInThirdParty()}
               />
-
-              <ThirdPartyButton
-                textButton="Continuar con Apple"
-                ButtonIcon={AppleLogoIcon}
-                customBackgroundColor={colors.Black}
-                customTextColor={colors.White}
-              />
+              {!isAndroid ? (
+                <ThirdPartyButton
+                  textButton="Continuar con Apple"
+                  ButtonIcon={AppleLogoIcon}
+                  customBackgroundColor={colors.Black}
+                  customTextColor={colors.White}
+                />
+              ) : null}
             </View>
             <View
               style={{
