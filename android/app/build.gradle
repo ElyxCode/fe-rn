@@ -83,11 +83,18 @@ android {
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('ferreplace.keystore')
+            storePassword 'F3rr91ac3'
+            keyAlias 'ferreplace'
+            keyPassword 'F3rr91ac3'
         }
+
+        // debug {
+        //     storeFile file('debug.keystore')
+        //     storePassword 'android'
+        //     keyAlias 'androiddebugkey'
+        //     keyPassword 'android'
+        // }
     }
     buildTypes {
         debug {
