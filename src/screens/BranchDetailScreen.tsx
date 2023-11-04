@@ -341,11 +341,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
               ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
               keyExtractor={item => item.id.toString() + Math.random() * 3}
               initialNumToRender={20}
-              onEndReachedThreshold={
-                Platform.OS === 'ios'
-                  ? 0.001
-                  : Dimensions.get('window').height / 2
-              }
+              onEndReachedThreshold={0.001}
               onEndReached={() => {
                 if (
                   nextPageProduct !== null &&
