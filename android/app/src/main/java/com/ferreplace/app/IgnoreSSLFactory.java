@@ -1,5 +1,5 @@
 //IgnoreSSLFactory.java
-package com.ferreplace;  //Change this
+package com.ferreplace.app;  //Change this
 import com.facebook.react.modules.network.OkHttpClientFactory;
 import com.facebook.react.modules.network.OkHttpClientFactory;
 import com.facebook.react.modules.network.OkHttpClientProvider;
