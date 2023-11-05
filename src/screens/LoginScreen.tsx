@@ -16,7 +16,7 @@ import {
 
 import {useAppDispatch} from '../hooks/useRedux';
 
-import {setToken} from '../services/auth/authSlice';
+import {setToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 
@@ -65,7 +65,7 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
-      dispatch(setToken(response.data?.token ?? '')); // guardo el token
+      dispatch(setToken({token: response.data?.token ?? ''})); // guardo el token
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
@@ -97,7 +97,7 @@ export const LoginScreen = ({navigation}: any) => {
     setIsLoading(true);
     try {
       await GoogleSignin.hasPlayServices();
-      await GoogleSignin.signIn(); // -> requerido
+      await GoogleSignin.signIn(); // -> requerido para tener tokens
       const {accessToken} = await GoogleSignin.getTokens();
 
       if (
@@ -107,7 +107,12 @@ export const LoginScreen = ({navigation}: any) => {
       ) {
         const response = await ThirdPartyLoginService('google', accessToken);
         if (response.ok) {
-          dispatch(setToken(response.data?.token ?? '')); // guardo el token
+          dispatch(
+            setToken({
+              token: response.data?.token ?? '',
+              social: thirdPartySocial.google,
+            }),
+          ); // guardo el token
           navigation.navigate('UserOptionsMenuScreen');
         } else {
           console.log({errorRespon: response.data?.error});
