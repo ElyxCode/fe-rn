@@ -1,4 +1,4 @@
-package com.ferreplace;
+package com.ferreplace.app;
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;

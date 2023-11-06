@@ -1,18 +1,22 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   View,
   Text,
+  ScrollView,
   StyleSheet,
   Pressable,
   Alert,
 } from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 import {useAppDispatch} from '../hooks/useRedux';
 
-import {setToken} from '../services/auth/authSlice';
-import {setUser} from '../services/user/userSlice';
+import {setToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 
@@ -23,8 +27,6 @@ import {CustomNavBar} from '../components/CustomNavBar';
 
 import {loginServices} from '../services/auth/auth';
 
-import {UserProfile} from '../model/User';
-
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
 import SMSTrackingIcon from '../assets/sms_tracking.svg';
@@ -33,6 +35,9 @@ import AppleLogoIcon from '../assets/apple_logo.svg';
 
 import {colors} from '../styles/colors';
 import Messages from '../constants/Messages';
+import {googleSingInConf} from '../constants/googleSignInConf';
+import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
+import {isAndroid} from '../constants/Platform';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -60,7 +65,7 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
-      dispatch(setToken(response.data?.token ?? '')); // guardo el token
+      dispatch(setToken({token: response.data?.token ?? ''})); // guardo el token
       navigation.navigate('UserOptionsMenuScreen');
     } else {
       console.log({error: response.data?.error});
@@ -84,6 +89,55 @@ export const LoginScreen = ({navigation}: any) => {
     }
   };
 
+  useEffect(() => {
+    GoogleSignin.configure(googleSingInConf);
+  }, []);
+
+  const googleSignInThirdParty = async () => {
+    setIsLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signIn(); // -> requerido para tener tokens
+      const {accessToken} = await GoogleSignin.getTokens();
+
+      if (
+        accessToken !== '' &&
+        accessToken !== undefined &&
+        accessToken !== null
+      ) {
+        const response = await ThirdPartyLoginService('google', accessToken);
+        if (response.ok) {
+          dispatch(
+            setToken({
+              token: response.data?.token ?? '',
+              social: thirdPartySocial.google,
+            }),
+          ); // guardo el token
+          navigation.navigate('UserOptionsMenuScreen');
+        } else {
+          console.log({errorRespon: response.data?.error});
+          Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
+        }
+      }
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        console.log('Cancel');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (f.e. sign in) is in progress already
+        console.log('Signin in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        console.log('PLAY_SERVICES_NOT_AVAILABLE');
+      } else {
+        // some other error happened
+        console.log({errorGoogle: error});
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       {isLoading ? (
@@ -91,7 +145,7 @@ export const LoginScreen = ({navigation}: any) => {
       ) : (
         <>
           <CustomNavBar />
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <UserTickIcon height={'75'} fill={colors.DarkGrayColor} />
             <Text style={styles.titleText}>Inicia sesión</Text>
             <View style={styles.descriptionContainer}>
@@ -142,13 +196,16 @@ export const LoginScreen = ({navigation}: any) => {
               <ThirdPartyButton
                 textButton="Continuar con Google"
                 ButtonIcon={GoogleLogoIcon}
+                onPress={() => googleSignInThirdParty()}
               />
-              <ThirdPartyButton
-                textButton="Continuar con Apple"
-                ButtonIcon={AppleLogoIcon}
-                customBackgroundColor={colors.Black}
-                customTextColor={colors.White}
-              />
+              {!isAndroid ? (
+                <ThirdPartyButton
+                  textButton="Continuar con Apple"
+                  ButtonIcon={AppleLogoIcon}
+                  customBackgroundColor={colors.Black}
+                  customTextColor={colors.White}
+                />
+              ) : null}
             </View>
             <View
               style={{
@@ -156,6 +213,7 @@ export const LoginScreen = ({navigation}: any) => {
                 marginTop: 15,
                 flexDirection: 'row',
                 justifyContent: 'center',
+                paddingBottom: 15,
               }}>
               <Text style={styles.noAccountMessage}>
                 ¿Aún no tienes una cuenta?
@@ -166,7 +224,7 @@ export const LoginScreen = ({navigation}: any) => {
                 </Text>
               </Pressable>
             </View>
-          </View>
+          </ScrollView>
         </>
       )}
     </SafeAreaView>
@@ -176,7 +234,7 @@ export const LoginScreen = ({navigation}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 35,
+    paddingHorizontal: 35,
   },
   titleText: {
     fontSize: 24,

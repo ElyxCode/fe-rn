@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "459778211715",
+    "project_id": "rational-aria-367621",
+    "storage_bucket": "rational-aria-367621.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:459778211715:android:7a880e20ef25fb9ce800b6",
+        "android_client_info": {
+          "package_name": "com.ferreplace.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "459778211715-r8kqkjgflhtaj6e10scf0i6mf5bo8s4p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ferreplace.app",
+            "certificate_hash": "58dfd2df3f0d1fd3e978f8184265721b9fdf9740"
+          }
+        },
+        {
+          "client_id": "459778211715-gbhibvbosi920pr36ms8pjkdcl2qc8bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDZQCFa2w1A8VuvMwMlXkGvg3fx6Gb1yA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "459778211715-32lvuj5msbllriht766v7m1re9t35v11.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "459778211715-ilgrqrht3nm19nm9bj1f3adu4a7pakk2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ferreplace.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

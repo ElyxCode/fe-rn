@@ -5,6 +5,8 @@ import {PersistGate} from 'redux-persist/integration/react';
 
 import {Provider} from 'react-redux';
 
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+
 import {persistor, store} from './src/utils/store';
 
 import SplashScreen from 'react-native-splash-screen';
@@ -16,34 +18,24 @@ import {enableLatestRenderer} from 'react-native-maps';
 
 import {MainNavigation} from './src/navigator/MainNavigation';
 
-
 const App = (): JSX.Element => {
   enableLatestRenderer();
   Geocoder.init('AIzaSyCytD23EG5zvcDjToXFyAYnvWcVd-e0ETw');
-
-  
-
-  
 
   useEffect(() => {
     SplashScreen.hide();
   }, []);
 
-  
-
-  
-
-
-  
-
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <NavigationContainer>
-          <MainNavigation />
-        </NavigationContainer>
-      </PersistGate>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer>
+            <MainNavigation />
+          </NavigationContainer>
+        </PersistGate>
+      </Provider>
+    </SafeAreaProvider>
   );
 };
 
