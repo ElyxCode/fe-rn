@@ -41,15 +41,7 @@ import ArrowDownIcon from '../assets/arrow_down.svg';
 import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {colors} from '../styles/colors';
-
-type ProductProps = {
-  id: string;
-  image?: string;
-  productName?: string;
-  normalPrice?: string | null;
-  specialPrice?: string | null;
-  brandProduct?: string | null;
-};
+import {ProductItemRender} from '../components/ProductItemRender';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
@@ -57,9 +49,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
-  const [nextPageProduct, setNextPageProduct] = useState<
-    string | null | undefined
-  >('');
+  const [nextPageProduct, setNextPageProduct] = useState<string | null | undefined>('');
   const category = useAppSelector(state => state.categorySelected);
   const dispatch = useAppDispatch();
   // hook que devueleve bool si estas o no en esta pantalla
@@ -181,60 +171,6 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     }
   }, [isFocused]);
 
-  const ProductItemRender = ({
-    id,
-    image,
-    productName,
-    normalPrice,
-    specialPrice,
-    brandProduct,
-  }: ProductProps) => {
-    return (
-      <View style={styles.productContainer}>
-        <View style={styles.imageProductContainer}>
-          <Image source={{uri: image}} style={{height: 80, width: 80}} />
-        </View>
-        <View style={styles.productInfoContainer}>
-          <Text
-            style={styles.productNameText}
-            numberOfLines={1}
-            lineBreakMode="tail">
-            {productName}
-          </Text>
-          <View style={styles.priceProductContainer}>
-            <Text
-              style={[
-                styles.priceText,
-                {
-                  textDecorationLine: specialPrice ? 'line-through' : 'none',
-                  color: specialPrice
-                    ? colors.DarkGrayColor
-                    : colors.PrimaryTextColor,
-                },
-              ]}>
-              ${normalPrice}
-            </Text>
-            {specialPrice ? (
-              <Text
-                style={[
-                  styles.priceText,
-                  {
-                    textDecorationLine: specialPrice ? 'none' : 'line-through',
-                    color: specialPrice
-                      ? colors.PrimaryTextColor
-                      : colors.DarkGrayColor,
-                  },
-                ]}>
-                ${specialPrice}
-              </Text>
-            ) : null}
-          </View>
-          <Text style={styles.brandText}>{brandProduct}</Text>
-        </View>
-      </View>
-    );
-  };
-
   const HeaderBranchDetail = () => {
     return (
       <>
@@ -344,13 +280,6 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
                   : Dimensions.get('window').height / 2
               }
               onEndReached={() => {
-                // console.log('-----------');
-                // console.log('onReacch');
-                // console.log({linkProductOnENd: nextPageProduct});
-                // setNextPageProduct(nextPageProduct?.split('=')[1]);
-                // console.log({linkProducConvertonENd: nextPageProduct});
-                // console.log('-----------');
-
                 if (
                   nextPageProduct !== null &&
                   nextPageProduct !== '' &&
@@ -495,26 +424,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingVertical: 5,
     width: 250,
-  },
-  productNameText: {
-    fontSize: 12,
-    color: colors.DarkGrayColor,
-    fontFamily: 'Poppins-Medium',
-  },
-  priceProductContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: 10,
-  },
-  priceText: {
-    fontSize: 12,
-    color: colors.DarkGrayColor,
-    fontFamily: 'Poppins-Medium',
-  },
-  brandText: {
-    fontSize: 12,
-    color: colors.PrimaryTextColor,
-    fontFamily: 'Poppins-Medium',
   },
   categorySelectedContainer: {
     flexDirection: 'row',
