@@ -48,7 +48,7 @@ export const PromotionProductsScreen = ({route, navigation}: any) => {
 
   return (
     
-      <SafeAreaView>
+      <SafeAreaView style={{flex:1}}>
          {isLoading ? (
         <LoaderScreen />
       ) : (
@@ -90,9 +90,12 @@ export const PromotionProductsScreen = ({route, navigation}: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 21,
+    
+    flex:1
+   
   },
   title: {
+    paddingLeft:20,
     fontSize: 14,
     marginTop: 35,
     marginBottom: 16,

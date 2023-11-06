@@ -19,7 +19,7 @@ export const PromotionDetailScreen = ({route, navigation}:any) =>{
         
         <PromotionImageDetail image={promotion.image} height={165}  ></PromotionImageDetail>
         <Text style={styles.title}>{promotion.title}</Text>
-        <Text>{promotion.description}</Text>
+        <Text style={styles.description}>{promotion.description}</Text>
        </View>
        </ScrollView>
         </>
@@ -28,9 +28,10 @@ export const PromotionDetailScreen = ({route, navigation}:any) =>{
 
 const styles = StyleSheet.create({
     container:{
-  paddingHorizontal:21
+  
     },
     title:{
+        paddingHorizontal:21,
      fontSize:20,
      marginTop:35,
      marginBottom:16,
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
      fontFamily:'Poppins-SemiBold'
     },
     description:{
+        paddingHorizontal:21,
         fontSize:16,
         color:colors.DarkGrayColor,
         fontFamily:'Poppins-Regular'
