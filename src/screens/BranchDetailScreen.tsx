@@ -48,6 +48,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingPromo, setIsLoadingPromo] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
   const [nextPageProduct, setNextPageProduct] = useState<string | null | undefined>('');
   const category = useAppSelector(state => state.categorySelected);
@@ -67,15 +68,12 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
           nextPageProduct,
           categoryId: category.categoryId,
         });
-        // console.log('entre servicio producto por categoria');
         const response = await getProductByCategoryService(
           branchId,
           category.categoryId,
         );
 
         if (response.ok) {
-          console.log('respuesta ok por cate prod');
-          // setNextPageProduct(response.data?.links.next);
           setProducts(response.data?.data as Product[]);
         } else {
           console.log({error: response.originalError});
@@ -105,6 +103,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   //carga servicio de promociones
   useEffect(() => {
     const getPromotionsData = async () => {
+      setIsLoadingPromo(true);
       const response = await promotionByBranchServices(
         branchData?.location?.lat ?? '',
         branchData?.location?.lng ?? '',
@@ -116,6 +115,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       } else {
         console.log({error: response.originalError});
       }
+      setIsLoadingPromo(false);
     };
     getPromotionsData();
   }, []);
@@ -127,7 +127,6 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         setIsLoading(true);
         const response = await productsService(branchId);
         if (response.ok) {
-          // console.log({GetProductHasNextPageProduct: response.data?.links.next});
           setNextPageProduct(response.data?.links.next);
           setProducts(response.data?.data as Product[]);
         } else {
@@ -206,7 +205,11 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
             <Text style={styles.descriptionText}>{branchData.description}</Text>
           </View>
         </View>
-        {promotions.length !== 0 && <PromoList promotions={promotions} />}
+        <PromoList
+          promotions={promotions}
+          navigation={navigation}
+          isLoading={isLoadingPromo}
+        />
         <View style={styles.productsCategoryContainer}>
           <Text style={styles.productsText}>Productos</Text>
           <Pressable

@@ -38,3 +38,28 @@ export const getDistanceUserToBranch = (branchLocationLat: number, branchLocatio
 
     return dist;
 }
+
+export const getOrderState = (orderState: string): string => {
+    if (orderState === null || orderState === '') return '';
+
+    let state: string = orderState;
+    switch (state)   {
+        case "creado":
+            return "Orden recibida";           
+        case "aceptado":
+            return "Orden confirmada";           
+        case "rechazado":
+            return "Orden no entregada";            
+        case "asignado":
+            return "Transporte asignado";           
+        case "entregado":
+            return "Orden entregada";            
+        case "cancelado":
+            return "Orden no entregada";          
+        case "preparando":
+            return "En proceso de preparación";           
+        case "camino":
+            return "Orden en camino";          
+    }
+            return "";
+}
