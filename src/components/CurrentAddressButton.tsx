@@ -5,14 +5,20 @@ import LocationIcon from '../assets/location.svg';
 import {colors} from '../styles/colors';
 
 type CurrentAddressButtonProps = {
+  currentAddressName?: string;
+  currentAddress?: string;
   addressName?: string;
   address?: string;
+  isOrderDetail?: boolean;
   onPress?: () => void;
 };
 
 export const CurrentAddressButton = ({
+  currentAddressName,
+  currentAddress,
   addressName,
   address,
+  isOrderDetail = false,
   onPress,
 }: CurrentAddressButtonProps) => {
   return (
@@ -26,13 +32,13 @@ export const CurrentAddressButton = ({
             style={styles.addressDescriptionText}
             numberOfLines={1}
             lineBreakMode="tail">
-            {addressName}
+            {isOrderDetail ? addressName : currentAddressName}
           </Text>
           <Text
             style={styles.addressDescriptionText}
             numberOfLines={1}
             lineBreakMode="tail">
-            {address}
+            {isOrderDetail ? address : currentAddress}
           </Text>
         </View>
       </View>
