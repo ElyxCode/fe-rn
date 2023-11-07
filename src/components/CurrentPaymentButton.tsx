@@ -9,13 +9,13 @@ type CurrentPaymentButtonProps = {
   paymentName?: string;
   payment?: string;
   onPress?: () => void;
-  isDetailOrder?: boolean;
+  isOrderDetail?: boolean;
   paymentMethod?: string;
   paymentStatus?: string;
 };
 
 export const CurrentPaymentButton = ({
-  isDetailOrder = false,
+  isOrderDetail = false,
   paymentStatus,
   paymentMethod,
   paymentName,
@@ -29,7 +29,7 @@ export const CurrentPaymentButton = ({
           <PaymentIcon height={24} width={24} />
         </View>
         <View style={styles.addressDescriptionContainer}>
-          {!isDetailOrder ? (
+          {!isOrderDetail ? (
             <>
               <Text
                 style={styles.addressDescriptionText}
