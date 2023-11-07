@@ -53,7 +53,7 @@ export const CurrentTotalOrder = ({
 
 const styles = StyleSheet.create({
   container: {
-    rowGap: 5,
+    rowGap: 8,
     paddingHorizontal: 15,
   },
   totalTextContainer: {
