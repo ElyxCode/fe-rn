@@ -1,3 +1,5 @@
+import { Order } from "../model/Order";
+
 export const transformBirthDateToSend = (dateFormat: string): string => {
     let date: string[] = dateFormat.split('/');
     // console.log(date[2] + '-' + date[1] + '-' + date[0]);
@@ -62,4 +64,24 @@ export const getOrderState = (orderState: string): string => {
             return "Orden en camino";          
     }
             return "";
+}
+
+export const paymentMethodFormat = (order: Order) => {
+    if (order.transaction != null)
+    {
+        switch (order.transaction.method)
+        {
+            case "card":
+                return "Tarjeta";
+                
+            case "transfer":
+                return "Transferencia";
+
+            case "cash":
+                return "Efectivo";
+                
+            default:
+                return "";               
+        }
+    }
 }
