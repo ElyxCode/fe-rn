@@ -9,6 +9,7 @@ import {
 
 import {colors} from '../styles/colors';
 import {SvgProps} from 'react-native-svg';
+import {isAndroid} from '../constants/Platform';
 
 type Props = {
   InputIcon: React.FC<SvgProps>;
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 20,
+    paddingVertical: isAndroid ? 12 : 20,
   },
   textInput: {
     color: colors.Black,

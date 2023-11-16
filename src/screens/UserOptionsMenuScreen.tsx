@@ -9,13 +9,15 @@ import {
 } from 'react-native';
 import {SvgProps} from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 import {clearUserData, setUser} from '../services/user/userSlice';
-import {clearToken} from '../services/auth/authSlice';
+import {clearToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import {UserInfo} from '../components/UserInfo';
 import {CustomNavBar} from '../components/CustomNavBar';
+import {LoaderScreen} from './LoaderScreen';
 
 import {getUserService} from '../services/user/user';
 
@@ -28,7 +30,6 @@ import SettingIcon from '../assets/settings.svg';
 import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
-import {LoaderScreen} from './LoaderScreen';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -58,7 +59,7 @@ const menuOptions: MenuOptionItemProps[] = [
 
 export const UserOptionsMenuScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const token = useAppSelector(state => state.authToken.token);
+  const {token, social} = useAppSelector(state => state.authToken);
   const user = useAppSelector(state => state.user.userData);
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -78,6 +79,24 @@ export const UserOptionsMenuScreen = () => {
     };
     getUserData();
   }, []);
+
+  const signOut = () => {
+    if (social === thirdPartySocial.google) {
+      googleSignOut();
+    }
+
+    dispatch(clearUserData());
+    dispatch(clearToken());
+    navigation.navigate('WelcomeScreen' as never);
+  };
+
+  const googleSignOut = async () => {
+    try {
+      await GoogleSignin.signOut();
+    } catch (error) {
+      console.error({signOutGoogleError: error});
+    }
+  };
 
   const MenuOptionItem = ({
     OptionButtonIcon,
@@ -131,12 +150,7 @@ export const UserOptionsMenuScreen = () => {
               />
             </View>
             <View style={styles.signoutContainer}>
-              <Pressable
-                onPress={() => {
-                  dispatch(clearUserData());
-                  dispatch(clearToken());
-                  navigation.navigate('WelcomeScreen' as never);
-                }}>
+              <Pressable onPress={() => signOut()}>
                 <View style={styles.signoutItemcontainer}>
                   <SignoutIcon height={24} />
                   <Text style={styles.logoutText}>Cerrar sesión</Text>

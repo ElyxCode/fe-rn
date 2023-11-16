@@ -2,6 +2,7 @@
 #import <GoogleMaps/GoogleMaps.h>
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h" 
+#import <Firebase.h>
 
 @implementation AppDelegate
 
@@ -9,6 +10,9 @@
 {
   [GMSServices provideAPIKey:@"AIzaSyCytD23EG5zvcDjToXFyAYnvWcVd-e0ETw"];
   self.moduleName = @"ferreplace";
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};

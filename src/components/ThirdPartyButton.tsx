@@ -8,6 +8,7 @@ type Props = {
   ButtonIcon: React.FC<SvgProps>;
   customBackgroundColor?: string;
   customTextColor?: string;
+  onPress?: any;
 };
 
 export const ThirdPartyButton = ({
@@ -15,13 +16,10 @@ export const ThirdPartyButton = ({
   ButtonIcon,
   customBackgroundColor = colors.White,
   customTextColor = colors.DarkGrayColor,
+  onPress,
 }: Props) => {
   return (
-    <TouchableHighlight
-      underlayColor={colors.White}
-      onPress={() => {
-        console.log('Presione el boton');
-      }}>
+    <TouchableHighlight underlayColor={colors.White} onPress={onPress}>
       <View
         style={[
           styles.buttonContainer,
