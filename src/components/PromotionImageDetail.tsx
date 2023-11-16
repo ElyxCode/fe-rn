@@ -15,7 +15,7 @@ export const PromotionImageDetail = ({image,height, customStyles}:imageProps) =>
           resizeMode="contain"
           source={{uri: image}}
           height={height}
-          style={{borderRadius: 12, width:'100%'}}
+          style={{borderRadius: 12, marginHorizontal:20}}
         />
          
         </>
