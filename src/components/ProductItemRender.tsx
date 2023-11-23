@@ -1,57 +1,59 @@
 import { ProductProps } from "../model/ProductProps";
 import {Image, StyleSheet, Text, View} from 'react-native'
 import { colors } from "../styles/colors";
-export const ProductItemRender = ({
-    id,
-    image,
-    productName,
-    normalPrice,
-    specialPrice,
-    brandProduct,
-  }: ProductProps) => {
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
+import {Product} from '../model/product'
+
+
+
+export const ProductItemRender = ({product, navigation}:ProductProps ) => {
+
+
+
     return (
-      <View style={styles.productContainer}>
+      <TouchableOpacity style={styles.productContainer} onPress={() => {navigation.navigate('ProductDetailScreen',  { ProductProps:{product,navigation}} )}}>
         <View style={styles.imageProductContainer}>
-          <Image source={{uri: image}} style={{height: 80, width: 80}} />
+          <Image source={{uri: product.image}} style={{height: 80, width: 80}} />
         </View>
         <View style={styles.productInfoContainer}>
           <Text
             style={styles.productNameText}
             numberOfLines={1}
             lineBreakMode="tail">
-            {productName}
+            {product.name}
           </Text>
           <View style={styles.priceProductContainer}>
             <Text
               style={[
                 styles.priceText,
                 {
-                  textDecorationLine: specialPrice ? 'line-through' : 'none',
-                  color: specialPrice
+                  textDecorationLine: product.price_with_discount ? 'line-through' : 'none',
+                  color: product.price_with_discount
                     ? colors.DarkGrayColor
                     : colors.PrimaryTextColor,
                 },
               ]}>
-              ${normalPrice}
+              ${product.price}
             </Text>
-            {specialPrice ? (
+            {product.price_with_discount ? (
               <Text
                 style={[
                   styles.priceText,
                   {
-                    textDecorationLine: specialPrice ? 'none' : 'line-through',
-                    color: specialPrice
+                    textDecorationLine: product.price_with_discount ? 'none' : 'line-through',
+                    color: product.price_with_discount
                       ? colors.PrimaryTextColor
                       : colors.DarkGrayColor,
                   },
                 ]}>
-                ${specialPrice}
+                ${product.price_with_discount}
               </Text>
             ) : null}
           </View>
-          <Text style={styles.brandText}>{brandProduct}</Text>
+          <Text style={styles.brandText}>{product.brand.name}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
