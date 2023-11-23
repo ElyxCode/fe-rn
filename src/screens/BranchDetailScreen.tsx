@@ -265,12 +265,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
               }}
               renderItem={({item}) => (
                 <ProductItemRender
-                  id={item.id.toString()}
-                  image={item.image}
-                  productName={item.name}
-                  normalPrice={item.price}
-                  specialPrice={item.price_with_discount}
-                  brandProduct={item.brand.name}
+                  product={item}
+                  navigation={navigation}
                 />
               )}
               scrollEnabled={!loadMore}

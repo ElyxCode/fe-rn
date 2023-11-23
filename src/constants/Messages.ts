@@ -13,5 +13,6 @@ export default {
     requireFiscalNumber: 'El registro de IVA es requerido',
     phoneNumberFormatPatternMessage: 'Ingrese 8 dígitos sin espacio o guión correcto en el campo número de teléfono',
     UnAvailableServerMessage: "Acción no disponible, por favor intenta más tarde",
+    ExceededProductStockMessage : "No hay suficientes existencias de este producto.\nEn stock: "
 
 }
