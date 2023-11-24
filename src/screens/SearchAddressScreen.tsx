@@ -48,7 +48,7 @@ export const SearchAddressScreen = ({route}:any) => {
   const selectedPlace = async (item: GooglePlaceAutoCompletePrediction) => {
    
     const googlePlace = await getPlaceDetails(item.place_id); 
-   
+  
     const location : Location = {
       latitude:  googlePlace.data?.result.geometry.location.lat!,
       longitude: googlePlace.data?.result.geometry.location.lng!

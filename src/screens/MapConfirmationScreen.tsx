@@ -11,21 +11,23 @@ import MapView, {
   Details,
 } from 'react-native-maps';
 import GetLocation from 'react-native-get-location';
-import Geocoder from 'react-native-geocoding';
-import {getPlaceDetails} from '../services/google/maps';
-import { Location } from '../model/Location';
-import { useDispatch } from 'react-redux';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { setCurrentLocationGlobal } from '../services/google/locationSlice';
 
+import {getPlaceDetails, getReverseGeocoding} from '../services/google/maps';
+import {Location} from '../model/Location';
+import {useDispatch} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+import {setCurrentLocationGlobal} from '../services/google/locationSlice';
+import {GooglePlaceAutoCompleteResult} from '../model/GooglePlaceAutoCompleteResult';
 
-
+import {first} from 'lodash';
 
 export const MapConfirmationScreen = ({navigation}: any) => {
   const [isLoading, setLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState<Location>();
   const dispatch = useAppDispatch();
-  const currentLocationGlobal = useAppSelector(state => state.currentLocation.currentLocation);
+  const currentLocationGlobal = useAppSelector(
+    state => state.currentLocation.currentLocation,
+  );
 
   const [region, setRegion] = useState({
     latitude: 13.701404423436982,
@@ -84,15 +86,22 @@ export const MapConfirmationScreen = ({navigation}: any) => {
     console.log(location.latitude, location.longitude);
 
     if (addressString === undefined || addressString === '') {
-      const geoResponse = await Geocoder.from(location);
+      const response = await getReverseGeocoding(
+        location.latitude,
+        location.longitude,
+      );
+      if (response.ok) {
+        var addressText = first(
+          response.data?.results ?? [],
+        )?.formatted_address;
 
-      // Toma la dirección del primer resultado
-      const streetAddress =
-        geoResponse.results[0].formatted_address.split(', ')[0];
-      location.description = streetAddress;
-      location.title = streetAddress;
+        // Toma la dirección del primer resultado
+
+        console.log(addressText, 'address');
+        location.description = addressText;
+        location.title = addressText;
+      }
     } else {
-      console.log('else')
       location.description = addressString;
       location.title = addressString;
     }
@@ -103,9 +112,9 @@ export const MapConfirmationScreen = ({navigation}: any) => {
   };
 
   const confirm = async () => {
-    dispatch(setCurrentLocationGlobal({...currentLocation!}))
-    await  navigation.navigate('HomeNavigation');
-  }
+    dispatch(setCurrentLocationGlobal({...currentLocation!}));
+    await navigation.navigate('HomeNavigation');
+  };
 
   useEffect(() => {
     (async () => {
@@ -114,8 +123,6 @@ export const MapConfirmationScreen = ({navigation}: any) => {
       setLocation({latitude: location.latitude, longitude: location.longitude});
     })();
   }, []);
-
-  
 
   return (
     <>
@@ -173,13 +180,12 @@ export const MapConfirmationScreen = ({navigation}: any) => {
                   : currentLocation?.description
               }></AddressBox>
           )}
-          <SubmitButton textButton="Confirmar dirección" onPress={() => {
-            
-            confirm();
-          
-          }
-        
-        }  />
+          <SubmitButton
+            textButton="Confirmar dirección"
+            onPress={() => {
+              confirm();
+            }}
+          />
         </View>
       </View>
     </>
