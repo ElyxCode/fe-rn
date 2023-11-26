@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 
 import {Order} from '../model/Order';
 
@@ -102,9 +102,54 @@ export const OrderStatus = ({order}: OrderStatusProps) => {
               </View>
               <Text style={[styles.orderStatusMessageText, {paddingBottom: 3}]}>
                 {item.message}
-                <Text style={[styles.orderStatusMessageText]}>
-                  {order?.cancellation_reason}
-                </Text>
+                {order?.state === 'aceptado' && (
+                  <Text style={styles.orderStatusMessageText}>
+                    order.delivery_time
+                  </Text>
+                )}
+                {order?.state === 'asignado' && (
+                  <Text style={styles.orderStatusMessageText}>
+                    {order.transport?.driver}
+                  </Text>
+                )}
+                {order?.state === 'asignado' && (
+                  <Text style={styles.orderStatusMessageText}>
+                    {order.transport?.licence_plate}
+                  </Text>
+                )}
+                {order?.state === 'camino' && (
+                  <Text style={styles.orderStatusMessageText}>
+                    {order.transport?.driver}
+                  </Text>
+                )}
+                {order?.state === 'camino' && (
+                  <Text style={styles.orderStatusMessageText}>
+                    {order.transport?.licence_plate}
+                  </Text>
+                )}
+                {order?.state === 'camino' && (
+                  <Text style={styles.orderStatusMessageText}>
+                    {order.delivery_time}
+                  </Text>
+                )}
+                {(order?.state === 'rechazado' ||
+                  order?.state === 'cancelado') && (
+                  <Text style={styles.orderStatusMessageText}>
+                    Motivo: {order.cancellation_reason}
+                    {'\n'}
+                  </Text>
+                )}
+                {(order?.state === 'rechazado' ||
+                  order?.state === 'cancelado') && (
+                  <>
+                    <Text style={styles.orderStatusMessageText}>
+                      Comunicate con atención al cliente en la opción
+                    </Text>
+                    <Pressable onPress={() => console.log('ayuda!!!')}>
+                      <Text style={styles.helpText}>Ayuda</Text>
+                    </Pressable>
+                  </>
+                )}
               </Text>
             </View>
           ) : item.status !== 'entregado' ? (
@@ -141,6 +186,11 @@ const styles = StyleSheet.create({
   orderStatusText: {
     color: colors.White,
     fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+  },
+  helpText: {
+    color: colors.SecondaryTextColor,
+    fontSize: 12,
     fontFamily: 'Poppins-SemiBold',
   },
   orderStatusMessageText: {
