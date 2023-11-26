@@ -13,12 +13,13 @@ import {Order} from '../model/Order';
 
 import {paymentMethodFormat} from '../utils/utilities';
 import {colors} from '../styles/colors';
+import {OrderStatus} from '../components/OrderStatus';
 
 export const OrderDetailScreen = ({route}: any) => {
   const {order} = route.params;
 
   const [currentOrder] = useState<Order>(order);
-  // console.log({currentOrder});
+  console.log({currentOrder});
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,6 +28,9 @@ export const OrderDetailScreen = ({route}: any) => {
         primaryColorDefault={false}
       />
       <ScrollView style={{flex: 1}}>
+        <View style={styles.orderStatusContainer}>
+          <OrderStatus order={currentOrder} />
+        </View>
         <View style={styles.orderDetailsContainer}>
           <Text style={styles.titleSection}>Detalle de la orden</Text>
           <View style={styles.addressPaymentBillingContainer}>
@@ -73,6 +77,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.PrimaryColor,
   },
+  orderStatusContainer: {
+    paddingTop: 10,
+    paddingHorizontal: 30,
+  },
   orderDetailsContainer: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -89,5 +97,7 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
   },
   productListOrder: {},
-  totalDetailOrderContainer: {},
+  totalDetailOrderContainer: {
+    paddingBottom: 30,
+  },
 });
