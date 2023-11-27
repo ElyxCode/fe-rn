@@ -8,6 +8,8 @@ type CurrentTotalOrderProps = {
   deliveryTotal?: string;
   discount?: string;
   totalAmount: string;
+  specialDiscount: boolean;
+  subtotalWithDiscount?: string;
 };
 
 export const CurrentTotalOrder = ({
@@ -16,16 +18,56 @@ export const CurrentTotalOrder = ({
   deliveryTotal,
   discount,
   totalAmount,
+  specialDiscount,
+  subtotalWithDiscount,
 }: CurrentTotalOrderProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.totalTextContainer}>
-        <Text style={styles.totalLabelText}>Subtotal</Text>
-        <Text style={styles.totalText}>${subtotal}</Text>
+        {subtotalWithDiscount !== null &&
+        subtotalWithDiscount !== undefined &&
+        Number(subtotal) > Number(subtotalWithDiscount) ? (
+          <>
+            <Text style={styles.totalLabelText}>Subtotal</Text>
+            <View style={styles.totalWithDiscountContainer}>
+              <Text
+                style={[
+                  styles.totalText,
+                  {textDecorationLine: 'line-through'},
+                ]}>
+                ${subtotal}
+              </Text>
+              <Text style={styles.totalText}>${subtotalWithDiscount}</Text>
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.totalLabelText}>Subtotal</Text>
+            <Text style={styles.totalText}>${subtotal}</Text>
+          </>
+        )}
       </View>
       <View style={styles.totalTextContainer}>
-        <Text style={styles.totalLabelText}>Costo de envío</Text>
-        <Text style={styles.totalText}>${deliveryTotal}</Text>
+        {specialDiscount ? (
+          <>
+            <Text style={styles.totalLabelText}>Costo de envío</Text>
+            <View style={styles.totalWithDiscountContainer}>
+              <Text
+                style={[
+                  styles.totalText,
+                  {textDecorationLine: 'line-through'},
+                ]}>
+                ${deliveryTotal}
+              </Text>
+              <Text style={styles.totalText}>$0.00</Text>
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.totalLabelText}>Costo de envío</Text>
+            <Text style={styles.totalText}>${deliveryTotal}</Text>
+          </>
+        )}
       </View>
       <View style={styles.totalTextContainer}>
         <Text style={styles.totalLabelText}>Ahorro</Text>
@@ -64,6 +106,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Medium',
     color: colors.DarkGrayColor,
+  },
+  totalWithDiscountContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    columnGap: 8,
   },
   totalText: {
     fontSize: 14,
