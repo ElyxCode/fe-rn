@@ -3,6 +3,7 @@ import { Order } from "../model/Order";
 export const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
 export const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
 export const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+export const passwordPatternValidation = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
 
 export const transformBirthDateToSend = (dateFormat: string): string => {
     let date: string[] = dateFormat.split('/');
@@ -99,3 +100,8 @@ export const formatter = Intl.NumberFormat('en-US', {
     //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 }); 
+
+export const passwordValidation = (userPassword: string) =>
+{
+    return passwordPatternValidation.test(userPassword);
+}
