@@ -49,7 +49,7 @@ let orderStatusDescription = [
     status: 'entregado',
     label: 'Orden entregada',
     icon: OrderDeliveredIcon,
-    message: '',
+    message: 'Entregado',
   },
   {
     status: 'cancelado|rechazado',
@@ -92,11 +92,7 @@ export const OrderStatus = ({order}: OrderStatusProps) => {
             <View>
               <View style={styles.orderStatusTextContainer}>
                 <View style={styles.circle}></View>
-                <Text
-                  style={[
-                    styles.orderStatusText,
-                    {fontSize: 24, paddingBottom: 5},
-                  ]}>
+                <Text style={[styles.orderStatusText, {fontSize: 24}]}>
                   {item.label}
                 </Text>
               </View>
@@ -145,7 +141,7 @@ export const OrderStatus = ({order}: OrderStatusProps) => {
                     <Text style={styles.orderStatusMessageText}>
                       Comunicate con atención al cliente en la opción
                     </Text>
-                    <Pressable onPress={() => console.log('ayuda!!!')}>
+                    <Pressable>
                       <Text style={styles.helpText}>Ayuda</Text>
                     </Pressable>
                   </>

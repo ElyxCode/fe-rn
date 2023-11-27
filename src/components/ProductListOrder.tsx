@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+
 import {colors} from '../styles/colors';
-import {Item} from '../model/Order';
 import {formatter} from '../utils/utilities';
 
 type ProductListOrderProps = {

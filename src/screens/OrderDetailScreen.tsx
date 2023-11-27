@@ -8,18 +8,18 @@ import {CurrentPaymentButton} from '../components/CurrentPaymentButton';
 import {CurrentBillingButton} from '../components/CurrentBillingButton';
 import {CurrentTotalOrder} from '../components/CurrentTotalOrder';
 import {ProductListOrder} from '../components/ProductListOrder';
+import {OrderStatus} from '../components/OrderStatus';
 
 import {Order} from '../model/Order';
 
 import {paymentMethodFormat} from '../utils/utilities';
 import {colors} from '../styles/colors';
-import {OrderStatus} from '../components/OrderStatus';
 
 export const OrderDetailScreen = ({route}: any) => {
   const {order} = route.params;
 
   const [currentOrder] = useState<Order>(order);
-  console.log({currentOrder});
+  console.log({a: currentOrder.address});
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,15 +48,22 @@ export const OrderDetailScreen = ({route}: any) => {
           </View>
           <View style={styles.productListOrder}>
             <Text style={styles.titleSection}>Productos</Text>
-            {currentOrder.items.map(item => (
-              <ProductListOrder
-                key={item.id}
-                quantity={item.quantity.toString()}
-                productName={item.product.name}
-                brand={item.product.brand.name}
-                price={item.price}
-              />
-            ))}
+            {currentOrder.items !== null && currentOrder.items.length !== 0 ? (
+              currentOrder.items.map(item => (
+                <ProductListOrder
+                  key={item.id}
+                  quantity={item.quantity.toString()}
+                  productName={item.product.name}
+                  brand={item.product.brand.name}
+                  price={item.price}
+                />
+              ))
+            ) : (
+              <View style={styles.noProductTextContainer}>
+                <Text>No tienes productos</Text>
+              </View>
+            )}
+            {}
           </View>
           <View style={styles.totalDetailOrderContainer}>
             <CurrentTotalOrder
@@ -64,6 +71,8 @@ export const OrderDetailScreen = ({route}: any) => {
               deliveryTotal={currentOrder.delivery}
               discount={currentOrder.discount}
               totalAmount={currentOrder.total}
+              specialDiscount={currentOrder.special_discount}
+              subtotalWithDiscount={currentOrder.subtotal_with_discount}
             />
           </View>
         </View>
@@ -94,10 +103,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-Regular',
     color: colors.PrimaryTextColor,
-    paddingVertical: 25,
+    paddingTop: 25,
+    paddingBottom: 5,
   },
   productListOrder: {},
   totalDetailOrderContainer: {
     paddingBottom: 30,
+  },
+  noProductTextContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 15,
   },
 });
