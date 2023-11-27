@@ -28,18 +28,29 @@ export const CurrentAddressButton = ({
           <LocationIcon height={24} width={24} />
         </View>
         <View style={styles.addressDescriptionContainer}>
-          <Text
-            style={styles.addressDescriptionText}
-            numberOfLines={1}
-            lineBreakMode="tail">
-            {isOrderDetail ? addressName : currentAddressName}
-          </Text>
-          <Text
-            style={styles.addressDescriptionText}
-            numberOfLines={1}
-            lineBreakMode="tail">
-            {isOrderDetail ? address : currentAddress}
-          </Text>
+          {currentAddressName !== undefined || currentAddress !== undefined ? (
+            <>
+              <Text
+                style={styles.addressDescriptionText}
+                numberOfLines={1}
+                lineBreakMode="tail">
+                {isOrderDetail ? addressName : currentAddressName}
+              </Text>
+              <Text
+                style={styles.addressDescriptionText}
+                numberOfLines={1}
+                lineBreakMode="tail">
+                {isOrderDetail ? address : currentAddress}
+              </Text>
+            </>
+          ) : (
+            <Text
+              style={styles.addressDescriptionText}
+              numberOfLines={1}
+              lineBreakMode="tail">
+              Agregar Dirección
+            </Text>
+          )}
         </View>
       </View>
     </Pressable>
