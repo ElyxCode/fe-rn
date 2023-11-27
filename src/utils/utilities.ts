@@ -1,5 +1,9 @@
 import { Order } from "../model/Order";
 
+export const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
+export const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
+export const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
 export const transformBirthDateToSend = (dateFormat: string): string => {
     let date: string[] = dateFormat.split('/');
     // console.log(date[2] + '-' + date[1] + '-' + date[0]);
@@ -94,4 +98,4 @@ export const formatter = Intl.NumberFormat('en-US', {
     // These options are needed to round to whole numbers if that's what you want.
     //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
     //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-  }); 
+}); 
