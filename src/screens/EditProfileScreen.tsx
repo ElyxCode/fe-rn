@@ -38,15 +38,15 @@ import {Occupation, UserProfile} from '../model/User';
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 
-import {colors} from '../styles/colors';
 import {
+  dateFormatPattern,
+  emailFormatPattern,
+  phoneFormatPattern,
   transformBirthDateToSend,
   transformBirthDateUTCTtoDDMMYYYY,
 } from '../utils/utilities';
 
-const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
-const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
-const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+import {colors} from '../styles/colors';
 
 export const EditProfileScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);

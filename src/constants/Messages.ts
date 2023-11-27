@@ -13,6 +13,7 @@ export default {
     requireFiscalNumber: 'El registro de IVA es requerido',
     phoneNumberFormatPatternMessage: 'Ingrese 8 dígitos sin espacio o guión correcto en el campo número de teléfono',
     UnAvailableServerMessage: "Acción no disponible, por favor intenta más tarde",
-    ExceededProductStockMessage : "No hay suficientes existencias de este producto.\nEn stock: "
+    ExceededProductStockMessage : "No hay suficientes existencias de este producto.\nEn stock: ",
+    PasswordValidationMessage:"Las contraseña debe tener 8 caracteres como mínimo y contener 1 mayúscula, 1 minúscula y 1 número", 
 
 }

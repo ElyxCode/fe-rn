@@ -26,6 +26,7 @@ import {ThirdPartyButton} from '../components/ThirdPartyButton';
 import {CustomNavBar} from '../components/CustomNavBar';
 
 import {loginServices} from '../services/auth/auth';
+import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -33,11 +34,11 @@ import SMSTrackingIcon from '../assets/sms_tracking.svg';
 import GoogleLogoIcon from '../assets/google_logo.svg';
 import AppleLogoIcon from '../assets/apple_logo.svg';
 
-import {colors} from '../styles/colors';
 import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
-import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
 import {isAndroid} from '../constants/Platform';
+
+import {colors} from '../styles/colors';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
