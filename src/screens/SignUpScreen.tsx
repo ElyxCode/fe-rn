@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View, ScrollView} from 'react-native';
 
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
@@ -15,12 +15,13 @@ import GoogleIcon from '../assets/google_logo.svg';
 import AppleIcon from '../assets/apple_logo.svg';
 
 import {colors} from '../styles/colors';
+import {isAndroid} from '../constants/Platform';
 
 export const SignUpScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <UserTagIcon height={75} />
         <Text style={styles.titleText}>Registrate</Text>
         <View style={styles.textInputContainer}>
@@ -38,21 +39,23 @@ export const SignUpScreen = () => {
             textButton="Continuar con Google"
             ButtonIcon={GoogleIcon}
           />
-          <ThirdPartyButton
-            textButton="Continuar con Apple"
-            ButtonIcon={AppleIcon}
-            customBackgroundColor={colors.Black}
-            customTextColor={colors.White}
-          />
+          {!isAndroid ? (
+            <ThirdPartyButton
+              textButton="Continuar con Apple"
+              ButtonIcon={AppleIcon}
+              customBackgroundColor={colors.Black}
+              customTextColor={colors.White}
+            />
+          ) : null}
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 35,
+    paddingHorizontal: 35,
   },
   titleText: {
     fontSize: 24,
@@ -65,6 +68,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginTop: 40,
+    marginBottom: 10,
     rowGap: 10,
   },
 });
