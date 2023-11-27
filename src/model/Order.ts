@@ -222,8 +222,11 @@ export interface Review {
 export enum State {
     Aceptado = "aceptado",
     Cancelado = "cancelado",
+    Rechazado = "rechazado",
     Creado = "creado",
     Entregado = "entregado",
+    Camino = "camino",
+    Asignado = "asignado",
 }
 
 export interface Transaction {

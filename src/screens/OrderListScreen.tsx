@@ -23,12 +23,7 @@ import {getOrderState} from '../utils/utilities';
 import {colors} from '../styles/colors';
 
 type OrderItemProps = {
-  id: string;
-  branchImage: string;
-  branchName: string;
-  amountProduct: string;
-  totalPrice: string;
-  orderStatus: string;
+  order: Order;
 };
 
 export const OrderListScreen = ({navigation}: any) => {
@@ -51,16 +46,10 @@ export const OrderListScreen = ({navigation}: any) => {
     getOrders();
   }, []);
 
-  const OrderItem = ({
-    id,
-    branchImage,
-    branchName,
-    amountProduct,
-    totalPrice,
-    orderStatus,
-  }: OrderItemProps) => {
+  const OrderItem = ({order}: OrderItemProps) => {
     return (
-      <Pressable>
+      <Pressable
+        onPress={() => navigation.navigate('OrderDetailScreen', {order})}>
         <View style={styles.orderItemContainer}>
           <View
             style={{
@@ -71,7 +60,7 @@ export const OrderListScreen = ({navigation}: any) => {
               justifyContent: 'center',
             }}>
             <Image
-              source={{uri: branchImage}}
+              source={{uri: order.branch.logo}}
               height={48}
               width={48}
               style={{
@@ -86,13 +75,13 @@ export const OrderListScreen = ({navigation}: any) => {
               style={styles.nameText}
               lineBreakMode="tail"
               numberOfLines={1}>
-              {branchName}
+              {order.branch.name}
             </Text>
             <Text style={styles.amountItemTotalText}>
-              {amountProduct} Productos · ${totalPrice}
+              {order.quantity.toString()} Productos · ${order.total}
             </Text>
             <Text style={styles.orderStatusText}>
-              {getOrderState(orderStatus)}
+              {getOrderState(order.state)}
             </Text>
           </View>
         </View>
@@ -109,15 +98,7 @@ export const OrderListScreen = ({navigation}: any) => {
           <CustomNavBar titleText="Mis ordenes" />
           <ScrollView style={styles.container}>
             {orders.map(order => (
-              <OrderItem
-                key={order.id}
-                id={order.id.toString()}
-                branchImage={order.branch.logo}
-                branchName={order.branch.name}
-                amountProduct={order.quantity.toString()}
-                totalPrice={order.total}
-                orderStatus={order.state}
-              />
+              <OrderItem key={order.id} order={order} />
             ))}
           </ScrollView>
         </>

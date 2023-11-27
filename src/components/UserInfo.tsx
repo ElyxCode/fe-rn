@@ -19,9 +19,24 @@ export const UserInfo = ({userName, userEmail, userTelNumber}: Props) => {
         <ProfileCircleIcon height={25} />
       </View>
       <View style={styles.userInfoContainer}>
-        <Text style={styles.userInfoText}>{userName}</Text>
-        <Text style={styles.userInfoText}>{userEmail}</Text>
-        <Text style={styles.userInfoText}>{userTelNumber}</Text>
+        <Text
+          style={styles.userInfoText}
+          lineBreakMode="tail"
+          numberOfLines={1}>
+          {userName}
+        </Text>
+        <Text
+          style={styles.userInfoText}
+          lineBreakMode="tail"
+          numberOfLines={1}>
+          {userEmail}
+        </Text>
+        <Text
+          style={styles.userInfoText}
+          lineBreakMode="tail"
+          numberOfLines={1}>
+          {userTelNumber}
+        </Text>
       </View>
       <View style={styles.pencilIconContainer}>
         <PencilEditIcon height={24} />
