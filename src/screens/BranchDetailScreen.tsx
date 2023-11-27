@@ -50,7 +50,9 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingPromo, setIsLoadingPromo] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
-  const [nextPageProduct, setNextPageProduct] = useState<string | null | undefined>('');
+  const [nextPageProduct, setNextPageProduct] = useState<
+    string | null | undefined
+  >('');
   const category = useAppSelector(state => state.categorySelected);
   const dispatch = useAppDispatch();
   // hook que devueleve bool si estas o no en esta pantalla
@@ -174,8 +176,12 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     return (
       <>
         <View style={styles.imageContainer}>
-          <Image source={{uri: branchData.banner}} style={styles.image} />
-          <Image source={{uri: branchData.logo}} style={styles.logo} />
+          {branchData.banner !== undefined && branchData.logo !== undefined ? (
+            <>
+              <Image source={{uri: branchData.banner}} style={styles.image} />
+              <Image source={{uri: branchData.logo}} style={styles.logo} />
+            </>
+          ) : null}
         </View>
         <View style={styles.branchInfoContainer}>
           <View style={styles.TitleInfoContainer}>
@@ -264,10 +270,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
                 paddingBottom: 20,
               }}
               renderItem={({item}) => (
-                <ProductItemRender
-                  product={item}
-                  navigation={navigation}
-                />
+                <ProductItemRender product={item} navigation={navigation} />
               )}
               scrollEnabled={!loadMore}
               ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
