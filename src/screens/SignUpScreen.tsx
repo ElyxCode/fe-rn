@@ -15,6 +15,12 @@ import {SubmitButton} from '../components/SubmitButton';
 import {ThirdPartyButton} from '../components/ThirdPartyButton';
 import {CustomNavBar} from '../components/CustomNavBar';
 
+import {LoaderScreen} from './LoaderScreen';
+
+import {signUpServices} from '../services/auth/auth';
+
+import {SignupErrors} from '../model/User';
+
 import UserTagIcon from '../assets/user_tag.svg';
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
 import SmsTrackingIcon from '../assets/sms_tracking.svg';
@@ -33,9 +39,6 @@ import {
 } from '../utils/utilities';
 
 import {colors} from '../styles/colors';
-import {signUpServices} from '../services/auth/auth';
-import {SignupErrors} from '../model/User';
-import {LoaderScreen} from './LoaderScreen';
 
 export const SignUpScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
