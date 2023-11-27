@@ -22,6 +22,19 @@ export interface UserProfile {
     bill_entity?:   string|null;
 }
 
+export interface SignupResponse {
+    status:  string;
+    message: string;
+    errors: SignupErrors;
+}
+
+export interface SignupErrors {
+    name: string[];
+    email: string[];
+    phone: string[];
+    password: string[];
+}
+
 export interface Occupation {
     id?:         number;
     name?:       string;
