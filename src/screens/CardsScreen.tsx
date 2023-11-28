@@ -17,7 +17,7 @@ import {CustomNavBar} from '../components/CustomNavBar';
 
 import {useAppSelector} from '../hooks/useRedux';
 
-import {getCardsService} from '../services/card/card';
+import {getCardsService, updateCardService} from '../services/card/card';
 
 import {Card} from '../model/Card';
 
@@ -28,6 +28,7 @@ import TrashBucketIcon from '../assets/trash.svg';
 import {colors} from '../styles/colors';
 
 type CardItem = {
+  id: number;
   name: string;
   lastNumber: string;
   verify: boolean;
@@ -54,9 +55,29 @@ export const CardsScreen = ({navigation}: any) => {
     getCards();
   }, []);
 
-  const CardItemRender = ({name, lastNumber, verify, active}: CardItem) => {
+  const setActiveCard = async (card: Card) => {
+    setIsLoading(true);
+    const response = await updateCardService(token, card.id.toString(), card);
+    if (response.ok) {
+      console.log({response: response.data});
+      navigation.goBack();
+    }
+    setIsLoading(false);
+  };
+
+  const CardItemRender = ({id, name, lastNumber, verify, active}: CardItem) => {
     return (
-      <Pressable>
+      <Pressable
+        onPress={() => {
+          let updateCard: Card = {
+            id,
+            name,
+            last_numbers: lastNumber,
+            verified: verify,
+            active: true,
+          };
+          setActiveCard(updateCard);
+        }}>
         <View style={[styles.cardItemContainer, {borderWidth: active ? 1 : 0}]}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <CardsIcon height={24} width={24} />
@@ -92,6 +113,7 @@ export const CardsScreen = ({navigation}: any) => {
             cards.map(item => (
               <CardItemRender
                 key={item.id}
+                id={item.id}
                 name={item.name}
                 lastNumber={item.last_numbers}
                 verify={item.verified}
