@@ -7,6 +7,7 @@ import {
   ScrollView,
   FlatList,
   Pressable,
+  Alert,
 } from 'react-native';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -17,7 +18,11 @@ import {CustomNavBar} from '../components/CustomNavBar';
 
 import {useAppSelector} from '../hooks/useRedux';
 
-import {getCardsService, updateCardService} from '../services/card/card';
+import {
+  deleteCardService,
+  getCardsService,
+  updateCardService,
+} from '../services/card/card';
 
 import {Card} from '../model/Card';
 
@@ -26,6 +31,7 @@ import CardsIcon from '../assets/cards_primary.svg';
 import TrashBucketIcon from '../assets/trash.svg';
 
 import {colors} from '../styles/colors';
+import Messages from '../constants/Messages';
 
 type CardItem = {
   id: number;
@@ -45,7 +51,7 @@ export const CardsScreen = ({navigation}: any) => {
       setIsLoading(true);
       const response = await getCardsService(token);
       if (response.ok) {
-        setCards((response.data as Card[]) ?? []);
+        setCards([...cards, ...(response.data as Card[])] ?? []);
       } else {
         setCards([] as Card[]);
       }
@@ -62,6 +68,28 @@ export const CardsScreen = ({navigation}: any) => {
       console.log({response: response.data});
       navigation.goBack();
     }
+    setIsLoading(false);
+  };
+
+  const deleteCard = async (cardId: string) => {
+    setIsLoading(true);
+    const responseStatus = await deleteCardService(token, cardId);
+    if (responseStatus.ok) {
+      Alert.alert(Messages.titleMessage, responseStatus.data?.status, [
+        {text: Messages.okButton},
+      ]);
+      const response = await getCardsService(token);
+      if (response.ok) {
+        setCards((response.data as Card[]) ?? []);
+      } else {
+        setCards([] as Card[]);
+      }
+    } else {
+      Alert.alert(Messages.titleMessage, responseStatus.data?.error, [
+        {text: Messages.okButton},
+      ]);
+    }
+
     setIsLoading(false);
   };
 
@@ -91,7 +119,10 @@ export const CardsScreen = ({navigation}: any) => {
               </Text>
             </View>
           </View>
-          <Pressable>
+          <Pressable
+            onPress={() => {
+              deleteCard(id.toString());
+            }}>
             <TrashBucketIcon height={24} width={24} />
           </Pressable>
         </View>
@@ -106,9 +137,11 @@ export const CardsScreen = ({navigation}: any) => {
       <CustomNavBar titleText="Métodos de pago" />
       <View style={styles.container}>
         <ScrollView style={styles.cardsContainer}>
-          <Text style={styles.selectCardTitleText}>
-            Selecciona la tarjeta que deseas usar
-          </Text>
+          {cards.length > 0 && (
+            <Text style={styles.selectCardTitleText}>
+              Selecciona la tarjeta que deseas usar
+            </Text>
+          )}
           {cards.length !== 0 ? (
             cards.map(item => (
               <CardItemRender
@@ -121,7 +154,9 @@ export const CardsScreen = ({navigation}: any) => {
               />
             ))
           ) : (
-            <Text>No tienes tarjetas</Text>
+            <View style={{alignItems: 'center', marginTop: 15}}>
+              <Text>No tienes tarjetas</Text>
+            </View>
           )}
         </ScrollView>
         <TouchableOpacity activeOpacity={0.5}>
