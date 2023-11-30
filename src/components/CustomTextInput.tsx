@@ -12,7 +12,7 @@ import {SvgProps} from 'react-native-svg';
 import {isAndroid} from '../constants/Platform';
 
 type Props = {
-  InputIcon: React.FC<SvgProps>;
+  InputIcon?: React.FC<SvgProps>;
   keyboardType?: KeyboardTypeOptions;
   placeHolder?: string;
   fill?: ColorValue;
@@ -34,7 +34,7 @@ export const CustomTextInput = ({
 }: Props) => {
   return (
     <View style={styles.container}>
-      <InputIcon height={25} width={25} fill={fill} />
+      {InputIcon ? <InputIcon height={25} width={25} fill={fill} /> : null}
       <TextInput
         style={styles.textInput}
         keyboardType={keyboardType}
