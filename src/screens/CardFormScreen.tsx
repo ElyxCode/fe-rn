@@ -280,7 +280,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   formContainer: {
-    // flex: 1,
     marginTop: 20,
   },
   textInputContainer: {
