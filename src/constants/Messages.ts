@@ -19,5 +19,6 @@ export default {
     requiredCardNumber: 'El número de tu tarjeta debe tener 16 dígitos', 
     requiredExpirationCard: 'Ingresa una fecha de expiración de tu válida', 
     requiredCvvCard: 'El CVV de tu tarjeta debe tener 3 dígitos', 
+    CardAddedSuccessMessage: 'Tu tarjeta ha sido registrada exitosamente',
 
 }
