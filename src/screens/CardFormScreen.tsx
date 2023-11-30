@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Controller, useForm} from 'react-hook-form';
 
@@ -88,7 +88,7 @@ export const CardFormScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <Text style={styles.newCardTitleText}>Nueva tarjeta</Text>
         <View style={styles.formContainer}>
           <Controller
@@ -194,7 +194,7 @@ export const CardFormScreen = () => {
             onPress={handleSubmit(handleOnSubmit, handleOnError)}
           />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
