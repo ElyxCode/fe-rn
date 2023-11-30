@@ -1,12 +1,19 @@
 import { ApiResponse } from "apisauce";
 import { api } from "../../api/api-config"
-import { Card, CardStatus } from "../../model/Card";
+import { Card, CardRequest, CreateCardResponse, CardStatus, CreateCardResponseError } from "../../model/Card";
 
 export const getCardsService = async (token: string) : Promise<ApiResponse<Card[]>> => {
     api.setHeader(
         'Authorization', "Bearer "+token
       )
     return api.get('/cards');
+};
+
+export const createCardService = async (token: string, cardRequest: CardRequest ) : Promise<ApiResponse<CreateCardResponse,CreateCardResponseError>> => {
+  api.setHeader(
+      'Authorization', "Bearer "+token
+    )
+  return api.post(`/cards`, { name: cardRequest.name, number: cardRequest.number, month: cardRequest.month, year: cardRequest.year, cvc: cardRequest.cvc });
 };
 
 export const updateCardService = async (token: string, cardId: string, card: Card) : Promise<ApiResponse<Card>> => {
@@ -22,3 +29,4 @@ export const deleteCardService = async (token: string, cardId: string) : Promise
     )
   return api.delete(`/cards/${cardId}`);
 };
+
