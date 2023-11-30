@@ -159,7 +159,9 @@ export const CardsScreen = ({navigation}: any) => {
             </View>
           )}
         </ScrollView>
-        <TouchableOpacity activeOpacity={0.5}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate('CardFormScreen')}>
           <View style={styles.addCardButtonContainer}>
             <PlusAddIcon height={24} width={24} />
             <Text style={styles.addCardButtonText}>Agregar tarjeta</Text>
