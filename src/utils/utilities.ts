@@ -3,7 +3,41 @@ import { Order } from "../model/Order";
 export const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
 export const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
 export const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+export const expirationCardPattern = /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/gm;
+export const cvvPattern = /^[0-9]{3}$/;
+export const cardsPattern = /(?<!\d)\d{16}(?!\d)|(?<!\d[ _-])(?<!\d)\d{4}(?=([_ -]))(?:\1\d{4}){3}(?![_ -]?\d)/;
 export const passwordPatternValidation = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
+
+export const normalizeCardNumber = (value: string): string => {
+    return (
+      value
+        .replace(/\s/g, '')
+        .replace(/[-—]+/g, '')
+        .replace(/[,.]+/g, '')
+        .match(/.{1,4}/g)
+        ?.join(' ')
+        .substring(0, 19) || ''
+    );
+};
+
+export const normalizeExpirationCard = (value: string): string => {
+    return value.replace(/\//g, "").replace(/[-—]+/g, '')
+    .replace(/[,.]+/g, '').substring(0, 2) + 
+            (value.length > 2 ? '/' : '') + 
+            value.replace(/\//g, "").replace(/[-—]+/g, '')
+            .replace(/[,.]+/g, '').substring(2, 4);
+};
+
+export const normalizeCvvCard = (value: string): string => {
+    if(value.length > 3){
+        return value.replace(/\s/g, '')
+        .replace(/[-—]+/g, '')
+        .replace(/[,.]+/g, '').substring(0, 3);
+    }
+    return value.replace(/\s/g, '')
+    .replace(/[-—]+/g, '')
+    .replace(/[,.]+/g, '');
+};
 
 export const transformBirthDateToSend = (dateFormat: string): string => {
     let date: string[] = dateFormat.split('/');
