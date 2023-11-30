@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Controller, useForm} from 'react-hook-form';
@@ -22,8 +22,14 @@ import {
 } from '../utils/utilities';
 
 import {colors} from '../styles/colors';
+import {CardRequest, ErrorsFields} from '../model/Card';
+import {createCardService} from '../services/card/card';
+import {useAppSelector} from '../hooks/useRedux';
+import {LoaderScreen} from './LoaderScreen';
 
-export const CardFormScreen = () => {
+export const CardFormScreen = ({navigation}: any) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const token = useAppSelector(state => state.authToken.token);
   const {
     control,
     handleSubmit,
@@ -48,14 +54,75 @@ export const CardFormScreen = () => {
     cvv: string;
     name: string;
   }) => {
-    const newCardRequest = {
-      cardNumber: cardNumber.replace(/ /g, ''),
+    setIsLoading(true);
+    const newCardRequest: CardRequest = {
+      number: cardNumber.replace(/ /g, ''),
       month: expCard.split('/')[0],
       year: expCard.split('/')[1],
-      cvv,
+      cvc: cvv,
       name,
     };
-    console.log({newCardRequest});
+
+    const response = await createCardService(token, newCardRequest);
+
+    if (response.ok) {
+      if (response.data?.last_numbers) {
+        const AsyncAlert = async () =>
+          new Promise(resolve => {
+            Alert.alert(
+              Messages.titleMessage,
+              Messages.CardAddedSuccessMessage,
+              [
+                {
+                  text: 'ok',
+                  onPress: () => {
+                    resolve('YES');
+                    navigation.goBack();
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          });
+
+        return await AsyncAlert();
+      }
+
+      if (response.data?.errors) {
+        let messageError =
+          (response.data?.errors?.name ? response.data?.errors?.name[0] : '') +
+          '\n' +
+          (response.data?.errors?.number
+            ? response.data?.errors?.number[0]
+            : '') +
+          '\n' +
+          (response.data?.errors?.month
+            ? response.data?.errors?.month[0]
+            : '') +
+          '\n' +
+          (response.data?.errors?.year ? response.data?.errors?.year[0] : '') +
+          '\n' +
+          (response.data?.errors?.cvc ? response.data?.errors?.cvc[0] : '');
+        setIsLoading(false);
+        return Alert.alert(Messages.titleMessage, messageError, [
+          {text: Messages.okButton},
+        ]);
+      }
+    } else {
+      setIsLoading(false);
+      return Alert.alert(Messages.titleMessage, response.data?.message, [
+        {text: Messages.okButton},
+      ]);
+    }
+
+    if (response == null) {
+      setIsLoading(false);
+      return Alert.alert(
+        Messages.titleMessage,
+        Messages.UnAvailableServerMessage,
+        [{text: Messages.okButton}],
+      );
+    }
   };
 
   const handleOnError = (errors: any) => {
@@ -84,6 +151,8 @@ export const CardFormScreen = () => {
       ]);
     }
   };
+
+  if (isLoading) return <LoaderScreen />;
 
   return (
     <SafeAreaView style={{flex: 1}}>
