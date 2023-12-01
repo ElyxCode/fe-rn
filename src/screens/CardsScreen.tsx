@@ -5,11 +5,11 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  FlatList,
   Pressable,
   Alert,
 } from 'react-native';
 
+import {useIsFocused} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {LoaderScreen} from './LoaderScreen';
@@ -30,8 +30,8 @@ import PlusAddIcon from '../assets/plus_add.svg';
 import CardsIcon from '../assets/cards_primary.svg';
 import TrashBucketIcon from '../assets/trash.svg';
 
-import {colors} from '../styles/colors';
 import Messages from '../constants/Messages';
+import {colors} from '../styles/colors';
 
 type CardItem = {
   id: number;
@@ -46,12 +46,23 @@ export const CardsScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     const getCards = async () => {
       setIsLoading(true);
       const response = await getCardsService(token);
       if (response.ok) {
-        setCards([...cards, ...(response.data as Card[])] ?? []);
+        setCards((response.data as Card[]) ?? []);
+        if (
+          response.data?.length == 1 &&
+          response.data.some(card => card.active === false)
+        ) {
+          let card = response.data.find(card => card.active == false);
+          if (card) {
+            setActiveFirstCard(card);
+          }
+        }
       } else {
         setCards([] as Card[]);
       }
@@ -59,15 +70,29 @@ export const CardsScreen = ({navigation}: any) => {
     };
 
     getCards();
-  }, []);
+  }, [isFocused]);
+
+  const setActiveFirstCard = async (card: Card) => {
+    console.log('entre para ser activo la tarjeta');
+    card.active = true;
+    const response = await updateCardService(token, card.id.toString(), card);
+    if (response.ok) {
+      console.log({responseUseEfect: response.data});
+    }
+  };
 
   const setActiveCard = async (card: Card) => {
     setIsLoading(true);
-    const response = await updateCardService(token, card.id.toString(), card);
-    if (response.ok) {
-      console.log({response: response.data});
-      navigation.goBack();
+    if (cards.some(card => card.active)) {
+      let oldCard = cards.find(card => card.active);
+      if (oldCard) {
+        oldCard.active = false;
+        await updateCardService(token, oldCard?.id.toString(), oldCard);
+      }
     }
+    await updateCardService(token, card.id.toString(), card);
+
+    navigation.goBack();
     setIsLoading(false);
   };
 
@@ -104,6 +129,7 @@ export const CardsScreen = ({navigation}: any) => {
             verified: verify,
             active: true,
           };
+
           setActiveCard(updateCard);
         }}>
         <View style={[styles.cardItemContainer, {borderWidth: active ? 1 : 0}]}>
@@ -211,6 +237,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 10,
   },
   cardDescriptionContainer: {
     marginLeft: 22,
