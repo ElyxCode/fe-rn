@@ -12,6 +12,7 @@ import {OrderDetailScreen} from '../screens/OrderDetailScreen';
 import {CardsScreen} from '../screens/CardsScreen';
 import {CardFormScreen} from '../screens/CardFormScreen';
 import {AddressListScreen} from '../screens/AddressListScreen';
+import {DeleteAccountScreen} from '../screens/DeleteAccountScreen';
 
 export type ProfileStackParams = {
   LoginScreen: any;
@@ -25,6 +26,7 @@ export type ProfileStackParams = {
   CardsScreen: any;
   CardFormScreen: any;
   AddressListScreen: any;
+  DeleteAccountScreen: any;
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParams>();
@@ -64,6 +66,10 @@ export const ProfileNavigation = () => {
           <ProfileStack.Screen
             name="AddressListScreen"
             component={AddressListScreen}
+          />
+          <ProfileStack.Screen
+            name="DeleteAccountScreen"
+            component={DeleteAccountScreen}
           />
         </>
       ) : (
