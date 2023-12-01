@@ -33,6 +33,7 @@ import TrashBucketIcon from '../assets/trash.svg';
 
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
+import {AddButton} from '../components/AddButton';
 
 type CardItem = {
   id: number;
@@ -204,15 +205,11 @@ export const CardsScreen = ({navigation}: any) => {
             </View>
           )}
         </ScrollView>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => navigation.navigate('CardFormScreen')}>
-          <View style={styles.addCardButtonContainer}>
-            <PlusAddIcon height={24} width={24} />
-            <Text style={styles.addCardButtonText}>Agregar tarjeta</Text>
-          </View>
-        </TouchableOpacity>
       </View>
+      <AddButton
+        text="Agregar tarjeta"
+        onPress={() => navigation.navigate('CardFormScreen')}
+      />
     </SafeAreaView>
   );
 };
