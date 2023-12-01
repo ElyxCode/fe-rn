@@ -14,6 +14,11 @@ export default {
     phoneNumberFormatPatternMessage: 'Ingrese 8 dígitos sin espacio o guión correcto en el campo número de teléfono',
     UnAvailableServerMessage: "Acción no disponible, por favor intenta más tarde",
     ExceededProductStockMessage : "No hay suficientes existencias de este producto.\nEn stock: ",
-    PasswordValidationMessage:"Las contraseña debe tener 8 caracteres como mínimo y contener 1 mayúscula, 1 minúscula y 1 número", 
+    PasswordValidationMessage:"Las contraseña debe tener 8 caracteres como mínimo y contener 1 mayúscula, 1 minúscula y 1 número",
+    requiredCardName: 'Añadele un nombre a tu tarjeta', 
+    requiredCardNumber: 'El número de tu tarjeta debe tener 16 dígitos', 
+    requiredExpirationCard: 'Ingresa una fecha de expiración de tu válida', 
+    requiredCvvCard: 'El CVV de tu tarjeta debe tener 3 dígitos', 
+    CardAddedSuccessMessage: 'Tu tarjeta ha sido registrada exitosamente',
 
 }

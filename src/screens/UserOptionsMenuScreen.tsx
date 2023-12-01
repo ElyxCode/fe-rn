@@ -43,11 +43,15 @@ const menuOptions: MenuOptionItemProps[] = [
     OptionButtonIcon: BoxIcon,
     screenPath: 'OrderListScreen',
   },
-  {optionName: 'Métodos de Pago', OptionButtonIcon: CardsIcon, screenPath: ''},
+  {
+    optionName: 'Métodos de Pago',
+    OptionButtonIcon: CardsIcon,
+    screenPath: 'CardsScreen',
+  },
   {
     optionName: 'Direcciones de envío',
     OptionButtonIcon: LocationIcon,
-    screenPath: '',
+    screenPath: 'AddressListScreen',
   },
   {optionName: 'Ayuda', OptionButtonIcon: MessageQuestionIcon, screenPath: ''},
   {
