@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {LoaderScreen} from '../screens/LoaderScreen';
 import {NestedListExt} from './NestedListExtended/NestedListExt';
@@ -44,7 +45,7 @@ export const CategoryListModal = ({route, navigation}: any) => {
         <LoaderScreen />
       ) : (
         <>
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <View style={styles.closeButtonContainer}>
               <Pressable onPress={() => navigation.goBack()}>
                 <CloseCircleIcon height={25} width={25} />
@@ -64,7 +65,7 @@ export const CategoryListModal = ({route, navigation}: any) => {
               onLastItemPressed={() => {}}
               navigation={navigation}
             />
-          </View>
+          </ScrollView>
         </>
       )}
     </SafeAreaView>
@@ -74,9 +75,8 @@ export const CategoryListModal = ({route, navigation}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     paddingHorizontal: 20,
-    paddingTop: 25,
+    marginTop: 25,
   },
   closeButtonContainer: {
     alignItems: 'flex-end',
