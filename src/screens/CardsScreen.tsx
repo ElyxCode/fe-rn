@@ -16,13 +16,14 @@ import {LoaderScreen} from './LoaderScreen';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {
   deleteCardService,
   getCardsService,
   updateCardService,
 } from '../services/card/card';
+import {setCard} from '../services/card/cardSlice';
 
 import {Card} from '../model/Card';
 
@@ -45,6 +46,8 @@ export const CardsScreen = ({navigation}: any) => {
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
+
+  const dispatch = useAppDispatch();
 
   const isFocused = useIsFocused();
 
@@ -73,11 +76,10 @@ export const CardsScreen = ({navigation}: any) => {
   }, [isFocused]);
 
   const setActiveFirstCard = async (card: Card) => {
-    console.log('entre para ser activo la tarjeta');
     card.active = true;
     const response = await updateCardService(token, card.id.toString(), card);
     if (response.ok) {
-      console.log({responseUseEfect: response.data});
+      dispatch(setCard(response.data as Card));
     }
   };
 
@@ -90,7 +92,10 @@ export const CardsScreen = ({navigation}: any) => {
         await updateCardService(token, oldCard?.id.toString(), oldCard);
       }
     }
-    await updateCardService(token, card.id.toString(), card);
+    const respo = await updateCardService(token, card.id.toString(), card);
+    if (respo.ok) {
+      dispatch(setCard(respo.data as Card));
+    }
 
     navigation.goBack();
     setIsLoading(false);
@@ -110,7 +115,14 @@ export const CardsScreen = ({navigation}: any) => {
           let oldCard = (response.data as Card[]).find(card => !card.active);
           if (oldCard) {
             oldCard.active = true;
-            await updateCardService(token, oldCard?.id.toString(), oldCard);
+            const response = await updateCardService(
+              token,
+              oldCard?.id.toString(),
+              oldCard,
+            );
+            if (response.ok) {
+              dispatch(setCard(response.data as Card));
+            }
           }
         }
       } else {
