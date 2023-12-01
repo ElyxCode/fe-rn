@@ -6,6 +6,7 @@ import authReducer from '../services/auth/authSlice';
 import userReducer from '../services/user/userSlice';
 import locationReducer from '../services/google/locationSlice'
 import categoryReducer from '../services/category/categorySlice';
+import cardReducer from '../services/card/cardSlice';
 
 
 // adding our persist configs
@@ -20,6 +21,7 @@ export const persistConfig = {
 const rootReducer = combineReducers({
     authToken: authReducer,
     user: userReducer,
+    currentCard: cardReducer,
     currentLocation : locationReducer,
     categorySelected: categoryReducer
 });
