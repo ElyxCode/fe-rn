@@ -106,6 +106,13 @@ export const CardsScreen = ({navigation}: any) => {
       const response = await getCardsService(token);
       if (response.ok) {
         setCards((response.data as Card[]) ?? []);
+        if ((response.data as Card[]).some(card => !card.active)) {
+          let oldCard = (response.data as Card[]).find(card => !card.active);
+          if (oldCard) {
+            oldCard.active = true;
+            await updateCardService(token, oldCard?.id.toString(), oldCard);
+          }
+        }
       } else {
         setCards([] as Card[]);
       }
