@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -32,7 +26,7 @@ export const DeleteAccountScreen = ({navigation}: any) => {
           customStyles={{
             backgroundColor: colors.RedColor,
           }}
-          onPress={() => navigation.navigate('')}
+          onPress={() => navigation.navigate('DeleteAccountModal')}
         />
       </View>
     </SafeAreaView>
