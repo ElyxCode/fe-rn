@@ -19,11 +19,13 @@ import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
 import {colors} from '../styles/colors';
 import {CustomNavBar} from '../components/CustomNavBar';
+import {useNavigation} from '@react-navigation/native';
 
 type OptionsMenu = {
   OptionIcon: React.FC<SvgProps>;
   optionText: string;
   hasSwitch: boolean;
+  navigationPath?: string | undefined;
 };
 
 const options: OptionsMenu[] = [
@@ -47,35 +49,53 @@ const options: OptionsMenu[] = [
     OptionIcon: ProfileDeleteIcon,
     optionText: 'Eliminar cuenta',
     hasSwitch: false,
+    navigationPath: 'DeleteAccountScreen',
   },
 ];
 
-const OptionMenu = ({OptionIcon, optionText, hasSwitch}: OptionsMenu) => {
-  return (
-    <Pressable onPress={() => !hasSwitch && console.log(optionText)}>
-      <View style={styles.optionContainer}>
-        <OptionIcon height={19} />
-        <View style={styles.textContainer}>
-          <Text style={styles.optionText}>{optionText}</Text>
-          {hasSwitch ? (
-            <Text style={[styles.optionText, {fontSize: hasSwitch ? 12 : 10}]}>
-              Activo
-            </Text>
-          ) : null}
+export const SettingsScreen = ({navigation}: any) => {
+  const OptionMenu = ({
+    OptionIcon,
+    optionText,
+    hasSwitch,
+    navigationPath,
+  }: OptionsMenu) => {
+    return (
+      <Pressable
+        onPress={() => {
+          if (
+            optionText === 'Notificaciones' ||
+            optionText === 'Face ID o huella'
+          ) {
+            !hasSwitch;
+          }
+          if (navigationPath !== undefined) {
+            navigation.navigate(navigationPath);
+          }
+        }}>
+        <View style={styles.optionContainer}>
+          <OptionIcon height={19} />
+          <View style={styles.textContainer}>
+            <Text style={styles.optionText}>{optionText}</Text>
+            {hasSwitch ? (
+              <Text
+                style={[styles.optionText, {fontSize: hasSwitch ? 12 : 10}]}>
+                Activo
+              </Text>
+            ) : null}
+          </View>
+          <View style={styles.switchContainer}>
+            {hasSwitch ? (
+              <Switch thumbColor={colors.SwitchThumbColor} />
+            ) : (
+              <ArrowRightIcon height={19} fill={colors.PrimaryColor} />
+            )}
+          </View>
         </View>
-        <View style={styles.switchContainer}>
-          {hasSwitch ? (
-            <Switch thumbColor={colors.SwitchThumbColor} />
-          ) : (
-            <ArrowRightIcon height={19} fill={colors.PrimaryColor} />
-          )}
-        </View>
-      </View>
-    </Pressable>
-  );
-};
+      </Pressable>
+    );
+  };
 
-export const SettingsScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar titleText="Ajustes" />
@@ -85,6 +105,7 @@ export const SettingsScreen = () => {
             key={option.optionText}
             OptionIcon={option.OptionIcon}
             optionText={option.optionText}
+            navigationPath={option.navigationPath}
             hasSwitch={option.hasSwitch}
           />
         ))}
