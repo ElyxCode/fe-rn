@@ -30,3 +30,10 @@ export const updateUserService = async (token: string, user: UserProfile) : Prom
       )
     return api.post('/me', {...userDataRequest});
 };
+
+export const deleteUserService = async (token: string) : Promise<ApiResponse<string[]>> => {
+  api.setHeader(
+      'Authorization', "Bearer "+token
+    )
+  return api.delete('/me');
+};
