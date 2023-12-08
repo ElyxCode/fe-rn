@@ -7,6 +7,7 @@ export const expirationCardPattern = /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/gm
 export const cvvPattern = /^[0-9]{3}$/;
 export const cardsPattern = /(?<!\d)\d{16}(?!\d)|(?<!\d[ _-])(?<!\d)\d{4}(?=([_ -]))(?:\1\d{4}){3}(?![_ -]?\d)/;
 export const passwordPatternValidation = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
+export const documentNumberPatternValidation = /\d{9}/;
 
 export const normalizeCardNumber = (value: string): string => {
     return (
