@@ -79,6 +79,18 @@ export const ProfileNavigation = () => {
             name="DeleteAccountScreen"
             component={DeleteAccountScreen}
           />
+          <ProfileStack.Screen
+            name="SignUpComplementScreen"
+            component={SignUpComplementScreen}
+          />
+          <ProfileStack.Screen
+            name="SignUpWelcomeScreen"
+            component={SignUpWelcomeScreen}
+          />
+          <ProfileStack.Screen
+            name="BiometricDetailScreen"
+            component={BiometricDetailScreen}
+          />
           <ProfileStack.Group screenOptions={{presentation: 'modal'}}>
             <ProfileStack.Screen
               name="DeleteAccountModal"
@@ -94,18 +106,6 @@ export const ProfileNavigation = () => {
           />
           <ProfileStack.Screen name="LoginScreen" component={LoginScreen} />
           <ProfileStack.Screen name="SignUpScreen" component={SignUpScreen} />
-          <ProfileStack.Screen
-            name="SignUpComplementScreen"
-            component={SignUpComplementScreen}
-          />
-          <ProfileStack.Screen
-            name="SignUpWelcomeScreen"
-            component={SignUpWelcomeScreen}
-          />
-          <ProfileStack.Screen
-            name="BiometricDetailScreen"
-            component={BiometricDetailScreen}
-          />
         </>
       )}
     </ProfileStack.Navigator>
