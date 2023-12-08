@@ -16,7 +16,7 @@ type Props = {
 
 export const SubmitButton = ({textButton, customStyles, onPress}: Props) => {
   return (
-    <TouchableHighlight underlayColor={colors.White} onPress={onPress}>
+    <TouchableHighlight underlayColor={'transparent'} onPress={onPress}>
       <View style={[styles.buttonContainer, customStyles]}>
         <Text style={styles.textButton}>{textButton}</Text>
       </View>
