@@ -29,7 +29,8 @@ export const SignUpWelcomeScreen = ({route, navigation}: any) => {
       </View>
       <SubmitButton
         onPress={() => {
-          navigation.navigate('BiometricDetailScreen');
+          // navigation.navigate('BiometricDetailScreen');
+          navigation.navigate('HomeBranchScreen');
         }}
         textButton="Comenzar a navegar"
         customStyles={{
