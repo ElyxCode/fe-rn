@@ -20,21 +20,30 @@ import {LoaderScreen} from './LoaderScreen';
 
 import {occupationsService} from '../services/occupation';
 
-import {Occupation} from '../model/User';
+import {Occupation, UserProfile} from '../model/User';
 
 import EditProfileIcon from '../assets/user_edit.svg';
 import CalendarIcon from '../assets/calendar.svg';
 import PersonalCardIcon from '../assets/personalcard.svg';
 import Profile2UserIcon from '../assets/profile-2user.svg';
 
-import {dateFormatPattern} from '../utils/utilities';
+import {
+  dateFormatPattern,
+  documentNumberPatternValidation,
+  transformBirthDateToSend,
+  transformBirthDateUTCTtoDDMMYYYY,
+} from '../utils/utilities';
 import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
+import {updateUserService} from '../services/user/user';
+import {useAppSelector} from '../hooks/useRedux';
 
 export const SignUpComplementScreen = ({route, navigation}: any) => {
+  const {userData} = route.params;
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const token = useAppSelector(state => state.authToken.token);
 
   const {
     control,
@@ -42,9 +51,10 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
     formState: {errors},
   } = useForm({
     defaultValues: {
-      birthDate: '',
-      dui: '',
-      occupation: '',
+      birthDate:
+        transformBirthDateUTCTtoDDMMYYYY(userData.birthday ?? '') ?? '',
+      dui: userData.dui ?? '',
+      occupation: userData.occupation?.id ?? '',
     },
   });
 
@@ -63,8 +73,39 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
 
   const handleOnSubmit = async ({birthDate, dui, occupation: value}: any) => {
     setIsLoading(true);
-    // console.log({birthDate, dui, value});
-    navigation.navigate('SignUpWelcomeScreen');
+    const data: UserProfile = {
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+      occupation: value,
+      dui: dui,
+      birthday: transformBirthDateToSend(birthDate ?? ''),
+    };
+    const response = await updateUserService(token, data);
+    if (response.ok) {
+      navigation.navigate('SignUpWelcomeScreen');
+    }
+
+    if (response === null) {
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.UnAvailableServerMessage,
+            [
+              {
+                text: 'ok',
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      return await AsyncAlert();
+    }
     setIsLoading(false);
   };
 
@@ -128,7 +169,13 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
           />
           <Controller
             control={control}
-            rules={{required: Messages.requireDuiProfile}}
+            rules={{
+              required: Messages.requireDuiProfile,
+              pattern: {
+                value: documentNumberPatternValidation,
+                message: 'Tu documento de identificación debe tener 9 dígitos',
+              },
+            }}
             render={({field: {onChange, value, onBlur}}) => (
               <CustomTextInput
                 InputIcon={PersonalCardIcon}
@@ -174,7 +221,7 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
           textButton="Confirmar"
           customStyles={{marginTop: 40, marginBottom: 30}}
         />
-        <Pressable>
+        <Pressable onPress={() => navigation.navigate('HomeBranchScreen')}>
           <Text style={styles.completeLaterText}>Completar más tarde</Text>
         </Pressable>
       </ScrollView>
