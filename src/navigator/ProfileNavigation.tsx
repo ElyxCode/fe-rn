@@ -13,6 +13,9 @@ import {CardsScreen} from '../screens/CardsScreen';
 import {CardFormScreen} from '../screens/CardFormScreen';
 import {AddressListScreen} from '../screens/AddressListScreen';
 import {DeleteAccountScreen} from '../screens/DeleteAccountScreen';
+import {SignUpComplementScreen} from '../screens/SignUpComplementScreen';
+import {SignUpWelcomeScreen} from '../screens/SignUpWelcomeScreen';
+import {BiometricDetailScreen} from '../screens/BiometricDetailScreen';
 import {DeleteAccountModal} from '../components/DeleteAccountModal';
 
 export type ProfileStackParams = {
@@ -28,6 +31,9 @@ export type ProfileStackParams = {
   CardFormScreen: any;
   AddressListScreen: any;
   DeleteAccountScreen: any;
+  SignUpComplementScreen: any;
+  SignUpWelcomeScreen: any;
+  BiometricDetailScreen: any;
   DeleteAccountModal: any;
 };
 
@@ -72,6 +78,18 @@ export const ProfileNavigation = () => {
           <ProfileStack.Screen
             name="DeleteAccountScreen"
             component={DeleteAccountScreen}
+          />
+          <ProfileStack.Screen
+            name="SignUpComplementScreen"
+            component={SignUpComplementScreen}
+          />
+          <ProfileStack.Screen
+            name="SignUpWelcomeScreen"
+            component={SignUpWelcomeScreen}
+          />
+          <ProfileStack.Screen
+            name="BiometricDetailScreen"
+            component={BiometricDetailScreen}
           />
           <ProfileStack.Group screenOptions={{presentation: 'modal'}}>
             <ProfileStack.Screen
