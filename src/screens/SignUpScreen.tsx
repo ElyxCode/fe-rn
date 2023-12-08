@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,6 +9,12 @@ import {
 } from 'react-native';
 
 import {useForm, Controller} from 'react-hook-form';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+import {useAppDispatch} from '../hooks/useRedux';
 
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
@@ -18,6 +24,8 @@ import {CustomNavBar} from '../components/CustomNavBar';
 import {LoaderScreen} from './LoaderScreen';
 
 import {signUpServices} from '../services/auth/auth';
+import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
+import {setToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import {SignupErrors} from '../model/User';
 
@@ -29,9 +37,9 @@ import LockIcon from '../assets/ic_lock.svg';
 import GoogleIcon from '../assets/google_logo.svg';
 import AppleIcon from '../assets/apple_logo.svg';
 
-import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
-
+import {isAndroid} from '../constants/Platform';
+import {googleSingInConf} from '../constants/googleSignInConf';
 import {
   emailFormatPattern,
   passwordValidation,
@@ -42,6 +50,7 @@ import {colors} from '../styles/colors';
 
 export const SignUpScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const {
     control,
@@ -103,6 +112,57 @@ export const SignUpScreen = ({navigation}: any) => {
         Messages.UnAvailableServerMessage,
         [{text: Messages.okButton}],
       );
+    }
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure(googleSingInConf);
+  }, []);
+
+  const googleSignInThirdParty = async () => {
+    setIsLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signIn(); // -> requerido para tener tokens
+      const {accessToken} = await GoogleSignin.getTokens();
+
+      if (
+        accessToken !== '' &&
+        accessToken !== undefined &&
+        accessToken !== null
+      ) {
+        const response = await ThirdPartyLoginService('google', accessToken);
+        if (response.ok) {
+          dispatch(
+            setToken({
+              token: response.data?.token ?? '',
+              social: thirdPartySocial.google,
+            }),
+          ); // guardo el token
+          navigation.navigate('SignUpComplementScreen', {
+            userData: response.data?.user,
+          });
+        } else {
+          console.log({errorRespon: response.data?.error});
+          Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
+        }
+      }
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        console.log('Cancel');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (f.e. sign in) is in progress already
+        console.log('Signin in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        console.log('PLAY_SERVICES_NOT_AVAILABLE');
+      } else {
+        // some other error happened
+        console.log({errorGoogle: error});
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -250,6 +310,7 @@ export const SignUpScreen = ({navigation}: any) => {
           <ThirdPartyButton
             textButton="Continuar con Google"
             ButtonIcon={GoogleIcon}
+            onPress={() => googleSignInThirdParty()}
           />
           {!isAndroid ? (
             <ThirdPartyButton
