@@ -11,8 +11,9 @@ import {useAppSelector} from '../hooks/useRedux';
 import {HomeNavigation} from './HomeNavigation';
 import {BranchInfoModal} from '../components/BranchInfoModal';
 import {CategoryListModal} from '../components/CategoryListModal';
-import {ProductDetailScreen} from '../screens/ProductDetailScreen'
-import { ProductProps } from '../model/ProductProps';
+import {ProductDetailScreen} from '../screens/ProductDetailScreen';
+import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
+import {ProductProps} from '../model/ProductProps';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -25,7 +26,8 @@ export type RootStackParams = {
   HomeNavigation: undefined;
   BranchInfoModal: any;
   CategoryListModal: any;
-  ProductDetailScreen:ProductProps
+  ProductDetailScreen: ProductProps;
+  ShoppingCartScreen: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -56,11 +58,14 @@ export const MainNavigation = () => {
         <MainStack.Screen
           name="ProductDetailScreen"
           component={ProductDetailScreen}
-          
         />
         <MainStack.Screen
           name="CategoryListModal"
           component={CategoryListModal}
+        />
+        <MainStack.Screen
+          name="ShoppingCartScreen"
+          component={ShoppingCartScreen}
         />
       </MainStack.Group>
       {/* <MainStack.Screen
