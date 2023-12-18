@@ -19,6 +19,12 @@ export default {
     requiredCardNumber: 'El número de tu tarjeta debe tener 16 dígitos', 
     requiredExpirationCard: 'Ingresa una fecha de expiración de tu válida', 
     requiredCvvCard: 'El CVV de tu tarjeta debe tener 3 dígitos', 
-    CardAddedSuccessMessage: 'Tu tarjeta ha sido registrada exitosamente',
-
+    cardAddedSuccessMessage: 'Tu tarjeta ha sido registrada exitosamente',
+    orderStartedMessage: 'Ya tienes una orden en proceso, ¿deseas eliminarla y crear una orden nueva con este comercio?',
+    notFreeShippingForDistanceMessage: 'Lo sentimos, la dirección que has seleccionada no aplica para el envío gratis',
+    freeShippingForDistanceMessage: 'El costo de envío va por cuenta de nosotros!\nRecibirás los productos hasta la puerta de tu casa o proyecto, totalmente gratis',
+    freeShippingWithTwoPromotionsMessage: 'Lo sentimos, no podemos aplicar dos promociones al mismo tiempo.\nElimina el código del cupón para mantener el Envío Gratis',
+    excededProductStockMessage: 'No hay suficientes existencias de este producto.\nEn stock: ',
+    excededAnyProductStockMessage: 'Uno de los item de tu carrito supera el numero productos que puedes llevar',
+    askQuantityProductMessage: 'Ingresa una cantidad',
 }
