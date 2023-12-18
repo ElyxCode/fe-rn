@@ -7,6 +7,7 @@ import userReducer from '../services/user/userSlice';
 import locationReducer from '../services/google/locationSlice'
 import categoryReducer from '../services/category/categorySlice';
 import cardReducer from '../services/card/cardSlice';
+import productReducer from '../services/product/productSlice';
 
 
 // adding our persist configs
@@ -23,7 +24,8 @@ const rootReducer = combineReducers({
     user: userReducer,
     currentCard: cardReducer,
     currentLocation : locationReducer,
-    categorySelected: categoryReducer
+    categorySelected: categoryReducer,
+    productsCart: productReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
