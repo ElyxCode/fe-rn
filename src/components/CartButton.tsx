@@ -1,15 +1,24 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../styles/colors';
+import {useNavigation} from '@react-navigation/native';
 
-export const CartButton = () => {
+type CartButtonProps = {
+  itemAmount: number;
+  totalAmount: number;
+};
+
+export const CartButton = ({itemAmount, totalAmount}: CartButtonProps) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
-      <Pressable>
+      <Pressable
+        onPress={() => navigation.navigate('ShoppingCartScreen' as never)}>
         <View style={styles.containerButton}>
           <Text style={styles.cartText}>Ver carrito</Text>
-          <Text style={styles.cartText}>(1) •</Text>
-          <Text style={styles.cartText}>$500</Text>
+          <Text style={styles.cartText}>({itemAmount}) •</Text>
+          <Text style={styles.cartText}>${totalAmount.toFixed(2)}</Text>
         </View>
       </Pressable>
     </View>
