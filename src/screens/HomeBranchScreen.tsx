@@ -30,7 +30,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
   const currentLocation = useAppSelector(
     state => state.currentLocation.currentLocation,
   );
-  const productsCart = useAppSelector(state => state.productsCart.products);
+  const productsCart = useAppSelector(state => state.productsCart);
 
   const getBranchs = async () => {
     setIsLoading(true);
@@ -114,7 +114,15 @@ export const HomeBranchScreen = ({navigation}: any) => {
         />
         <BranchHomeList branchs={branchs} navigation={navigation} />
       </ScrollView>
-      {productsCart.length !== 0 && <CartButton />}
+      {productsCart.products.length !== 0 && (
+        <CartButton
+          itemAmount={productsCart.products.reduce(
+            (acc, cv) => acc + cv.quantity,
+            0,
+          )}
+          totalAmount={productsCart.totalValue}
+        />
+      )}
     </SafeAreaView>
   );
 };
