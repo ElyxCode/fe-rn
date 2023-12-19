@@ -1,7 +1,8 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {colors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
+import {colors} from '../styles/colors';
+import {formatter} from '../utils/utilities';
 
 type CartButtonProps = {
   itemAmount: number;
@@ -18,7 +19,9 @@ export const CartButton = ({itemAmount, totalAmount}: CartButtonProps) => {
         <View style={styles.containerButton}>
           <Text style={styles.cartText}>Ver carrito</Text>
           <Text style={styles.cartText}>({itemAmount}) •</Text>
-          <Text style={styles.cartText}>${totalAmount.toFixed(2)}</Text>
+          <Text style={styles.cartText}>
+            {formatter.format(Number(totalAmount.toFixed(2)))}
+          </Text>
         </View>
       </Pressable>
     </View>
