@@ -40,7 +40,7 @@ export const productSlice = createSlice({
         incrementProduct: (state, action: PayloadAction<number>) => {
             state.products = state.products.map(item => {
                 if(item.id === action.payload){
-                    item.quantity++
+                    item.quantity = item.quantity + 1;
                 }
                 return item
             })
@@ -53,7 +53,7 @@ export const productSlice = createSlice({
             }else{
                 state.products = state.products.map(item => {
                     if(item.id === action.payload){
-                        item.quantity--
+                        item.quantity = item.quantity - 1;
                     }
                     return item
                 })
