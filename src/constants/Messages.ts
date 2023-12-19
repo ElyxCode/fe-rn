@@ -24,6 +24,6 @@ export default {
     notFreeShippingForDistanceMessage: 'Lo sentimos, la dirección que has seleccionada no aplica para el envío gratis',
     freeShippingForDistanceMessage: 'El costo de envío va por cuenta de nosotros!\nRecibirás los productos hasta la puerta de tu casa o proyecto, totalmente gratis',
     freeShippingWithTwoPromotionsMessage: 'Lo sentimos, no podemos aplicar dos promociones al mismo tiempo.\nElimina el código del cupón para mantener el Envío Gratis',
-    excededAnyProductStockMessage: 'Uno de los item de tu carrito supera el numero productos que puedes llevar',
+    exceedsAnyProductStockMessage: 'Uno de los item de tu carrito supera el numero productos que puedes llevar',
     askQuantityProductMessage: 'Ingresa una cantidad',
 }
