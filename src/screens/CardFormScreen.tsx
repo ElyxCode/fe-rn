@@ -3,6 +3,14 @@ import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Controller, useForm} from 'react-hook-form';
 
+import {useAppSelector} from '../hooks/useRedux';
+
+import {LoaderScreen} from './LoaderScreen';
+
+import {createCardService} from '../services/card/card';
+
+import {CardRequest, ErrorsFields} from '../model/Card';
+
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
@@ -10,7 +18,8 @@ import {SubmitButton} from '../components/SubmitButton';
 import CardEditIcon from '../assets/card_edit.svg';
 
 import Messages from '../constants/Messages';
-import {isAndroid} from '../constants/Platform';
+
+import {colors} from '../styles/colors';
 
 import {
   normalizeCardNumber,
@@ -21,11 +30,7 @@ import {
   cvvPattern,
 } from '../utils/utilities';
 
-import {colors} from '../styles/colors';
-import {CardRequest, ErrorsFields} from '../model/Card';
-import {createCardService} from '../services/card/card';
-import {useAppSelector} from '../hooks/useRedux';
-import {LoaderScreen} from './LoaderScreen';
+import {isAndroid} from '../constants/Platform';
 
 export const CardFormScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -71,7 +76,7 @@ export const CardFormScreen = ({navigation}: any) => {
           new Promise(resolve => {
             Alert.alert(
               Messages.titleMessage,
-              Messages.CardAddedSuccessMessage,
+              Messages.cardAddedSuccessMessage,
               [
                 {
                   text: 'ok',
