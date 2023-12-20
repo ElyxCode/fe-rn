@@ -58,6 +58,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   const category = useAppSelector(state => state.categorySelected);
   const productsCart = useAppSelector(state => state.productsCart);
   const totalValue = useAppSelector(state => state.productsCart.totalValue);
+  const token = useAppSelector(state => state.authToken.token);
   const dispatch = useAppDispatch();
   // hook que devueleve bool si estas o no en esta pantalla
   const isFocused = useIsFocused();
@@ -308,7 +309,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
           }
         />
       </View>
-      {productsCart.products.length != 0 && (
+      {token && productsCart.products.length !== 0 && (
         <CartButton
           itemAmount={productsCart.products.reduce(
             (acc, cv) => acc + cv.quantity,
