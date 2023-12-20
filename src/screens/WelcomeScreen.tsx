@@ -8,6 +8,7 @@ import WelcomeSecureWallet from '../assets/welcome_secure_wallet.svg';
 import WelcomeBaggageSpanner from '../assets/welcome_baggage_spanner.svg';
 
 import {colors} from '../styles/colors';
+import { MapconfirmationProps, MapFlow } from './MapConfirmationScreen';
 
 const svgImageHeight = 75;
 
@@ -60,7 +61,10 @@ export const WelcomeScreen = ({route, navigation}: any) => {
       <View style={{margin: 30}}>
         <SubmitButton
           textButton="Comenzar"
-          onPress={() => navigation.navigate('MapConfirmationScreen')}
+          onPress={() => { 
+            
+            navigation.navigate('MapConfirmationScreen',{mapFlow: MapFlow.WelcomeFlow})
+        }}
         />
       </View>
     </SafeAreaView>

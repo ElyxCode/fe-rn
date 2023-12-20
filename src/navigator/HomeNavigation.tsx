@@ -13,6 +13,7 @@ export type HomeStackParams = {
    SearchAddressScreen:undefined;
    PromotionDetailScreen:any;
    PromotionProductsScreen:any;
+  
   };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -26,6 +27,7 @@ export const HomeNavigation = () => {
       <HomeStack.Screen name="SearchAddressScreen" component={SearchAddressScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}  />
       <HomeStack.Screen name="PromotionDetailScreen" component={PromotionDetailScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}  />
       <HomeStack.Screen name="PromotionProductsScreen" component={PromotionProductsScreen} options={{headerShown:true, header: ()=> (<CustomNavBar  />)}}  />
+    
       </HomeStack.Navigator>
 
     )

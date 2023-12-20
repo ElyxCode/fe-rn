@@ -6,6 +6,7 @@ import GpsIcon from '../assets/location.svg';
 import {colors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import {isAndroid} from '../constants/Platform';
+import { MapFlow } from '../screens/MapConfirmationScreen';
 
 type locationProps = {
   name: string;
@@ -25,7 +26,7 @@ export const LocationBar = ({name}: locationProps) => {
       <TouchableOpacity
         style={styles.changeAddressContainer}
         onPress={() => {
-          navigation.navigate('MapConfirmationScreen' as never);
+          navigation.navigate('MapConfirmationScreen', {mapFlow: MapFlow.HomeFlow});
         }}>
         <Text style={styles.changeAddressText}>Cambiar</Text>
       </TouchableOpacity>

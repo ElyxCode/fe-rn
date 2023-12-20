@@ -9,9 +9,11 @@ import {SettingsScreen} from '../screens/SettingsScreen';
 import {EditProfileScreen} from '../screens/EditProfileScreen';
 import {OrderListScreen} from '../screens/OrderListScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
+import { AddressListScreen } from '../screens/AddressListScreen';
+import { AddressNavigation } from './AddressNavigation';
+
 import {CardsScreen} from '../screens/CardsScreen';
 import {CardFormScreen} from '../screens/CardFormScreen';
-import {AddressListScreen} from '../screens/AddressListScreen';
 import {DeleteAccountScreen} from '../screens/DeleteAccountScreen';
 import {SignUpComplementScreen} from '../screens/SignUpComplementScreen';
 import {SignUpWelcomeScreen} from '../screens/SignUpWelcomeScreen';
@@ -27,6 +29,8 @@ export type ProfileStackParams = {
   EditProfileScreen: any;
   OrderListScreen: any;
   OrderDetailScreen: any;
+
+  AddressNavigation:any;
   CardsScreen: any;
   CardFormScreen: any;
   AddressListScreen: any;
@@ -68,6 +72,13 @@ export const ProfileNavigation = () => {
           />
           <ProfileStack.Screen name="CardsScreen" component={CardsScreen} />
           <ProfileStack.Screen
+          name='AddressNavigation'
+          component={AddressNavigation}
+          />
+
+         
+
+
             name="CardFormScreen"
             component={CardFormScreen}
           />

@@ -20,6 +20,7 @@ type Props = {
   onChangeText?: any;
   onBlur?: any;
   value?: string;
+  editable?: boolean;
 };
 
 export const CustomTextInput = ({
@@ -31,6 +32,7 @@ export const CustomTextInput = ({
   value,
   onChangeText,
   onBlur,
+  editable = true
 }: Props) => {
   return (
     <View style={styles.container}>
@@ -43,6 +45,7 @@ export const CustomTextInput = ({
         value={value}
         onChangeText={onChangeText}
         onBlur={onBlur}
+        editable={editable}
       />
     </View>
   );

@@ -6,9 +6,15 @@ export interface Address{
     address:string;
     block:string;
     comments:string;
-    slope:string;
+    slope:boolean;
     road:string;
     location:Location;
     active:boolean;
     
 } 
+
+export interface AddressResponse {
+    status?:  string;
+    address?: Address;
+    errors?: any;
+}
