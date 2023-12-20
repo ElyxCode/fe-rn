@@ -31,6 +31,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
     state => state.currentLocation.currentLocation,
   );
   const productsCart = useAppSelector(state => state.productsCart);
+  const token = useAppSelector(state => state.authToken.token);
 
   const getBranchs = async () => {
     setIsLoading(true);
@@ -114,7 +115,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
         />
         <BranchHomeList branchs={branchs} navigation={navigation} />
       </ScrollView>
-      {productsCart.products.length !== 0 && (
+      {token && productsCart.products.length !== 0 && (
         <CartButton
           itemAmount={productsCart.products.reduce(
             (acc, cv) => acc + cv.quantity,
