@@ -123,7 +123,11 @@ export const ShoppingCartScreen = () => {
         <View style={styles.productDescriptionContainer}>
           <Text style={styles.descriptionText}>{productItem.name}</Text>
           <Text style={styles.descriptionText}>
-            ${productItem.price_with_discount}
+            {formatter.format(
+              productItem.price_with_discount
+                ? Number(productItem.price_with_discount)
+                : Number(productItem.price),
+            )}
           </Text>
           <Text style={[styles.descriptionText, {fontSize: 12}]}>
             {productItem.brand.name}
@@ -157,7 +161,7 @@ export const ShoppingCartScreen = () => {
           </Text>
           <Text
             style={[styles.subtotalText, {color: colors.SecondaryTextColor}]}>
-            {formatter.format(Number(productsCart.totalValue.toFixed(2)))}
+            {formatter.format(Number(productsCart.totalValue))}
           </Text>
         </View>
       </ScrollView>
