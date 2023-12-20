@@ -74,14 +74,15 @@ export const productSlice = createSlice({
             calculateTotalAmount(state);
         },
         clearProduct: (state) => {
-            state = initialState;
+            state.products = initialState.products;
+            state.totalValue = initialState.totalValue;
             persistConfig.storage.removeItem('persist:root')
         },
     },
   });
 
   const calculateTotalAmount = (state: Cart) => {
-    state.totalValue = state.products.reduce((acc, currentValue) => acc + ((Number(currentValue.price_with_discount) * currentValue.quantity)), 0,);
+    state.totalValue = state.products.reduce((acc, currentValue) => acc + ((currentValue.price_with_discount ? Number(currentValue.price_with_discount) : Number(currentValue.price)) * currentValue.quantity), 0,);
   }
 
   export const { addProduct, incrementProduct, decrementProduct, setProductAmount, removeProduct, clearProduct } = productSlice.actions;
