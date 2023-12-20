@@ -18,6 +18,7 @@ import {promotionServices} from '../services/promotion';
 import {Branch} from '../model/Branch';
 import {Category} from '../model/Category';
 import {Promotion} from '../model/Promotion';
+import {CartButton} from '../components/CartButton';
 
 export const HomeBranchScreen = ({navigation}: any) => {
   const [branchs, setBranchs] = useState<Branch[]>([]);
@@ -29,6 +30,8 @@ export const HomeBranchScreen = ({navigation}: any) => {
   const currentLocation = useAppSelector(
     state => state.currentLocation.currentLocation,
   );
+  const productsCart = useAppSelector(state => state.productsCart);
+  const token = useAppSelector(state => state.authToken.token);
 
   const getBranchs = async () => {
     setIsLoading(true);
@@ -93,28 +96,33 @@ export const HomeBranchScreen = ({navigation}: any) => {
     getPromotions();
   }, []);
 
+  if (isLoading) return <LoaderScreen />;
+
   return (
     <SafeAreaView style={{flex: 1}}>
-      {isLoading ? (
-        <LoaderScreen />
-      ) : (
-        <>
-          <CustomNavBarHome navigation={navigation} />
-          <LocationBar name={currentLocation.title!} />
-          <ScrollView style={styles.scrollContainer}>
-            <PromoList
-              promotions={promotions}
-              navigation={navigation}
-              isLoading={isLoadingPromo}
-            />
-            <CategoryHomeList
-              categories={categories}
-              categoryId={categoryId}
-              setCategoryId={setCategoryId}
-            />
-            <BranchHomeList branchs={branchs} navigation={navigation} />
-          </ScrollView>
-        </>
+      <CustomNavBarHome navigation={navigation} />
+      <LocationBar name={currentLocation.title!} />
+      <ScrollView style={styles.scrollContainer}>
+        <PromoList
+          promotions={promotions}
+          navigation={navigation}
+          isLoading={isLoadingPromo}
+        />
+        <CategoryHomeList
+          categories={categories}
+          categoryId={categoryId}
+          setCategoryId={setCategoryId}
+        />
+        <BranchHomeList branchs={branchs} navigation={navigation} />
+      </ScrollView>
+      {token && productsCart.products.length !== 0 && (
+        <CartButton
+          itemAmount={productsCart.products.reduce(
+            (acc, cv) => acc + cv.quantity,
+            0,
+          )}
+          totalAmount={productsCart.totalValue}
+        />
       )}
     </SafeAreaView>
   );
@@ -125,6 +133,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContainer: {
-    marginBottom: 10,
+    marginBottom: 5,
   },
 });

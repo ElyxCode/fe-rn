@@ -12,6 +12,13 @@ import {OrderDetailScreen} from '../screens/OrderDetailScreen';
 import { AddressListScreen } from '../screens/AddressListScreen';
 import { AddressNavigation } from './AddressNavigation';
 
+import {CardsScreen} from '../screens/CardsScreen';
+import {CardFormScreen} from '../screens/CardFormScreen';
+import {DeleteAccountScreen} from '../screens/DeleteAccountScreen';
+import {SignUpComplementScreen} from '../screens/SignUpComplementScreen';
+import {SignUpWelcomeScreen} from '../screens/SignUpWelcomeScreen';
+import {BiometricDetailScreen} from '../screens/BiometricDetailScreen';
+import {DeleteAccountModal} from '../components/DeleteAccountModal';
 
 export type ProfileStackParams = {
   LoginScreen: any;
@@ -24,6 +31,14 @@ export type ProfileStackParams = {
   OrderDetailScreen: any;
 
   AddressNavigation:any;
+  CardsScreen: any;
+  CardFormScreen: any;
+  AddressListScreen: any;
+  DeleteAccountScreen: any;
+  SignUpComplementScreen: any;
+  SignUpWelcomeScreen: any;
+  BiometricDetailScreen: any;
+  DeleteAccountModal: any;
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParams>();
@@ -55,6 +70,7 @@ export const ProfileNavigation = () => {
             name="OrderDetailScreen"
             component={OrderDetailScreen}
           />
+          <ProfileStack.Screen name="CardsScreen" component={CardsScreen} />
           <ProfileStack.Screen
           name='AddressNavigation'
           component={AddressNavigation}
@@ -63,6 +79,35 @@ export const ProfileNavigation = () => {
          
 
 
+            name="CardFormScreen"
+            component={CardFormScreen}
+          />
+          <ProfileStack.Screen
+            name="AddressListScreen"
+            component={AddressListScreen}
+          />
+          <ProfileStack.Screen
+            name="DeleteAccountScreen"
+            component={DeleteAccountScreen}
+          />
+          <ProfileStack.Screen
+            name="SignUpComplementScreen"
+            component={SignUpComplementScreen}
+          />
+          <ProfileStack.Screen
+            name="SignUpWelcomeScreen"
+            component={SignUpWelcomeScreen}
+          />
+          <ProfileStack.Screen
+            name="BiometricDetailScreen"
+            component={BiometricDetailScreen}
+          />
+          <ProfileStack.Group screenOptions={{presentation: 'modal'}}>
+            <ProfileStack.Screen
+              name="DeleteAccountModal"
+              component={DeleteAccountModal}
+            />
+          </ProfileStack.Group>
         </>
       ) : (
         <>

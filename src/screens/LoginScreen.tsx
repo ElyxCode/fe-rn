@@ -67,7 +67,7 @@ export const LoginScreen = ({navigation}: any) => {
     if (response.ok) {
       console.log({user: response.data?.user});
       dispatch(setToken({token: response.data?.token ?? ''})); // guardo el token
-      navigation.navigate('UserOptionsMenuScreen');
+      navigation.navigate('HomeBranchScreen');
     } else {
       console.log({error: response.data?.error});
       Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -114,7 +114,7 @@ export const LoginScreen = ({navigation}: any) => {
               social: thirdPartySocial.google,
             }),
           ); // guardo el token
-          navigation.navigate('UserOptionsMenuScreen');
+          navigation.navigate('HomeBranchScreen');
         } else {
           console.log({errorRespon: response.data?.error});
           Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
