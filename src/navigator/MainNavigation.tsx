@@ -3,7 +3,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {WelcomeScreen} from '../screens/WelcomeScreen';
 import {HomeBranchScreen} from '../screens/HomeBranchScreen';
 import {BranchDetailScreen} from '../screens/BranchDetailScreen';
-import {ProfileNavigation} from './ProfileNavigation';
 import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
 import {SearchAddressScreen} from '../screens/SearchAddressScreen';
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -14,12 +13,15 @@ import {CategoryListModal} from '../components/CategoryListModal';
 import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
 import {ProductProps} from '../model/ProductProps';
+import {ProfileNavigation} from './ProfileNavigation';
+import {SignInNavigation} from './SignInNavigation';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
   HomeBranchScreen: undefined;
   BranchDetailScreen: any;
   ProfileNavigation: undefined;
+  SignInNavigation: undefined;
   MapConfirmationScreen: undefined;
   SearchAddressScreen: undefined;
   SearchAddressScreenn: undefined;
@@ -66,6 +68,10 @@ export const MainNavigation = () => {
         <MainStack.Screen
           name="ShoppingCartScreen"
           component={ShoppingCartScreen}
+        />
+        <MainStack.Screen
+          name="SignInNavigation"
+          component={SignInNavigation}
         />
       </MainStack.Group>
       {/* <MainStack.Screen
