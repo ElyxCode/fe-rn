@@ -21,13 +21,25 @@ import {GooglePlaceAutoCompleteResult} from '../model/GooglePlaceAutoCompleteRes
 
 import {first} from 'lodash';
 
-export const MapConfirmationScreen = ({navigation}: any) => {
+export enum MapFlow{
+  HomeFlow,
+  AddressFlow,
+  WelcomeFlow,
+
+}
+
+export interface MapconfirmationProps{
+  mapFlow:MapFlow;
+}
+
+export const MapConfirmationScreen = ({navigation, route}: any  ) => {
   const [isLoading, setLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState<Location>();
   const dispatch = useAppDispatch();
   const currentLocationGlobal = useAppSelector(
     state => state.currentLocation.currentLocation,
   );
+  const {mapFlow} = route.params;
 
   const [region, setRegion] = useState({
     latitude: 13.701404423436982,
@@ -68,27 +80,27 @@ export const MapConfirmationScreen = ({navigation}: any) => {
     setLoading(true);
     setMarkers([
       {
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: location.lat,
+        longitude: location.lng,
         title: location.title!,
         description: location.description!,
       },
     ]);
 
     const region = {
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: location.lat,
+      longitude: location.lng,
       latitudeDelta: 0.015,
       longitudeDelta: 0.0121,
     };
     setRegion(region);
 
-    console.log(location.latitude, location.longitude);
+    console.log(location.lat, location.lng);
 
     if (addressString === undefined || addressString === '') {
       const response = await getReverseGeocoding(
-        location.latitude,
-        location.longitude,
+        location.lat,
+        location.lng,
       );
       if (response.ok) {
         var addressText = first(
@@ -112,15 +124,32 @@ export const MapConfirmationScreen = ({navigation}: any) => {
   };
 
   const confirm = async () => {
-    dispatch(setCurrentLocationGlobal({...currentLocation!}));
-    await navigation.navigate('HomeNavigation');
+
+    switch(mapFlow){
+       case MapFlow.WelcomeFlow:
+        dispatch(setCurrentLocationGlobal({...currentLocation!}));
+        await navigation.navigate('HomeNavigation');
+        break;
+
+        case MapFlow.AddressFlow:
+          await navigation.navigate('AddressFormScreen',{selectedLocation:currentLocation });
+        break;
+
+        case MapFlow.HomeFlow:
+          await navigation.goBack()
+          break;
+      default:
+      console.log('Unknown flow');
+      break;
+    }
+    
   };
 
   useEffect(() => {
     (async () => {
       console.log('location');
       const location = await getCurrentLocation();
-      setLocation({latitude: location.latitude, longitude: location.longitude});
+      setLocation({lat: location.latitude , lng: location.longitude});
     })();
   }, []);
 
@@ -130,10 +159,11 @@ export const MapConfirmationScreen = ({navigation}: any) => {
         <View style={styles.headerContainer}>
           <MapView
             onPoiClick={e =>
-              setLocation(e.nativeEvent.coordinate, e.nativeEvent.name)
+              
+              setLocation( {lat: e.nativeEvent.coordinate.latitude,lng:e.nativeEvent.coordinate.longitude}, e.nativeEvent.name)
             }
             onPress={e => {
-              setLocation(e.nativeEvent.coordinate);
+              setLocation({lat: e.nativeEvent.coordinate.latitude,lng:e.nativeEvent.coordinate.longitude});
             }}
             style={styles.map}
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps

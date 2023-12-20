@@ -47,7 +47,7 @@ const menuOptions: MenuOptionItemProps[] = [
   {
     optionName: 'Direcciones de envío',
     OptionButtonIcon: LocationIcon,
-    screenPath: 'AddressListScreen',
+    screenPath: 'AddressNavigation',
   },
   {optionName: 'Ayuda', OptionButtonIcon: MessageQuestionIcon, screenPath: ''},
   {
