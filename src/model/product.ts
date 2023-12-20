@@ -21,6 +21,7 @@ export interface Product {
     categories:          string[];
     stock:               number;
     branch:              Branch;
+    quantity:            number;
 }
 
 export interface Branch {

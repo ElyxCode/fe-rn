@@ -26,7 +26,7 @@ import {
   productsService,
   nextPageProductsService,
   getProductByCategoryService,
-} from '../services/product';
+} from '../services/product/product';
 
 import {clearCategorySelected} from '../services/category/categorySlice';
 
@@ -42,6 +42,8 @@ import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {colors} from '../styles/colors';
 import {ProductItemRender} from '../components/ProductItemRender';
+import {Item} from '../components/NestedListExtended/NestedListItem';
+import {CartButton} from '../components/CartButton';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
@@ -54,6 +56,9 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     string | null | undefined
   >('');
   const category = useAppSelector(state => state.categorySelected);
+  const productsCart = useAppSelector(state => state.productsCart);
+  const totalValue = useAppSelector(state => state.productsCart.totalValue);
+  const token = useAppSelector(state => state.authToken.token);
   const dispatch = useAppDispatch();
   // hook que devueleve bool si estas o no en esta pantalla
   const isFocused = useIsFocused();
@@ -83,7 +88,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         setIsLoading(false);
       }
     };
-
+    console.log({productsCart: productsCart.products});
+    console.log({totalValue});
     getProductByCategory();
   }, [category]);
 
@@ -255,60 +261,62 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     );
   };
 
+  if (isLoading) return <LoaderScreen />;
+
   return (
     <SafeAreaView style={styles.container}>
-      {isLoading ? (
-        <LoaderScreen />
-      ) : (
-        <>
-          <CustomNavBar />
-          <View style={styles.productListContainer}>
-            <FlatList
-              ListHeaderComponent={<HeaderBranchDetail />}
-              data={products}
-              contentContainerStyle={{
-                paddingBottom: 20,
-              }}
-              renderItem={({item}) => (
-                <ProductItemRender product={item} navigation={navigation} />
-              )}
-              scrollEnabled={!loadMore}
-              ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
-              keyExtractor={item => item.id.toString() + Math.random() * 3}
-              initialNumToRender={20}
-              onEndReachedThreshold={0.001}
-              onEndReached={() => {
-                if (
-                  nextPageProduct !== null &&
-                  nextPageProduct !== '' &&
-                  nextPageProduct !== undefined
-                ) {
-                  loadMoreProducts();
-                } else {
-                  console.log('No hay mas items');
-                }
-              }}
-              ListFooterComponent={
-                loadMore ? (
-                  <>
-                    <View
-                      style={{
-                        height: 25,
-                        width: '100%',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <ActivityIndicator
-                        size={25}
-                        color={colors.PrimaryColor}
-                      />
-                    </View>
-                  </>
-                ) : null
-              }
-            />
-          </View>
-        </>
+      <CustomNavBar />
+      <View style={styles.productListContainer}>
+        <FlatList
+          ListHeaderComponent={<HeaderBranchDetail />}
+          data={products}
+          contentContainerStyle={{
+            paddingBottom: 20,
+          }}
+          renderItem={({item}) => (
+            <ProductItemRender product={item} navigation={navigation} />
+          )}
+          scrollEnabled={!loadMore}
+          ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
+          keyExtractor={item => item.id.toString() + Math.random() * 3}
+          initialNumToRender={20}
+          onEndReachedThreshold={0.001}
+          onEndReached={() => {
+            if (
+              nextPageProduct !== null &&
+              nextPageProduct !== '' &&
+              nextPageProduct !== undefined
+            ) {
+              loadMoreProducts();
+            } else {
+              console.log('No hay mas items');
+            }
+          }}
+          ListFooterComponent={
+            loadMore ? (
+              <>
+                <View
+                  style={{
+                    height: 25,
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <ActivityIndicator size={25} color={colors.PrimaryColor} />
+                </View>
+              </>
+            ) : null
+          }
+        />
+      </View>
+      {token && productsCart.products.length !== 0 && (
+        <CartButton
+          itemAmount={productsCart.products.reduce(
+            (acc, cv) => acc + cv.quantity,
+            0,
+          )}
+          totalAmount={productsCart.totalValue}
+        />
       )}
     </SafeAreaView>
   );
