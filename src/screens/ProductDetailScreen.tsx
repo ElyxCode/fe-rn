@@ -1,6 +1,7 @@
-import {Route} from '@react-navigation/native';
-import React, {useState} from 'react';
+import {Route, useIsFocused} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -8,22 +9,65 @@ import {
   Text,
   View,
 } from 'react-native';
+
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+
 import {CustomNavBar} from '../components/CustomNavBar';
 import {StepperComponent} from '../components/StepperComponent';
 import {SubmitButton} from '../components/SubmitButton';
-import {processDescription} from '../helpers/processDescription';
+
+import {addProduct, clearProduct} from '../services/product/productSlice';
+
 import {Product} from '../model/product';
 import {ProductProps} from '../model/ProductProps';
+
+import {processDescription} from '../helpers/processDescription';
+
+import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
-import {useAppDispatch} from '../hooks/useRedux';
-import {addProduct} from '../services/product/productSlice';
 
 export const ProductDetailScreen = ({route, navigation}: any) => {
   const {product}: {product: Product} = route.params.ProductProps;
-  console.log({product});
   const descriptionItems = processDescription(product.description);
   const [itemCount, setItemCount] = useState(1);
+  const token = useAppSelector(state => state.authToken.token);
+  const productsCart = useAppSelector(state => state.productsCart);
   const dispatch = useAppDispatch();
+  const isFocused = useIsFocused();
+
+  console.log({product});
+  useEffect(() => {
+    if (!token && isFocused) {
+      dispatch(clearProduct());
+    }
+  }, [isFocused]);
+
+  const showDiferentBranchMessage = async (): Promise<boolean> => {
+    const AsyncAlert = async () =>
+      new Promise(resolve => {
+        Alert.alert(
+          Messages.titleMessage,
+          Messages.orderStartedMessage,
+          [
+            {
+              text: 'Si',
+              onPress: () => resolve('si'),
+            },
+            {
+              text: 'No',
+              onPress: () => resolve('no'),
+            },
+          ],
+          {cancelable: false, onDismiss: () => 'no'},
+        );
+      });
+
+    if ((await AsyncAlert()) === 'si') {
+      return true;
+    }
+
+    return false;
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -69,14 +113,38 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
           <View style={styles.submitButton}>
             <SubmitButton
               textButton="Agregar al carrito"
-              onPress={() => {
-                dispatch(
-                  addProduct({
-                    product,
-                    itemAmount: itemCount,
-                  }),
-                );
-                navigation.goBack();
+              onPress={async () => {
+                if (!token) {
+                  navigation.navigate('SignInNavigation');
+                  dispatch(
+                    addProduct({
+                      product,
+                      itemAmount: itemCount,
+                    }),
+                  );
+                } else {
+                  if (
+                    productsCart.products.length !== 0 &&
+                    product.branch.id !==
+                      productsCart.products[productsCart.products.length - 1]
+                        .branch.id
+                  ) {
+                    const choice = await showDiferentBranchMessage();
+                    if (choice) {
+                      dispatch(clearProduct());
+                    } else {
+                      return;
+                    }
+                  }
+
+                  dispatch(
+                    addProduct({
+                      product,
+                      itemAmount: itemCount,
+                    }),
+                  );
+                  navigation.goBack();
+                }
               }}></SubmitButton>
           </View>
         </View>
