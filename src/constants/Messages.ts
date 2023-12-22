@@ -26,4 +26,5 @@ export default {
     freeShippingWithTwoPromotionsMessage: 'Lo sentimos, no podemos aplicar dos promociones al mismo tiempo.\nElimina el código del cupón para mantener el Envío Gratis',
     exceedsAnyProductStockMessage: 'Uno de los item de tu carrito supera el numero productos que puedes llevar',
     askQuantityProductMessage: 'Ingresa una cantidad',
+    errorReviewServicesResponseMessage: 'No fue posible calificar, intente mas tarde',
 }
