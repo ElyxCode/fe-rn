@@ -90,7 +90,11 @@ export const ShoppingCartScreen = () => {
               value={itemAmount.toString()}
               onChangeText={text => {
                 setItemAmount(() => {
-                  return text.replace('-', '').replace(' ', '');
+                  return text
+                    .replace('-', '')
+                    .replace(' ', '')
+                    .replace(',', '')
+                    .replace('.', '');
                 });
               }}
               onEndEditing={({nativeEvent: {text}}) =>
