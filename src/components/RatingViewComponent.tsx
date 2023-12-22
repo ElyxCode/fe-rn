@@ -1,39 +1,105 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  ScrollView,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {Rating} from '@kolking/react-native-rating';
 
 import {SubmitButton} from './SubmitButton';
 
+import {ratingOrderService} from '../services/Order';
+
+import {Order} from '../model/Order';
+
 import OrderDeliveredIcon from '../assets/order_delivered.svg';
 
+import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
 
 type RatingViewComponentProp = {
-  branchName: string;
+  token: string;
+  currentOrder: Order;
+  setShowReview: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const RatingViewComponent = ({branchName}: RatingViewComponentProp) => {
-  const [comment, setComment] = useState('');
+export const RatingViewComponent = ({
+  token,
+  currentOrder,
+  setShowReview,
+}: RatingViewComponentProp) => {
+  const [comment, setComment] = useState<string>('');
   const [rating, setRating] = useState<number>(5);
   const handleChange = useCallback(
     (value: number) => setRating(value),
     [rating],
   );
+
+  const ratingOrder = async () => {
+    const response = await ratingOrderService(
+      token,
+      currentOrder.id.toString(),
+      rating.toString(),
+      comment,
+    );
+    if (response.ok) {
+      setShowReview(true);
+      setComment('');
+      setRating(5);
+    } else {
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.errorReviewServicesResponseMessage,
+            [
+              {
+                text: 'ok',
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      return await AsyncAlert();
+    }
+  };
+
+  const skipRatingOrder = async () => {
+    const response = await ratingOrderService(
+      token,
+      currentOrder.id.toString(),
+      '5',
+      '',
+    );
+
+    setShowReview(true);
+    setComment('');
+    setRating(5);
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <OrderDeliveredIcon height={85} width={85} style={{marginTop: 15}} />
         <Text style={styles.orderStateText}>Orden Entregada</Text>
         <Text style={styles.messageText}>
-          ¿Cómo fue tu experiencia con {branchName}?
+          ¿Cómo fue tu experiencia con {currentOrder.branch.name}?
         </Text>
         <Rating
           variant="stars-outline"
           size={30}
           scale={1}
+          maxRating={5}
           rating={rating}
           spacing={12}
           baseColor={colors.SecondaryColor}
@@ -59,6 +125,7 @@ export const RatingViewComponent = ({branchName}: RatingViewComponentProp) => {
           style={styles.textInputContainer}
           multiline={true}
           numberOfLines={4}
+          keyboardType="default"
         />
 
         <SubmitButton
@@ -67,9 +134,12 @@ export const RatingViewComponent = ({branchName}: RatingViewComponentProp) => {
             backgroundColor: colors.SecondaryColor,
             marginVertical: 25,
           }}
+          onPress={() => ratingOrder()}
         />
-        <Text style={styles.skipText}>Omitir</Text>
-      </View>
+        <Pressable onPress={() => skipRatingOrder()}>
+          <Text style={styles.skipText}>Omitir</Text>
+        </Pressable>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -96,6 +166,8 @@ const styles = StyleSheet.create({
     borderColor: isAndroid
       ? colors.textInputBorderColorAndroid
       : colors.textInputBorderColorIos,
+    padding: 8,
+    color: colors.White,
   },
   skipText: {
     color: colors.SecondaryTextColor,
