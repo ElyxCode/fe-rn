@@ -31,6 +31,19 @@ export const updateUserService = async (token: string, user: UserProfile) : Prom
     return api.post('/me', {...userDataRequest});
 };
 
+//TODO: colocar el tipo de repuesta correcto para este servicio
+export const updateDeviceIdService = async (token: string, name: string, email: string, deviceId: string, device: string) : Promise<ApiResponse<string[]>> => {
+  api.setHeader(
+      'Authorization', "Bearer "+token
+    )
+  return api.post('/me',{
+    name: name,
+    email: email,
+    device_id: deviceId,
+    device: device
+  });
+};
+
 export const deleteUserService = async (token: string) : Promise<ApiResponse<string[]>> => {
   api.setHeader(
       'Authorization', "Bearer "+token
