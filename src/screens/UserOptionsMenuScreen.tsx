@@ -30,6 +30,7 @@ import SettingIcon from '../assets/settings.svg';
 import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
+import {googleSingInConf} from '../constants/googleSignInConf';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -82,6 +83,12 @@ export const UserOptionsMenuScreen = () => {
       setIsLoading(false);
     };
     getUserData();
+  }, []);
+
+  useEffect(() => {
+    if (social === thirdPartySocial.google) {
+      GoogleSignin.configure(googleSingInConf);
+    }
   }, []);
 
   const signOut = () => {
