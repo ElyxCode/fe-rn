@@ -171,16 +171,20 @@ export const ShoppingCartScreen = () => {
       </ScrollView>
       <SubmitButton
         onPress={() => {
-          if (exceedsStock) return;
+          if (exceedsStock || productsCart.products.length === 0) return;
           console.log('continuo');
         }}
         textButton="Pagar"
+        activeOpacity={
+          exceedsStock || productsCart.products.length === 0 ? 1 : 0.9
+        }
         customStyles={{
           marginHorizontal: 20,
           marginBottom: 20,
-          backgroundColor: exceedsStock
-            ? colors.DarkGrayColor
-            : colors.PrimaryColor,
+          backgroundColor:
+            exceedsStock || productsCart.products.length === 0
+              ? colors.disbledButtonColor
+              : colors.PrimaryColor,
         }}
       />
     </SafeAreaView>
