@@ -136,7 +136,14 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
                       return;
                     }
                   }
-
+                  if (itemCount > product.stock) {
+                    Alert.alert(
+                      Messages.titleMessage,
+                      Messages.exceededProductStockMessage + product.stock,
+                      [{text: Messages.okButton}],
+                    );
+                    return;
+                  }
                   dispatch(
                     addProduct({
                       product,

@@ -3,14 +3,17 @@ import {StyleSheet, View, Image, Text} from 'react-native';
 
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import {colors} from '../styles/colors';
-import {CustomNavBar} from '../components/CustomNavBar';
+import {updateDeviceIdService} from '../services/user/user';
+
 import {SubmitButton} from '../components/SubmitButton';
 
+import {getPlatformDevice} from '../utils/utilities';
+import {colors} from '../styles/colors';
+
 export const SignUpWelcomeScreen = ({route, navigation}: any) => {
+  const {token, name, email} = route.params;
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
-      {/* <CustomNavBar /> */}
       <View style={styles.container}>
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
           <Image
@@ -20,7 +23,7 @@ export const SignUpWelcomeScreen = ({route, navigation}: any) => {
           />
         </View>
         <View style={styles.containerText}>
-          <Text style={styles.greetingText}>¡Hola, tito!</Text>
+          <Text style={styles.greetingText}>¡Hola, {name}!</Text>
           <Text style={styles.descriptionText}>
             Ya puede iniciar a explorar y vivir una nueva experiencia de compra
             en ferreteria
@@ -28,8 +31,16 @@ export const SignUpWelcomeScreen = ({route, navigation}: any) => {
         </View>
       </View>
       <SubmitButton
-        onPress={() => {
+        onPress={async () => {
           // navigation.navigate('BiometricDetailScreen');
+          //TODO:push notification
+          await updateDeviceIdService(
+            token,
+            name,
+            email,
+            '',
+            getPlatformDevice(),
+          );
           navigation.navigate('HomeBranchScreen');
         }}
         textButton="Comenzar a navegar"

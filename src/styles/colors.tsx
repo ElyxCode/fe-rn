@@ -16,5 +16,8 @@ export const colors = {
   MenuIconsColor: '#42bfdf',
   PrimaryLightColor: '#3947A3',
   SwitchThumbColor: '#27AE60',
+  textInputBorderColorAndroid: '#7B87D0',
+  textInputBorderColorIos: '#2A3890',
   PopUpBackground: 'rgba(0, 0, 0, 0.8)',
+  disbledButtonColor: '#cccccc',
 };

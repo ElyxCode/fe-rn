@@ -37,6 +37,7 @@ import LockIcon from '../assets/ic_lock.svg';
 import GoogleIcon from '../assets/google_logo.svg';
 import AppleIcon from '../assets/apple_logo.svg';
 
+import {showServiceErrors} from '../helpers/showServiceErrors';
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {googleSingInConf} from '../constants/googleSignInConf';
@@ -89,7 +90,7 @@ export const SignUpScreen = ({navigation}: any) => {
     const response = await signUpServices(name, email, phone, password);
     if (response.ok) {
       if (response.data?.errors) {
-        showServicesError(response.data?.errors);
+        showServiceErrors(response.data?.errors);
         setIsLoading(false);
         return;
       }
@@ -163,32 +164,6 @@ export const SignUpScreen = ({navigation}: any) => {
       }
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const showServicesError = (errors: SignupErrors) => {
-    if (errors.name) {
-      return Alert.alert(Messages.titleMessage, errors.name.toString(), [
-        {text: Messages.okButton},
-      ]);
-    }
-
-    if (errors.email) {
-      return Alert.alert(Messages.titleMessage, errors.email.toString(), [
-        {text: Messages.okButton},
-      ]);
-    }
-
-    if (errors.phone) {
-      return Alert.alert(Messages.titleMessage, errors.phone.toString(), [
-        {text: Messages.okButton},
-      ]);
-    }
-
-    if (errors.password) {
-      return Alert.alert(Messages.titleMessage, errors.password.toString(), [
-        {text: Messages.okButton},
-      ]);
     }
   };
 
