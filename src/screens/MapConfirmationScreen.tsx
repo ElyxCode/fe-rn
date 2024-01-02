@@ -20,6 +20,7 @@ import {setCurrentLocationGlobal} from '../services/google/locationSlice';
 import {GooglePlaceAutoCompleteResult} from '../model/GooglePlaceAutoCompleteResult';
 
 import {first} from 'lodash';
+import { LoaderScreen } from './LoaderScreen';
 
 export enum MapFlow{
   HomeFlow,
@@ -155,8 +156,10 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
 
   return (
     <>
-      <View style={{flex: 1}}>
-        <View style={styles.headerContainer}>
+     
+        {isLoading ? (<LoaderScreen/>):(
+          <View style={{flex: 1}}>
+          <View style={styles.headerContainer}>
           <MapView
             onPoiClick={e =>
               
@@ -218,6 +221,10 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
           />
         </View>
       </View>
+
+         )}
+       
+        
     </>
   );
 };
