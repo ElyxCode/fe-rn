@@ -83,7 +83,11 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
     };
     const response = await updateUserService(token, data);
     if (response.ok) {
-      navigation.navigate('SignUpWelcomeScreen');
+      navigation.navigate('SignUpWelcomeScreen', {
+        token,
+        name: data.name,
+        email: data.email,
+      });
     }
 
     if (response === null) {

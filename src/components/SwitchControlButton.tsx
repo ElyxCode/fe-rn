@@ -11,8 +11,8 @@ import {isAndroid} from '../constants/Platform';
 
 type SwitchControlButtonProps = {
   billingSelected: (value: string) => void;
-  setDuiNumber: (value: string) => void;
-  setFiscalNumber: (value: string) => void;
+  setDuiNumber: React.Dispatch<React.SetStateAction<string>>;
+  setFiscalNumber: React.Dispatch<React.SetStateAction<string>>;
   dui: string;
   fiscal: string;
   personTypeSelected: (value: string) => void;
@@ -138,22 +138,21 @@ export const SwitchControlButton = ({
         />
       </View>
       <View style={styles.inputDocumentNumberContainer}>
-        <CustomTextInput
-          keyboardType={isAndroid ? 'numeric' : 'number-pad'}
-          onChangeText={(value: any) => {
-            selectedBilling === BillingInfo.billing.finalConsumer
-              ? setDuiNumber(value)
-              : setFiscalNumber(value);
-          }}
-          value={
-            selectedBilling === BillingInfo.billing.finalConsumer ? dui : fiscal
-          }
-          InputIcon={
-            selectedBilling === BillingInfo.billing.finalConsumer
-              ? PersonalCardIcon
-              : ReceiptEditIcon
-          }
-        />
+        {selectedBilling === BillingInfo.billing.finalConsumer ? (
+          <CustomTextInput
+            keyboardType={isAndroid ? 'numeric' : 'number-pad'}
+            onChangeText={setDuiNumber}
+            value={dui}
+            InputIcon={PersonalCardIcon}
+          />
+        ) : (
+          <CustomTextInput
+            keyboardType={isAndroid ? 'numeric' : 'number-pad'}
+            onChangeText={setFiscalNumber}
+            value={fiscal}
+            InputIcon={ReceiptEditIcon}
+          />
+        )}
       </View>
       {selectedBilling === BillingInfo.billing.fiscalCredit ? (
         <View style={styles.personTypeContainer}>

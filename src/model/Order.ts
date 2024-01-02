@@ -219,6 +219,15 @@ export interface Review {
     updated_at: string;
 }
 
+export interface ReviewOrderResponse {
+    order_id:   string;
+    comments:   string;
+    value:      string;
+    updated_at: string;
+    created_at: string;
+    id:         number;
+}
+
 export enum State {
     Aceptado = "aceptado",
     Cancelado = "cancelado",

@@ -27,6 +27,7 @@ import {CustomNavBar} from '../components/CustomNavBar';
 
 import {loginServices} from '../services/auth/auth';
 import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
+import {updateDeviceIdService} from '../services/user/user';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -34,6 +35,7 @@ import SMSTrackingIcon from '../assets/sms_tracking.svg';
 import GoogleLogoIcon from '../assets/google_logo.svg';
 import AppleLogoIcon from '../assets/apple_logo.svg';
 
+import {getPlatformDevice} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
 import {isAndroid} from '../constants/Platform';
@@ -67,6 +69,14 @@ export const LoginScreen = ({navigation}: any) => {
     if (response.ok) {
       console.log({user: response.data?.user});
       dispatch(setToken({token: response.data?.token ?? ''})); // guardo el token
+      //TODO: push notifications
+      await updateDeviceIdService(
+        response.data?.token ?? '',
+        response.data?.user.name ?? '',
+        response.data?.user.email ?? '',
+        '',
+        getPlatformDevice(),
+      );
       navigation.navigate('HomeBranchScreen');
     } else {
       console.log({error: response.data?.error});
@@ -139,95 +149,91 @@ export const LoginScreen = ({navigation}: any) => {
     }
   };
 
+  if (isLoading) return <LoaderScreen />;
+
   return (
     <SafeAreaView style={{flex: 1}}>
-      {isLoading ? (
-        <LoaderScreen />
-      ) : (
-        <>
-          <CustomNavBar />
-          <ScrollView style={styles.container}>
-            <UserTickIcon height={'75'} fill={colors.DarkGrayColor} />
-            <Text style={styles.titleText}>Inicia sesión</Text>
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.descriptionText}>
-                y vive una nueva experiencia de{' '}
-              </Text>
-              <Text style={styles.descriptionText}>compra en ferreteria</Text>
-            </View>
-            <View style={styles.inputTextContainer}>
-              <Controller
-                control={control}
-                rules={{required: Messages.requireEmailMessage}}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <CustomTextInput
-                    InputIcon={SMSTrackingIcon}
-                    placeHolder="Correo Electrónico"
-                    fill={colors.PrimaryColor}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                  />
-                )}
-                name="email"
+      <CustomNavBar />
+      <ScrollView style={styles.container}>
+        <UserTickIcon height={'75'} fill={colors.DarkGrayColor} />
+        <Text style={styles.titleText}>Inicia sesión</Text>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.descriptionText}>
+            y vive una nueva experiencia de{' '}
+          </Text>
+          <Text style={styles.descriptionText}>compra en ferreteria</Text>
+        </View>
+        <View style={styles.inputTextContainer}>
+          <Controller
+            control={control}
+            rules={{required: Messages.requireEmailMessage}}
+            render={({field: {onChange, value, onBlur}}) => (
+              <CustomTextInput
+                InputIcon={SMSTrackingIcon}
+                placeHolder="Correo Electrónico"
+                fill={colors.PrimaryColor}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
               />
+            )}
+            name="email"
+          />
 
-              <Controller
-                control={control}
-                rules={{required: Messages.requirePasswordMessage}}
-                render={({field: {onChange, value, onBlur}}) => (
-                  <CustomTextInput
-                    InputIcon={LockIcon}
-                    placeHolder="Contraseña"
-                    isPassword={true}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                  />
-                )}
-                name="password"
+          <Controller
+            control={control}
+            rules={{required: Messages.requirePasswordMessage}}
+            render={({field: {onChange, value, onBlur}}) => (
+              <CustomTextInput
+                InputIcon={LockIcon}
+                placeHolder="Contraseña"
+                isPassword={true}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
               />
-            </View>
-            <Text style={styles.recoverPassword}>Recuperar Contraseña</Text>
-            <View style={styles.buttonsContainer}>
-              <SubmitButton
-                textButton="Iniciar Sesión"
-                onPress={handleSubmit(handleOnSubmit, handleOnError)}
-              />
-              <ThirdPartyButton
-                textButton="Continuar con Google"
-                ButtonIcon={GoogleLogoIcon}
-                onPress={() => googleSignInThirdParty()}
-              />
-              {!isAndroid ? (
-                <ThirdPartyButton
-                  textButton="Continuar con Apple"
-                  ButtonIcon={AppleLogoIcon}
-                  customBackgroundColor={colors.Black}
-                  customTextColor={colors.White}
-                />
-              ) : null}
-            </View>
-            <View
-              style={{
-                alignItems: 'center',
-                marginTop: 15,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                paddingBottom: 15,
-              }}>
-              <Text style={styles.noAccountMessage}>
-                ¿Aún no tienes una cuenta?
-              </Text>
-              <Pressable onPress={() => navigation.navigate('SignUpScreen')}>
-                <Text style={[styles.noAccountMessage, styles.registerMessage]}>
-                  Registrarme
-                </Text>
-              </Pressable>
-            </View>
-          </ScrollView>
-        </>
-      )}
+            )}
+            name="password"
+          />
+        </View>
+        <Text style={styles.recoverPassword}>Recuperar Contraseña</Text>
+        <View style={styles.buttonsContainer}>
+          <SubmitButton
+            textButton="Iniciar Sesión"
+            onPress={handleSubmit(handleOnSubmit, handleOnError)}
+          />
+          <ThirdPartyButton
+            textButton="Continuar con Google"
+            ButtonIcon={GoogleLogoIcon}
+            onPress={() => googleSignInThirdParty()}
+          />
+          {!isAndroid ? (
+            <ThirdPartyButton
+              textButton="Continuar con Apple"
+              ButtonIcon={AppleLogoIcon}
+              customBackgroundColor={colors.Black}
+              customTextColor={colors.White}
+            />
+          ) : null}
+        </View>
+        <View
+          style={{
+            alignItems: 'center',
+            marginTop: 15,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            paddingBottom: 15,
+          }}>
+          <Text style={styles.noAccountMessage}>
+            ¿Aún no tienes una cuenta?
+          </Text>
+          <Pressable onPress={() => navigation.navigate('SignUpScreen')}>
+            <Text style={[styles.noAccountMessage, styles.registerMessage]}>
+              Registrarme
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

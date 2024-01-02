@@ -1,3 +1,4 @@
+import { isAndroid } from "../constants/Platform";
 import { Order } from "../model/Order";
 
 export const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
@@ -139,4 +140,8 @@ export const formatter = Intl.NumberFormat('en-US', {
 export const passwordValidation = (userPassword: string) =>
 {
     return passwordPatternValidation.test(userPassword);
+}
+
+export const getPlatformDevice = (): string => {
+    return isAndroid ? 'android' : 'ios'
 }
