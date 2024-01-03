@@ -41,6 +41,7 @@ import {googleSingInConf} from '../constants/googleSignInConf';
 import {isAndroid} from '../constants/Platform';
 
 import {colors} from '../styles/colors';
+import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -149,6 +150,44 @@ export const LoginScreen = ({navigation}: any) => {
     }
   };
 
+  const appleSignInThirdParty = async () => {
+    setIsLoading(true);
+
+    // performs login request
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      // Note: it appears putting FULL_NAME first is important, see issue #293
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
+
+    // get current authentication state for user
+    // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user,
+    );
+console.log(credentialState)
+    // use credentialState response to ensure the user is authenticated
+    if (credentialState === appleAuth.State.AUTHORIZED && appleAuthRequestResponse.identityToken !== null) {
+      
+      // user is authenticated
+      const response = await ThirdPartyLoginService('apple', appleAuthRequestResponse.identityToken);
+      if (response.ok) {
+        dispatch(
+          setToken({
+            token: response.data?.token ?? '',
+            social: thirdPartySocial.apple,
+          }),
+        ); // guardo el token
+        navigation.navigate('HomeBranchScreen');
+      } else {
+        console.log({errorRespon: response.data?.error});
+        Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
+      }
+    }
+
+    setIsLoading(false);
+  };
+
   if (isLoading) return <LoaderScreen />;
 
   return (
@@ -213,6 +252,7 @@ export const LoginScreen = ({navigation}: any) => {
               ButtonIcon={AppleLogoIcon}
               customBackgroundColor={colors.Black}
               customTextColor={colors.White}
+              onPress={() => appleSignInThirdParty()}
             />
           ) : null}
         </View>
