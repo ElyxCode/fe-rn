@@ -127,6 +127,7 @@ export const EditProfileScreen = () => {
 
   const userModifyRequest = async (userData: UserProfile) => {
     const response = await updateUserService(token, userData);
+    console.log(response.originalError,token)
     if (response.ok) {
       const {user} = clearObjectData(response.data);
       dispatch(setUser({...user}));
