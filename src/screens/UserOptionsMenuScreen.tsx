@@ -92,6 +92,7 @@ export const UserOptionsMenuScreen = () => {
   }, []);
 
   const signOut = () => {
+    setIsLoading(true);
     if (social === thirdPartySocial.google) {
       googleSignOut();
     }
@@ -99,6 +100,7 @@ export const UserOptionsMenuScreen = () => {
     dispatch(clearUserData());
     dispatch(clearToken());
     navigation.navigate('WelcomeScreen' as never);
+    setIsLoading(true);
   };
 
   const googleSignOut = async () => {
