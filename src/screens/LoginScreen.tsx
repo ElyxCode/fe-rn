@@ -165,7 +165,7 @@ export const LoginScreen = ({navigation}: any) => {
     const credentialState = await appleAuth.getCredentialStateForUser(
       appleAuthRequestResponse.user,
     );
-console.log(credentialState)
+    
     // use credentialState response to ensure the user is authenticated
     if (credentialState === appleAuth.State.AUTHORIZED && appleAuthRequestResponse.identityToken !== null) {
       
