@@ -6,7 +6,7 @@ import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
 import {colors} from '../styles/colors';
 
-type CurrentPhoneButtonProp = {
+type CurrentPhoneButtonProps = {
   onPress?: () => void;
   phoneNumber: string;
 };
@@ -14,7 +14,7 @@ type CurrentPhoneButtonProp = {
 export const CurrentPhoneButton = ({
   onPress,
   phoneNumber = '',
-}: CurrentPhoneButtonProp) => {
+}: CurrentPhoneButtonProps) => {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.container}>
