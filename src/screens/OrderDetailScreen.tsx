@@ -55,15 +55,20 @@ export const OrderDetailScreen = ({route}: any) => {
               <View style={styles.addressPaymentBillingContainer}>
                 <CurrentAddressButton
                   isOrderDetail={true}
-                  addressName={currentOrder.address?.name}
-                  address={currentOrder.address?.address}
+                  address={currentOrder.address}
                 />
                 <CurrentPaymentButton
                   isOrderDetail={true}
                   paymentMethod={paymentMethodFormat(currentOrder)}
                   paymentStatus={currentOrder.transaction?.status}
                 />
-                <CurrentBillingButton isOrderDetail={true} order={order} />
+                <CurrentBillingButton
+                  isOrderDetail={true}
+                  billType={currentOrder.transaction?.bill_type ?? ''}
+                  billEntity={currentOrder.transaction?.bill_entity ?? ''}
+                  dui={currentOrder.transaction?.dui ?? ''}
+                  iva={currentOrder.transaction?.iva ?? ''}
+                />
               </View>
               <View style={styles.productListOrder}>
                 <Text style={styles.titleSection}>Productos</Text>
