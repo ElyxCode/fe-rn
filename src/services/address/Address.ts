@@ -1,9 +1,9 @@
 import { ApiResponse } from "apisauce";
-import { api } from "../api/api-config";
+import { api } from "../../api/api-config";
 
 
-import {useAppSelector} from '../hooks/useRedux';
-import { Address, AddressResponse } from "../model/Address";
+import {useAppSelector} from '../../hooks/useRedux';
+import { Address, AddressResponse } from "../../model/Address";
 
 
 
