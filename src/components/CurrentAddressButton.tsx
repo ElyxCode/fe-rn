@@ -1,22 +1,20 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 
+import {Address} from '../model/Address';
+
 import LocationIcon from '../assets/location.svg';
+import ArrowRightIcon from '../assets/arrow_right_blue.svg';
+
 import {colors} from '../styles/colors';
 
 type CurrentAddressButtonProps = {
-  currentAddressName?: string;
-  currentAddress?: string;
-  addressName?: string;
-  address?: string;
+  address: Address | undefined;
   isOrderDetail?: boolean;
   onPress?: () => void;
 };
 
 export const CurrentAddressButton = ({
-  currentAddressName,
-  currentAddress,
-  addressName,
   address,
   isOrderDetail = false,
   onPress,
@@ -28,30 +26,48 @@ export const CurrentAddressButton = ({
           <LocationIcon height={24} width={24} />
         </View>
         <View style={styles.addressDescriptionContainer}>
-          {currentAddressName !== undefined || currentAddress !== undefined ? (
+          {isOrderDetail ? (
+            address?.address !== undefined || address?.name !== undefined ? (
+              <>
+                <Text
+                  style={styles.addressDescriptionText}
+                  numberOfLines={1}
+                  lineBreakMode="tail">
+                  {address.name}
+                </Text>
+                <Text
+                  style={styles.addressDescriptionText}
+                  numberOfLines={1}
+                  lineBreakMode="tail">
+                  {address.address}
+                </Text>
+              </>
+            ) : (
+              <Text
+                style={styles.addressDescriptionText}
+                numberOfLines={1}
+                lineBreakMode="tail">
+                Agregar Dirección
+              </Text>
+            )
+          ) : (
             <>
               <Text
                 style={styles.addressDescriptionText}
                 numberOfLines={1}
                 lineBreakMode="tail">
-                {isOrderDetail ? addressName : currentAddressName}
+                Dirección
               </Text>
               <Text
                 style={styles.addressDescriptionText}
                 numberOfLines={1}
                 lineBreakMode="tail">
-                {isOrderDetail ? address : currentAddress}
+                {address?.address}
               </Text>
             </>
-          ) : (
-            <Text
-              style={styles.addressDescriptionText}
-              numberOfLines={1}
-              lineBreakMode="tail">
-              Agregar Dirección
-            </Text>
           )}
         </View>
+        {!isOrderDetail ? <ArrowRightIcon height={25} width={25} /> : null}
       </View>
     </Pressable>
   );
@@ -70,6 +86,7 @@ const styles = StyleSheet.create({
     paddingRight: 23,
   },
   addressDescriptionContainer: {
+    flex: 1,
     rowGap: 8,
   },
   addressDescriptionText: {
