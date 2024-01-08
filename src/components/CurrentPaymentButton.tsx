@@ -2,6 +2,7 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 
 import PaymentIcon from '../assets/cards_primary.svg';
+import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
 import {colors} from '../styles/colors';
 
@@ -29,7 +30,22 @@ export const CurrentPaymentButton = ({
           <PaymentIcon height={24} width={24} />
         </View>
         <View style={styles.addressDescriptionContainer}>
-          {!isOrderDetail ? (
+          {isOrderDetail ? (
+            <>
+              <Text
+                style={styles.addressDescriptionText}
+                numberOfLines={1}
+                lineBreakMode="tail">
+                {'Método de pago'}
+              </Text>
+              <Text
+                style={styles.addressDescriptionText}
+                numberOfLines={1}
+                lineBreakMode="tail">
+                {paymentMethod} - {paymentStatus}
+              </Text>
+            </>
+          ) : paymentMethod === 'card' ? (
             <>
               <Text
                 style={styles.addressDescriptionText}
@@ -56,11 +72,12 @@ export const CurrentPaymentButton = ({
                 style={styles.addressDescriptionText}
                 numberOfLines={1}
                 lineBreakMode="tail">
-                {paymentMethod} - {paymentStatus}
+                **** {paymentName}
               </Text>
             </>
           )}
         </View>
+        {!isOrderDetail ? <ArrowRightIcon height={25} width={25} /> : null}
       </View>
     </Pressable>
   );
@@ -79,6 +96,7 @@ const styles = StyleSheet.create({
     paddingRight: 23,
   },
   addressDescriptionContainer: {
+    flex: 1,
     rowGap: 8,
   },
   addressDescriptionText: {
