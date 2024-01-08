@@ -12,6 +12,7 @@ import {BranchInfoModal} from '../components/BranchInfoModal';
 import {CategoryListModal} from '../components/CategoryListModal';
 import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
+import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
 import {ProductProps} from '../model/ProductProps';
 import {ProfileNavigation} from './ProfileNavigation';
 import {SignInNavigation} from './SignInNavigation';
@@ -30,6 +31,7 @@ export type RootStackParams = {
   CategoryListModal: any;
   ProductDetailScreen: ProductProps;
   ShoppingCartScreen: any;
+  ConfirmOrderScreen: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -68,6 +70,10 @@ export const MainNavigation = () => {
         <MainStack.Screen
           name="ShoppingCartScreen"
           component={ShoppingCartScreen}
+        />
+        <MainStack.Screen
+          name="ConfirmOrderScreen"
+          component={ConfirmOrderScreen}
         />
         <MainStack.Screen
           name="SignInNavigation"
