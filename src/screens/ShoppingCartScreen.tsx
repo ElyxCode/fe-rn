@@ -37,7 +37,7 @@ type ProductItemRenderProps = {
   productItem: Product;
 };
 
-export const ShoppingCartScreen = () => {
+export const ShoppingCartScreen = ({navigation}: any) => {
   const productsCart = useAppSelector(state => state.productsCart);
   const [branchName, setBranchName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -172,7 +172,7 @@ export const ShoppingCartScreen = () => {
       <SubmitButton
         onPress={() => {
           if (exceedsStock || productsCart.products.length === 0) return;
-          console.log('continuo');
+          navigation.navigate('ConfirmOrderScreen');
         }}
         textButton="Pagar"
         activeOpacity={
