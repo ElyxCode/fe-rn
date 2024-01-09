@@ -92,6 +92,7 @@ export const OrderDetailScreen = ({route}: any) => {
               </View>
               <View style={styles.totalDetailOrderContainer}>
                 <CurrentTotalOrder
+                  isOrderDetail={true}
                   subtotal={currentOrder.subtotal}
                   deliveryTotal={currentOrder.delivery}
                   discount={currentOrder.discount}
