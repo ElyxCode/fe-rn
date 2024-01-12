@@ -1,5 +1,10 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
+
+import {useNavigation} from '@react-navigation/native';
+
+import InfoCircleIcon from '../assets/info_circle.svg';
+
 import {colors} from '../styles/colors';
 
 type CurrentTotalOrderProps = {
@@ -21,6 +26,8 @@ export const CurrentTotalOrder = ({
   specialDiscount,
   subtotalWithDiscount,
 }: CurrentTotalOrderProps) => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.totalTextContainer}>
@@ -50,7 +57,24 @@ export const CurrentTotalOrder = ({
       <View style={styles.totalTextContainer}>
         {specialDiscount ? (
           <>
-            <Text style={styles.totalLabelText}>Costo de envío</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                columnGap: 5,
+              }}>
+              <Text style={styles.totalLabelText}>Costo de envío</Text>
+              {isOrderDetail ? null : (
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('DeliveryInfoModal' as never)
+                  }>
+                  <InfoCircleIcon width={17} height={17} />
+                </Pressable>
+              )}
+            </View>
+
             <View style={styles.totalWithDiscountContainer}>
               <Text
                 style={[
@@ -64,7 +88,24 @@ export const CurrentTotalOrder = ({
           </>
         ) : (
           <>
-            <Text style={styles.totalLabelText}>Costo de envío</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                columnGap: 5,
+              }}>
+              <Text style={styles.totalLabelText}>Costo de envío</Text>
+              {isOrderDetail ? null : (
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('DeliveryInfoModal' as never)
+                  }>
+                  <InfoCircleIcon width={17} height={17} />
+                </Pressable>
+              )}
+            </View>
+
             <Text style={styles.totalText}>${deliveryTotal}</Text>
           </>
         )}
@@ -100,6 +141,7 @@ const styles = StyleSheet.create({
   },
   totalTextContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   totalLabelText: {
