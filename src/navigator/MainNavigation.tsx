@@ -13,6 +13,8 @@ import {CategoryListModal} from '../components/CategoryListModal';
 import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
 import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
+import {AddressListScreen} from '../screens/AddressListScreen';
+import {CardsScreen} from '../screens/CardsScreen';
 import {DeliveryInfoModal} from '../components/DeliveryInfoModal';
 import {ProductProps} from '../model/ProductProps';
 import {ProfileNavigation} from './ProfileNavigation';
@@ -34,6 +36,8 @@ export type RootStackParams = {
   ShoppingCartScreen: any;
   ConfirmOrderScreen: any;
   DeliveryInfoModal: any;
+  AddressListScreen: any;
+  CardsScreen: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -55,6 +59,11 @@ export const MainNavigation = () => {
       />
 
       <MainStack.Screen name="HomeNavigation" component={HomeNavigation} />
+      <MainStack.Screen name="CardsScreen" component={CardsScreen} />
+      <MainStack.Screen
+        name="AddressListScreen"
+        component={AddressListScreen}
+      />
       <MainStack.Group screenOptions={{presentation: 'modal'}}>
         <MainStack.Screen
           name="BranchDetailScreen"
