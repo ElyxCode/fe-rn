@@ -7,41 +7,23 @@ import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
 import {colors} from '../styles/colors';
 import {BillEntity, BillType, Order, Transaction} from '../model/Order';
+import {BillInfo} from '../model/BillInfo';
 
 type CurrentBillingButtonProps = {
   isOrderDetail?: boolean;
-  billType?: string;
-  billEntity?: string;
-  dui?: string;
-  iva?: string;
+  billInfo: BillInfo;
   onPress?: () => void;
-};
-
-type BillingFormatRenderProps = {
-  //transaction?: Transaction | null;
-  bill_type: string;
-  bill_entity: string;
-  dui: string;
-  iva: string;
 };
 
 export const CurrentBillingButton = ({
   isOrderDetail = false,
-  billType,
-  billEntity,
-  iva,
-  dui,
+  billInfo,
   onPress,
 }: CurrentBillingButtonProps) => {
-  const BillingFormatRender = ({
-    bill_type,
-    bill_entity,
-    dui,
-    iva,
-  }: BillingFormatRenderProps) => {
+  const BillingFormatRender = ({billType, billEntity, dui, iva}: BillInfo) => {
     return (
       <>
-        {bill_type === 'final' ? (
+        {billType === 'final' ? (
           <>
             <Text
               style={styles.billingText}
@@ -77,9 +59,9 @@ export const CurrentBillingButton = ({
               numberOfLines={1}
               lineBreakMode="tail">
               Tipo de Persona:{' '}
-              {bill_entity === 'natural' ? 'Natural' : 'Jurídica'}
+              {billEntity === 'natural' ? 'Natural' : 'Jurídica'}
             </Text>
-            {bill_entity === 'natural' ? (
+            {billEntity === 'natural' ? (
               <Text
                 style={styles.billingText}
                 numberOfLines={1}
@@ -111,14 +93,16 @@ export const CurrentBillingButton = ({
               style={styles.billingText}
               numberOfLines={1}
               lineBreakMode="tail">
-              {billType === 'final' ? 'Consumidor final' : 'Crédito fiscal'}
+              {billInfo.billType === 'final'
+                ? 'Consumidor final'
+                : 'Crédito fiscal'}
             </Text>
           ) : (
             <BillingFormatRender
-              bill_type={billType ?? ''}
-              bill_entity={billEntity ?? ''}
-              dui={dui ?? ''}
-              iva={iva ?? ''}
+              billType={billInfo.billType ?? ''}
+              billEntity={billInfo.billEntity ?? ''}
+              dui={billInfo.dui ?? ''}
+              iva={billInfo.iva ?? ''}
             />
           )}
         </View>
