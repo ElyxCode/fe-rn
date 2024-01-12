@@ -30,3 +30,14 @@ export const deleteCardService = async (token: string, cardId: string) : Promise
   return api.delete(`/cards/${cardId}`);
 };
 
+export const validationCardService = async (token: string, cardId: string,cardMonth: string, cardYear: string) : Promise<ApiResponse<string|any>> => {
+  api.setHeader(
+      'Authorization', "Bearer "+token
+    )
+  return api.post('/cards-verify',{
+    id: cardId,
+    month: cardMonth,
+    year: cardYear
+  });
+};
+
