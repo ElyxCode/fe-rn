@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -12,11 +12,10 @@ import {
 import CloseCircleIcon from '../assets/close_circle.svg';
 
 import {colors} from '../styles/colors';
-import {isAndroid} from '../constants/Platform';
 
 export type CreditCardValidationErrorModalProps = {
   visible: boolean;
-  setIsVisible: any;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const CreditCardValidationErrorModal = ({
