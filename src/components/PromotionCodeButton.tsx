@@ -20,7 +20,9 @@ export const PromotionCodeButton = ({
           <CardsIcon height={24} width={24} />
         </View>
         <View style={styles.promoCodeDescription}>
-          <Text style={styles.promoCodeDescriptionText}>{promotionCode}</Text>
+          <Text style={styles.promoCodeDescriptionText}>
+            {promotionCode.length === 0 && 'Código promocional'}
+          </Text>
         </View>
         <ArrowRightIcon height={25} width={25} />
       </View>
