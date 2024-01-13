@@ -1,6 +1,11 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import {useAppSelector} from '../hooks/useRedux';
 
+import {AddressNavigation} from './AddressNavigation';
+import {CardNavigation} from './CardNavigation';
+
+import {DeleteAccountModal} from '../components/DeleteAccountModal';
+
 import {LoginScreen} from '../screens/LoginScreen';
 import {SignUpScreen} from '../screens/SignUpScreen';
 import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
@@ -10,15 +15,10 @@ import {EditProfileScreen} from '../screens/EditProfileScreen';
 import {OrderListScreen} from '../screens/OrderListScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
 import {AddressListScreen} from '../screens/AddressListScreen';
-import {AddressNavigation} from './AddressNavigation';
-
-import {CardsScreen} from '../screens/CardsScreen';
-import {CardFormScreen} from '../screens/CardFormScreen';
 import {DeleteAccountScreen} from '../screens/DeleteAccountScreen';
 import {SignUpComplementScreen} from '../screens/SignUpComplementScreen';
 import {SignUpWelcomeScreen} from '../screens/SignUpWelcomeScreen';
 import {BiometricDetailScreen} from '../screens/BiometricDetailScreen';
-import {DeleteAccountModal} from '../components/DeleteAccountModal';
 
 export type ProfileStackParams = {
   LoginScreen: any;
@@ -29,10 +29,8 @@ export type ProfileStackParams = {
   EditProfileScreen: any;
   OrderListScreen: any;
   OrderDetailScreen: any;
-
+  CardNavigation: any;
   AddressNavigation: any;
-  CardsScreen: any;
-  CardFormScreen: any;
   AddressListScreen: any;
   DeleteAccountScreen: any;
   SignUpComplementScreen: any;
@@ -70,15 +68,13 @@ export const ProfileNavigation = () => {
             name="OrderDetailScreen"
             component={OrderDetailScreen}
           />
-          <ProfileStack.Screen name="CardsScreen" component={CardsScreen} />
+          <ProfileStack.Screen
+            name="CardNavigation"
+            component={CardNavigation}
+          />
           <ProfileStack.Screen
             name="AddressNavigation"
             component={AddressNavigation}
-          />
-
-          <ProfileStack.Screen
-            name="CardFormScreen"
-            component={CardFormScreen}
           />
           <ProfileStack.Screen
             name="AddressListScreen"
