@@ -172,7 +172,7 @@ export const ShoppingCartScreen = ({navigation}: any) => {
       <SubmitButton
         onPress={() => {
           if (exceedsStock || productsCart.products.length === 0) return;
-          navigation.navigate('ConfirmOrderScreen');
+          navigation.navigate('ConfirmOrderNavigation');
         }}
         textButton="Pagar"
         activeOpacity={
