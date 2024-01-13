@@ -10,14 +10,12 @@ import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
 
 export type ConfirmOrderParams = {
-  HomeBranchScreen: undefined;
   HomeNavigation: undefined;
+  AddressNavigation: any;
+  CardNavigation: any;
   ConfirmOrderScreen: any;
   DeliveryInfoModal: any;
   OrderDetailScreen: any;
-  CardNavigation: any;
-  CardsScreen: any;
-  AddressNavigation: any;
 };
 
 const ConfirmOrderStack = createStackNavigator<ConfirmOrderParams>();
@@ -28,10 +26,6 @@ export const ConfirmOrderNavigation = () => {
       <ConfirmOrderStack.Screen
         name="ConfirmOrderScreen"
         component={ConfirmOrderScreen}
-      />
-      <ConfirmOrderStack.Screen
-        name="DeliveryInfoModal"
-        component={DeliveryInfoModal}
       />
       <ConfirmOrderStack.Screen
         name="CardNavigation"
@@ -45,11 +39,12 @@ export const ConfirmOrderNavigation = () => {
         name="OrderDetailScreen"
         component={OrderDetailScreen}
       />
-
-      <ConfirmOrderStack.Screen
-        name="HomeNavigation"
-        component={HomeNavigation}
-      />
+      <ConfirmOrderStack.Group screenOptions={{presentation: 'modal'}}>
+        <ConfirmOrderStack.Screen
+          name="DeliveryInfoModal"
+          component={DeliveryInfoModal}
+        />
+      </ConfirmOrderStack.Group>
     </ConfirmOrderStack.Navigator>
   );
 };
