@@ -33,7 +33,7 @@ export const CurrentTotalOrder = ({
       <View style={styles.totalTextContainer}>
         {subtotalWithDiscount !== null &&
         subtotalWithDiscount !== undefined &&
-        Number(subtotal) > Number(subtotalWithDiscount) ? (
+        Number(subtotal) >= Number(subtotalWithDiscount) ? (
           <>
             <Text style={styles.totalLabelText}>Subtotal</Text>
             <View style={styles.totalWithDiscountContainer}>
