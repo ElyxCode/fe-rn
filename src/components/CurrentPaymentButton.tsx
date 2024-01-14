@@ -1,6 +1,8 @@
 import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 
+import {alterPaymentMethod} from '../screens/CardsScreen';
+
 import PaymentIcon from '../assets/cards_primary.svg';
 import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
@@ -72,7 +74,8 @@ export const CurrentPaymentButton = ({
                 style={styles.addressDescriptionText}
                 numberOfLines={1}
                 lineBreakMode="tail">
-                {paymentName === 'Transferencia' || paymentName === 'Efectivo'
+                {paymentName === alterPaymentMethod.transferencia ||
+                paymentName === alterPaymentMethod.efectivo
                   ? paymentName
                   : '**** ' + paymentName}
               </Text>

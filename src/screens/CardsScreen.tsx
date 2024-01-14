@@ -48,11 +48,21 @@ type CardItemProps = {
 type AlternativePaymentProps = {
   Icon: React.FC<SvgProps>;
   name: string;
+  value: string;
+};
+
+export const alterPaymentMethod = {
+  transferencia: 'transferencia',
+  efectivo: 'efectivo',
 };
 
 const optionsPayment = [
-  {name: 'Transferencia', icon: ConvertCardIcon},
-  {name: 'Efectivo', icon: MoneyIcon},
+  {
+    name: 'Transferencia',
+    icon: ConvertCardIcon,
+    value: alterPaymentMethod.transferencia,
+  },
+  {name: 'Efectivo', icon: MoneyIcon, value: alterPaymentMethod.efectivo},
 ];
 
 export const CardsScreen = ({route, navigation}: any) => {
@@ -102,8 +112,8 @@ export const CardsScreen = ({route, navigation}: any) => {
   const setActiveCard = async (card: Card) => {
     setIsLoading(true);
     if (
-      card.last_numbers === 'Transferencia' ||
-      card.last_numbers === 'Efectivo'
+      card.last_numbers === alterPaymentMethod.transferencia ||
+      card.last_numbers === alterPaymentMethod.efectivo
     ) {
       dispatch(setCard(card));
       navigation.goBack();
@@ -207,14 +217,14 @@ export const CardsScreen = ({route, navigation}: any) => {
     );
   };
 
-  const AlternativePayment = ({Icon, name}: AlternativePaymentProps) => {
+  const AlternativePayment = ({Icon, name, value}: AlternativePaymentProps) => {
     return (
       <Pressable
         onPress={() => {
           let updateCard: Card = {
             id: -1,
             name,
-            last_numbers: name,
+            last_numbers: value,
             verified: false,
             active: true,
           };
@@ -264,6 +274,7 @@ export const CardsScreen = ({route, navigation}: any) => {
                   key={item.name}
                   Icon={item.icon}
                   name={item.name}
+                  value={item.value}
                 />
               ))
             : null}
