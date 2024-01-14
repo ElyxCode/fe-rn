@@ -4,20 +4,25 @@ import {FlatList, SafeAreaView, Text, View} from 'react-native';
 import {AddButton} from '../components/AddButton';
 import {AddressListCell} from '../components/AddressListCell';
 import {CustomNavBar} from '../components/CustomNavBar';
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 import {Address} from '../model/Address';
-import {DeleteAddress, ReadAll, UpdateAddress} from '../services/Address';
-import { updateUserService } from '../services/user/user';
+import {
+  DeleteAddress,
+  ReadAll,
+  UpdateAddress,
+} from '../services/address/Address';
+import {updateUserService} from '../services/user/user';
 import {LoaderScreen} from './LoaderScreen';
 import {MapFlow} from './MapConfirmationScreen';
+import {setAddress} from '../services/address/addressSlice';
 
 export const AddressListScreen = ({navigation, route}: any) => {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {token, social} = useAppSelector(state => state.authToken);
-  
-  const {addressWassAdded = false, newAddress = {}} =  route.params ?? {};
+  const dispatch = useAppDispatch();
 
+  const {addressWassAdded = false, newAddress = {}} = route.params ?? {};
 
   const getAddresses = async () => {
     setIsLoading(true);
@@ -25,61 +30,59 @@ export const AddressListScreen = ({navigation, route}: any) => {
     if (response.ok) {
       response.data?.sort((a, b) => a.id - b.id);
       setAddresses(response.data as Address[]);
+      //TEMP
+      dispatch(
+        setAddress(response.data?.find(x => x.active) ?? ({} as Address)),
+      );
     } else {
       console.log({error: response}, 'address error');
     }
+
     setIsLoading(false);
   };
 
- 
-  
-
   useFocusEffect(
     React.useCallback(() => {
-      if(addressWassAdded){
-        
-        setAddresses((prevAddresses) => [...prevAddresses, newAddress])
-        if(addresses?.length == 1){
+      if (addressWassAdded) {
+        setAddresses(prevAddresses => [...prevAddresses, newAddress]);
+        if (addresses?.length == 1) {
           setActiveAddress(addressWassAdded);
         }
-       
-      }else{
+      } else {
         getAddresses();
       }
     }, []),
   );
 
   const setActiveAddress = async (currentAddress: Address) => {
-    if(currentAddress.active && !addressWassAdded) return
-    
-    
+    if (currentAddress.active && !addressWassAdded) return;
+
     if (addresses.some(x => x.active)) {
       let oldAddress = addresses.find(x => x.active);
       if (oldAddress) {
         oldAddress.active = false;
 
-       const response = await UpdateAddress(token,  oldAddress);
-       if(response.ok ){
-        const nuevasDirecciones = addresses.map(x =>
-          x.id === oldAddress?.id ? { ...x, active: false } : x
-        );
-        setAddresses(nuevasDirecciones);
-       }
+        const response = await UpdateAddress(token, oldAddress);
+        if (response.ok) {
+          const nuevasDirecciones = addresses.map(x =>
+            x.id === oldAddress?.id ? {...x, active: false} : x,
+          );
+          setAddresses(nuevasDirecciones);
+        }
       }
     }
 
     currentAddress.active = true;
-    const respo = await UpdateAddress(token,  currentAddress);
+    const respo = await UpdateAddress(token, currentAddress);
     if (respo.ok) {
-      console.log(respo.data?.errors)
+      console.log(respo.data?.errors);
       const nuevasDirecciones = addresses.map(y =>
-        y.id === currentAddress?.id ? { ...y, active: true } : y
+        y.id === currentAddress?.id ? {...y, active: true} : y,
       );
       setAddresses(nuevasDirecciones);
     }
-    
-   
-   
+
+    dispatch(setAddress(addresses.find(x => x.active) ?? ({} as Address)));
   };
 
   const GoToCreateAddress = () => {
