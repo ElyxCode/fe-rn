@@ -20,10 +20,15 @@ export const CurrentBillingButton = ({
   billInfo,
   onPress,
 }: CurrentBillingButtonProps) => {
-  const BillingFormatRender = ({billType, billEntity, dui, iva}: BillInfo) => {
+  const BillingFormatRender = ({
+    bill_type,
+    bill_entity,
+    dui,
+    iva,
+  }: BillInfo) => {
     return (
       <>
-        {billType === 'final' ? (
+        {bill_type === 'final' ? (
           <>
             <Text
               style={styles.billingText}
@@ -59,9 +64,9 @@ export const CurrentBillingButton = ({
               numberOfLines={1}
               lineBreakMode="tail">
               Tipo de Persona:{' '}
-              {billEntity === 'natural' ? 'Natural' : 'Jurídica'}
+              {bill_entity === 'natural' ? 'Natural' : 'Jurídica'}
             </Text>
-            {billEntity === 'natural' ? (
+            {bill_entity === 'natural' ? (
               <Text
                 style={styles.billingText}
                 numberOfLines={1}
@@ -93,14 +98,14 @@ export const CurrentBillingButton = ({
               style={styles.billingText}
               numberOfLines={1}
               lineBreakMode="tail">
-              {billInfo.billType === 'final'
+              {billInfo.bill_type === 'final'
                 ? 'Consumidor final'
                 : 'Crédito fiscal'}
             </Text>
           ) : (
             <BillingFormatRender
-              billType={billInfo.billType ?? ''}
-              billEntity={billInfo.billEntity ?? ''}
+              bill_type={billInfo.bill_type ?? ''}
+              bill_entity={billInfo.bill_entity ?? ''}
               dui={billInfo.dui ?? ''}
               iva={billInfo.iva ?? ''}
             />
