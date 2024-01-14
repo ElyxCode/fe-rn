@@ -9,17 +9,35 @@ import {colors} from '../styles/colors';
 type Props = {
   titleText?: string;
   primaryColorDefault?: boolean;
+  navigationPath?: string;
+  resetRootNavigation?: boolean;
 };
 
 export const CustomNavBar = ({
   titleText,
   primaryColorDefault = true,
+  navigationPath,
+  resetRootNavigation = false,
 }: Props) => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => navigation.goBack()}>
+      <Pressable
+        onPress={() => {
+          if (navigationPath) {
+            if (resetRootNavigation) {
+              navigation.reset({
+                index: 0,
+                routes: [{name: navigationPath}],
+              } as never);
+              return;
+            }
+            navigation.navigate(navigationPath as never);
+          } else {
+            navigation.goBack();
+          }
+        }}>
         {primaryColorDefault ? (
           <BackArrowIcon height={25} width={25} />
         ) : (

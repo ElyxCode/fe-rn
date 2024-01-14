@@ -1,24 +1,28 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {WelcomeScreen} from '../screens/WelcomeScreen';
-import {HomeBranchScreen} from '../screens/HomeBranchScreen';
-import {BranchDetailScreen} from '../screens/BranchDetailScreen';
-import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
-import {SearchAddressScreen} from '../screens/SearchAddressScreen';
-import {CustomNavBar} from '../components/CustomNavBar';
 import {useAppSelector} from '../hooks/useRedux';
-import {HomeNavigation} from './HomeNavigation';
-import {BranchInfoModal} from '../components/BranchInfoModal';
-import {CategoryListModal} from '../components/CategoryListModal';
-import {ProductDetailScreen} from '../screens/ProductDetailScreen';
-import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
+
 import {ProductProps} from '../model/ProductProps';
+
+import {HomeNavigation} from './HomeNavigation';
+import {ConfirmOrderNavigation} from '../navigator/ConfirmOrderNavigation';
 import {ProfileNavigation} from './ProfileNavigation';
 import {SignInNavigation} from './SignInNavigation';
 
+import {CustomNavBar} from '../components/CustomNavBar';
+import {BranchInfoModal} from '../components/BranchInfoModal';
+import {CategoryListModal} from '../components/CategoryListModal';
+
+import {WelcomeScreen} from '../screens/WelcomeScreen';
+import {BranchDetailScreen} from '../screens/BranchDetailScreen';
+import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
+import {SearchAddressScreen} from '../screens/SearchAddressScreen';
+import {ProductDetailScreen} from '../screens/ProductDetailScreen';
+import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
+import {AddressListScreen} from '../screens/AddressListScreen';
+
 export type RootStackParams = {
   WelcomeScreen: undefined;
-  HomeBranchScreen: undefined;
   BranchDetailScreen: any;
   ProfileNavigation: undefined;
   SignInNavigation: undefined;
@@ -30,6 +34,9 @@ export type RootStackParams = {
   CategoryListModal: any;
   ProductDetailScreen: ProductProps;
   ShoppingCartScreen: any;
+  ConfirmOrderScreen: any;
+  AddressListScreen: any;
+  ConfirmOrderNavigation: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
@@ -51,6 +58,10 @@ export const MainNavigation = () => {
       />
 
       <MainStack.Screen name="HomeNavigation" component={HomeNavigation} />
+      <MainStack.Screen
+        name="AddressListScreen"
+        component={AddressListScreen}
+      />
       <MainStack.Group screenOptions={{presentation: 'modal'}}>
         <MainStack.Screen
           name="BranchDetailScreen"
@@ -70,14 +81,14 @@ export const MainNavigation = () => {
           component={ShoppingCartScreen}
         />
         <MainStack.Screen
+          name="ConfirmOrderNavigation"
+          component={ConfirmOrderNavigation}
+        />
+        <MainStack.Screen
           name="SignInNavigation"
           component={SignInNavigation}
         />
       </MainStack.Group>
-      {/* <MainStack.Screen
-        name="BranchDetailScreen"
-        component={BranchDetailScreen}
-      /> */}
       <MainStack.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}

@@ -13,7 +13,7 @@ import {Rating} from '@kolking/react-native-rating';
 
 import {SubmitButton} from './SubmitButton';
 
-import {ratingOrderService} from '../services/Order';
+import {ratingOrderService} from '../services/order';
 
 import {Order} from '../model/Order';
 

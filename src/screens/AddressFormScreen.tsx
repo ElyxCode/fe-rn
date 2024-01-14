@@ -17,13 +17,14 @@ import {SwitchSlopeComponent} from '../components/SwitchSlopComponent';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import {SubmitButton} from '../components/SubmitButton';
 import {useForm, Controller} from 'react-hook-form';
-import {CreateAddress} from '../services/Address';
+
 import {useAppSelector} from '../hooks/useRedux';
 import {Address} from '../model/Address';
 import {Navigation} from '../navigator/Navigation';
-import { showServiceErrors } from '../helpers/showServiceErrors';
-import { MapFlow } from './MapConfirmationScreen';
-import { Location } from '../model/Location';
+import {showServiceErrors} from '../helpers/showServiceErrors';
+import {MapFlow} from './MapConfirmationScreen';
+import {Location} from '../model/Location';
+import {CreateAddress} from '../services/address/Address';
 
 type RoadData = {
   id: string;
@@ -65,8 +66,8 @@ const Item = ({item, onPress}: RoadProps) => {
         textStyle={{fontFamily: 'Poppins-Regular', textDecorationLine: 'none'}}
         onPress={(isChecked: boolean) => {
           onPress(isChecked);
-         setCheckboxState(isChecked);
-         console.log(isChecked)
+          setCheckboxState(isChecked);
+          console.log(isChecked);
         }}></BouncyCheckbox>
     </View>
   );
@@ -83,7 +84,7 @@ export const AddressFormScreen = ({route, navigation}: any) => {
   const [roads, setRoads] = useState(Roads);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  console.log(selectedLocation,'current location form')
+  console.log(selectedLocation, 'current location form');
 
   const {
     control,
@@ -138,11 +139,9 @@ export const AddressFormScreen = ({route, navigation}: any) => {
       active: false,
     };
 
-   
     const response = await CreateAddress(token, addressrequest);
 
     if (response.ok) {
-
       if (response.data?.errors) {
         showServiceErrors(response.data?.errors);
         setIsLoading(false);
@@ -151,23 +150,22 @@ export const AddressFormScreen = ({route, navigation}: any) => {
       console.log(response.data);
       await navigation.navigate('AddressListScreen', {
         addressWassAdded: true,
-        newAddress:response.data?.address
-      })
+        newAddress: response.data?.address,
+      });
     }
-
   };
 
   const renderItem = ({item}: {item: RoadData}) => {
     return (
       <Item
         item={item}
-        onPress={(isChecked: boolean)  => {
-          const updatedRoads = roads.map(road => 
-            road.id === item.id ? { ...road, selected: isChecked} : road
+        onPress={(isChecked: boolean) => {
+          const updatedRoads = roads.map(road =>
+            road.id === item.id ? {...road, selected: isChecked} : road,
           );
-          
+
           setRoads(updatedRoads);
-          console.log(updatedRoads)
+          console.log(updatedRoads);
         }}
       />
     );

@@ -27,4 +27,9 @@ export default {
     exceedsAnyProductStockMessage: 'Uno de los item de tu carrito supera el numero productos que puedes llevar',
     askQuantityProductMessage: 'Ingresa una cantidad',
     errorReviewServicesResponseMessage: 'No fue posible calificar, intente mas tarde',
+    orderCreatedSuccessTitle: 'Pago exitoso',
+    orderCreatedSuccessMessage: '¡Gracias por tu compra!',
+    orderCreatedSuccessCashMessage: 'Deberás realizar el pago contra entrega del producto al encargado de transporte.',
+    orderCreatedSuccessTransferMessage: 'Estamos verificando la transacción con el banco emisor, te notificaremos cuando tu pedido este siendo procesado.'
+    
 }

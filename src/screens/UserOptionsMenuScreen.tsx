@@ -47,7 +47,7 @@ const menuOptions: MenuOptionItemProps[] = [
   {
     optionName: 'Métodos de Pago',
     OptionButtonIcon: CardsIcon,
-    screenPath: 'CardsScreen',
+    screenPath: 'CardNavigation',
   },
   {
     optionName: 'Direcciones de envío',

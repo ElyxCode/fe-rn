@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 20,
     backgroundColor: colors.PrimaryBackgroundColor,
   },
   quantityText: {
