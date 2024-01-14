@@ -210,7 +210,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           />
           <CurrentPaymentButton
             paymentName={currentCard.last_numbers}
-            onPress={() => navigation.navigate('CardNavigation')}
+            onPress={() =>
+              navigation.navigate('CardNavigation', {
+                screen: 'CardsScreen',
+                params: {confirmOrder: true},
+              })
+            }
           />
           <CurrentBillingButton billInfo={currentBilling} />
           <CurrentPhoneButton phoneNumber={currentPhoneNumber} />
