@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, View, ScrollView, BackHandler} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {useAppSelector} from '../hooks/useRedux';
@@ -21,7 +21,8 @@ import {paymentMethodFormat} from '../utils/utilities';
 import {colors} from '../styles/colors';
 
 export const OrderDetailScreen = ({route}: any) => {
-  const {order} = route.params;
+  const {order, navigationPath, resetRootNavigation, isOrderCreated} =
+    route.params;
 
   const [currentOrder] = useState<Order>(order);
   const [showReview, setShowReview] = useState<boolean>(
@@ -30,6 +31,16 @@ export const OrderDetailScreen = ({route}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
 
+  // previene backbutton del dispositivo solo cuando la orden se a creado.
+  useEffect(() => {
+    if (!isOrderCreated) return;
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+    return () => backHandler.remove();
+  }, []);
+
   if (isLoading) return <LoaderScreen />;
 
   return (
@@ -37,6 +48,8 @@ export const OrderDetailScreen = ({route}: any) => {
       <CustomNavBar
         titleText={currentOrder.branch.name}
         primaryColorDefault={false}
+        navigationPath={navigationPath}
+        resetRootNavigation={resetRootNavigation}
       />
       {currentOrder.state === 'entregado' && !showReview ? (
         <RatingViewComponent
@@ -64,10 +77,12 @@ export const OrderDetailScreen = ({route}: any) => {
                 />
                 <CurrentBillingButton
                   isOrderDetail={true}
-                  billType={currentOrder.transaction?.bill_type ?? ''}
-                  billEntity={currentOrder.transaction?.bill_entity ?? ''}
-                  dui={currentOrder.transaction?.dui ?? ''}
-                  iva={currentOrder.transaction?.iva ?? ''}
+                  billInfo={{
+                    bill_entity: currentOrder.transaction?.bill_entity ?? '',
+                    bill_type: currentOrder.transaction?.bill_type ?? '',
+                    dui: currentOrder.transaction?.dui ?? '',
+                    iva: currentOrder.transaction?.iva ?? '',
+                  }}
                 />
               </View>
               <View style={styles.productListOrder}>
