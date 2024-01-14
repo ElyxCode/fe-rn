@@ -1,6 +1,6 @@
 import { ApiResponse } from "apisauce";
-import { api } from "../api/api-config"
-import { Order, OrderCreateResponse, OrderRequestDTO, ReviewOrderResponse } from "../model/Order";
+import { api } from "../../api/api-config"
+import { Order, OrderCreateResponse, OrderRequestDTO, ReviewOrderResponse } from "../../model/Order";
 
 export const getOrdersService = async (token: string) : Promise<ApiResponse<Order[]>> => {
     api.setHeader(
@@ -45,5 +45,4 @@ return api.post('/order', {
   card_month: orderRequest.cardMonth,
   card_year: orderRequest.cardYear
 });
-
 }

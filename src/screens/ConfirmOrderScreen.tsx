@@ -13,7 +13,7 @@ import {BillInfo} from '../model/BillInfo';
 
 import {quoteService} from '../services/quote';
 import {validationCardService} from '../services/card/card';
-import {createOrderService, getOrderByIdService} from '../services/order';
+import {createOrderService, getOrderByIdService} from '../services/order/order';
 
 import {LoaderScreen} from './LoaderScreen';
 

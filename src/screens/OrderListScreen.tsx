@@ -14,7 +14,7 @@ import {useAppSelector} from '../hooks/useRedux';
 import {CustomNavBar} from '../components/CustomNavBar';
 import {LoaderScreen} from './LoaderScreen';
 
-import {getOrdersService} from '../services/order';
+import {getOrdersService} from '../services/order/order';
 
 import {Order} from '../model/Order';
 
