@@ -72,7 +72,9 @@ export const CurrentPaymentButton = ({
                 style={styles.addressDescriptionText}
                 numberOfLines={1}
                 lineBreakMode="tail">
-                **** {paymentName}
+                {paymentName === 'Transferencia' || paymentName === 'Efectivo'
+                  ? paymentName
+                  : '**** ' + paymentName}
               </Text>
             </>
           )}
