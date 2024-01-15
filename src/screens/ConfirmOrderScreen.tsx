@@ -16,6 +16,7 @@ import {validationCardService} from '../services/card/card';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
 
 import {LoaderScreen} from './LoaderScreen';
+import {alterPaymentMethod} from './CardsScreen';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CurrentAddressButton} from '../components/CurrentAddressButton';
@@ -135,6 +136,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   };
 
   const confirmOrder = async () => {
+    if (currentCard.last_numbers === alterPaymentMethod.transferencia) {
+      navigation.navigate('TransferScreen', {
+        quoteData: quoteData,
+        billing: currentBilling,
+        discountCode,
+        phoneNumber: currentPhoneNumber,
+      });
+      return;
+    }
+
     const result = await handleCardExpDateValidationModal();
     if (String(result).length === 0) return;
     const validationCard = await cardValidation(
