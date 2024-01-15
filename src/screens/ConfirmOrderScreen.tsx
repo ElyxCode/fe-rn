@@ -7,7 +7,12 @@ import useAwaitableComponent from 'use-awaitable-component';
 import {useAppSelector} from '../hooks/useRedux';
 import {useIsFocused} from '@react-navigation/native';
 
-import {Order, OrderRequestDTO} from '../model/Order';
+import {
+  Order,
+  OrderCreateErrorResponse,
+  OrderCreateResponse,
+  OrderRequestDTO,
+} from '../model/Order';
 import {Quote, QuoteResponse} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
 
@@ -33,6 +38,7 @@ import {CreditCardValidationErrorModal} from '../components/CreditCardValidation
 
 import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
+import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
 
 export type tempCardExpDate = {
@@ -175,6 +181,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
     const response = await createOrderService(token, orderRequest);
     if (response.ok) {
+      if ((response.data as OrderCreateErrorResponse).errors) {
+        showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+        setIsLoading(false);
+        return;
+      }
+
       const AsyncAlert = async () =>
         new Promise(resolve => {
           Alert.alert(
@@ -195,7 +207,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       await AsyncAlert();
       const resp = await getOrderByIdService(
         token,
-        response.data?.order.id.toString(),
+        (response.data as OrderCreateResponse).order.id.toString(),
       );
 
       navigation.navigate('OrderDetailScreen', {
@@ -205,6 +217,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         isOrderCreated: true,
       });
     }
+
     setIsLoading(false);
   };
 

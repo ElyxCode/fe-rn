@@ -24,8 +24,15 @@ import {LoaderScreen} from './LoaderScreen';
 import {QuoteResponse} from '../model/Quote';
 import {Bank} from '../model/bank';
 import {BillInfo} from '../model/BillInfo';
-import {Order, OrderRequestDTO, Item} from '../model/Order';
+import {
+  Order,
+  OrderRequestDTO,
+  OrderCreateErrorResponse,
+  OrderCreateResponse,
+} from '../model/Order';
+import {FileResponse} from '../model/File';
 
+import {uploadFileService} from '../services/file';
 import {getBanksService} from '../services/bank';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
 
@@ -35,9 +42,8 @@ import {formatter} from '../utils/utilities';
 import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
+import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
-import {uploadFileService} from '../services/file';
-import {FileResponse} from '../model/File';
 
 type BankItemRenderProps = {
   bank: Bank;
@@ -134,6 +140,11 @@ export const TransferScreen = ({navigation, route}: any) => {
       const response = await createOrderService(token, orderReq);
 
       if (response.ok) {
+        if ((response.data as OrderCreateErrorResponse).errors) {
+          showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+          setIsLoading(false);
+          return;
+        }
         const AsyncAlert = async () =>
           new Promise(resolve => {
             Alert.alert(
@@ -154,7 +165,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         await AsyncAlert();
         const resp = await getOrderByIdService(
           token,
-          response.data?.order.id.toString(),
+          (response.data as OrderCreateResponse).order.id.toString(),
         );
 
         navigation.navigate('OrderDetailScreen', {
