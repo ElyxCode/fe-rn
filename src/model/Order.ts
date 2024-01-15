@@ -321,6 +321,13 @@ export interface OrderCreateResponse {
     special_discount:       boolean;
 }
 
+export interface OrderCreateErrorResponse {
+    "0":    number;
+    errors: Errors;
+}
 
-
+export interface Errors {
+    address_id: string[];
+    total:      string[];
+}
 
