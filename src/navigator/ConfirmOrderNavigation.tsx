@@ -1,6 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {HomeNavigation} from './HomeNavigation';
 import {CardNavigation} from './CardNavigation';
 import {AddressNavigation} from './AddressNavigation';
 
@@ -8,6 +7,7 @@ import {DeliveryInfoModal} from '../components/DeliveryInfoModal';
 
 import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
+import {TransferScreen} from '../screens/TransferScreen';
 
 export type ConfirmOrderParams = {
   HomeNavigation: undefined;
@@ -16,6 +16,7 @@ export type ConfirmOrderParams = {
   ConfirmOrderScreen: any;
   DeliveryInfoModal: any;
   OrderDetailScreen: any;
+  TransferScreen: any;
 };
 
 const ConfirmOrderStack = createStackNavigator<ConfirmOrderParams>();
@@ -38,6 +39,10 @@ export const ConfirmOrderNavigation = () => {
       <ConfirmOrderStack.Screen
         name="OrderDetailScreen"
         component={OrderDetailScreen}
+      />
+      <ConfirmOrderStack.Screen
+        name="TransferScreen"
+        component={TransferScreen}
       />
       <ConfirmOrderStack.Group screenOptions={{presentation: 'modal'}}>
         <ConfirmOrderStack.Screen
