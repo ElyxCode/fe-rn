@@ -30,7 +30,7 @@ import {
   OrderCreateErrorResponse,
   OrderCreateResponse,
 } from '../model/Order';
-import {FileResponse} from '../model/File';
+import {FileResponse, FileResponseError} from '../model/File';
 
 import {uploadFileService} from '../services/file';
 import {getBanksService} from '../services/bank';
@@ -124,6 +124,9 @@ export const TransferScreen = ({navigation, route}: any) => {
       fileData.filePath,
       fileData.fileName ?? '',
     );
+
+    console.log({responseFile: responseFile.data});
+
     if (responseFile.ok) {
       let fileIdRecent = (responseFile.data as FileResponse).id.toString();
       const orderReq: OrderRequestDTO = {
@@ -174,7 +177,40 @@ export const TransferScreen = ({navigation, route}: any) => {
           resetRootNavigation: true,
           isOrderCreated: true,
         });
+      } else {
+        Alert.alert(
+          Messages.titleMessage,
+          Messages.UnAvailableServerMessage,
+          [
+            {
+              text: 'ok',
+            },
+          ],
+          {cancelable: false},
+        );
       }
+    } else if (responseFile.status === 400) {
+      Alert.alert(
+        Messages.titleMessage,
+        (responseFile.data as FileResponseError).error,
+        [
+          {
+            text: 'ok',
+          },
+        ],
+        {cancelable: false},
+      );
+    } else {
+      Alert.alert(
+        Messages.titleMessage,
+        Messages.UnAvailableServerMessage,
+        [
+          {
+            text: 'ok',
+          },
+        ],
+        {cancelable: false},
+      );
     }
 
     setIsLoading(false);
