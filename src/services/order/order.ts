@@ -1,6 +1,6 @@
 import { ApiResponse } from "apisauce";
 import { api } from "../../api/api-config"
-import { Order, OrderCreateResponse, OrderRequestDTO, ReviewOrderResponse } from "../../model/Order";
+import { Order, OrderCreateErrorResponse, OrderCreateResponse, OrderRequestDTO, ReviewOrderResponse } from "../../model/Order";
 
 export const getOrdersService = async (token: string) : Promise<ApiResponse<Order[]>> => {
     api.setHeader(
@@ -27,7 +27,7 @@ export const ratingOrderService = async (token: string, orderId: string, rating:
   });
 };
 
-export const createOrderService = async (token: string, orderRequest: OrderRequestDTO): Promise<ApiResponse<OrderCreateResponse>> => {
+export const createOrderService = async (token: string, orderRequest: OrderRequestDTO): Promise<ApiResponse<OrderCreateResponse|OrderCreateErrorResponse>> => {
   api.setHeader(
     'Authorization', "Bearer "+token
   )

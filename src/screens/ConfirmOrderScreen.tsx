@@ -7,7 +7,12 @@ import useAwaitableComponent from 'use-awaitable-component';
 import {useAppSelector} from '../hooks/useRedux';
 import {useIsFocused} from '@react-navigation/native';
 
-import {Order, OrderRequestDTO} from '../model/Order';
+import {
+  Order,
+  OrderCreateErrorResponse,
+  OrderCreateResponse,
+  OrderRequestDTO,
+} from '../model/Order';
 import {Quote, QuoteResponse} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
 
@@ -16,6 +21,7 @@ import {validationCardService} from '../services/card/card';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
 
 import {LoaderScreen} from './LoaderScreen';
+import {alterPaymentMethod} from './CardsScreen';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CurrentAddressButton} from '../components/CurrentAddressButton';
@@ -32,6 +38,7 @@ import {CreditCardValidationErrorModal} from '../components/CreditCardValidation
 
 import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
+import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
 
 export type tempCardExpDate = {
@@ -135,6 +142,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   };
 
   const confirmOrder = async () => {
+    if (currentCard.last_numbers === alterPaymentMethod.transferencia) {
+      navigation.navigate('TransferScreen', {
+        quoteData: quoteData,
+        billing: currentBilling,
+        discountCode,
+        phoneNumber: currentPhoneNumber,
+      });
+      return;
+    }
+
     const result = await handleCardExpDateValidationModal();
     if (String(result).length === 0) return;
     const validationCard = await cardValidation(
@@ -164,6 +181,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
     const response = await createOrderService(token, orderRequest);
     if (response.ok) {
+      if ((response.data as OrderCreateErrorResponse).errors) {
+        showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+        setIsLoading(false);
+        return;
+      }
+
       const AsyncAlert = async () =>
         new Promise(resolve => {
           Alert.alert(
@@ -184,7 +207,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       await AsyncAlert();
       const resp = await getOrderByIdService(
         token,
-        response.data?.order.id.toString(),
+        (response.data as OrderCreateResponse).order.id.toString(),
       );
 
       navigation.navigate('OrderDetailScreen', {
@@ -194,6 +217,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         isOrderCreated: true,
       });
     }
+
     setIsLoading(false);
   };
 
@@ -210,7 +234,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           />
           <CurrentPaymentButton
             paymentName={currentCard.last_numbers}
-            onPress={() => navigation.navigate('CardNavigation')}
+            onPress={() =>
+              navigation.navigate('CardNavigation', {
+                screen: 'CardsScreen',
+                params: {confirmOrder: true},
+              })
+            }
           />
           <CurrentBillingButton billInfo={currentBilling} />
           <CurrentPhoneButton phoneNumber={currentPhoneNumber} />

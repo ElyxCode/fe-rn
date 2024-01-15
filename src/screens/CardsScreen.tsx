@@ -27,15 +27,17 @@ import {setCard} from '../services/card/cardSlice';
 
 import {Card} from '../model/Card';
 
-import PlusAddIcon from '../assets/plus_add.svg';
 import CardsIcon from '../assets/cards_primary.svg';
 import TrashBucketIcon from '../assets/trash.svg';
+import MoneyIcon from '../assets/moneys_cyan.svg';
+import ConvertCardIcon from '../assets/convert_card.svg';
 
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
 import {AddButton} from '../components/AddButton';
+import {SvgProps} from 'react-native-svg';
 
-type CardItem = {
+type CardItemProps = {
   id: number;
   name: string;
   lastNumber: string;
@@ -43,9 +45,32 @@ type CardItem = {
   active: boolean;
 };
 
-export const CardsScreen = ({navigation}: any) => {
+type AlternativePaymentProps = {
+  Icon: React.FC<SvgProps>;
+  name: string;
+  value: string;
+};
+
+export const alterPaymentMethod = {
+  transferencia: 'transferencia',
+  efectivo: 'efectivo',
+};
+
+const optionsPayment = [
+  {
+    name: 'Transferencia',
+    icon: ConvertCardIcon,
+    value: alterPaymentMethod.transferencia,
+  },
+  {name: 'Efectivo', icon: MoneyIcon, value: alterPaymentMethod.efectivo},
+];
+
+export const CardsScreen = ({route, navigation}: any) => {
+  const {confirmOrder} = route.params ?? false;
+
   const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fromConfirmOrder] = useState<boolean>(confirmOrder);
   const token = useAppSelector(state => state.authToken.token);
 
   const dispatch = useAppDispatch();
@@ -86,6 +111,16 @@ export const CardsScreen = ({navigation}: any) => {
 
   const setActiveCard = async (card: Card) => {
     setIsLoading(true);
+    if (
+      card.last_numbers === alterPaymentMethod.transferencia ||
+      card.last_numbers === alterPaymentMethod.efectivo
+    ) {
+      dispatch(setCard(card));
+      navigation.goBack();
+      setIsLoading(false);
+      return;
+    }
+
     if (cards.some(card => card.active)) {
       let oldCard = cards.find(card => card.active);
       if (oldCard) {
@@ -138,7 +173,13 @@ export const CardsScreen = ({navigation}: any) => {
     setIsLoading(false);
   };
 
-  const CardItemRender = ({id, name, lastNumber, verify, active}: CardItem) => {
+  const CardItemRender = ({
+    id,
+    name,
+    lastNumber,
+    verify,
+    active,
+  }: CardItemProps) => {
     return (
       <Pressable
         onPress={() => {
@@ -176,6 +217,28 @@ export const CardsScreen = ({navigation}: any) => {
     );
   };
 
+  const AlternativePayment = ({Icon, name, value}: AlternativePaymentProps) => {
+    return (
+      <Pressable
+        onPress={() => {
+          let updateCard: Card = {
+            id: -1,
+            name,
+            last_numbers: value,
+            verified: false,
+            active: true,
+          };
+
+          setActiveCard(updateCard);
+        }}>
+        <View style={styles.alternativePaymentContainer}>
+          <Icon height={25} width={25} style={{marginRight: 20}} />
+          <Text style={styles.alternativePaymentText}>{name}</Text>
+        </View>
+      </Pressable>
+    );
+  };
+
   if (isLoading) return <LoaderScreen />;
 
   return (
@@ -204,6 +267,17 @@ export const CardsScreen = ({navigation}: any) => {
               <Text>No tienes tarjetas</Text>
             </View>
           )}
+
+          {fromConfirmOrder
+            ? optionsPayment.map(item => (
+                <AlternativePayment
+                  key={item.name}
+                  Icon={item.icon}
+                  name={item.name}
+                  value={item.value}
+                />
+              ))
+            : null}
         </ScrollView>
       </View>
       <AddButton
@@ -263,5 +337,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: colors.DarkGrayColor,
     fontSize: 12,
+  },
+  alternativePaymentContainer: {
+    flexDirection: 'row',
+    backgroundColor: colors.White,
+    padding: 17,
+    marginBottom: 13,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  alternativePaymentText: {
+    fontSize: 10,
+    color: colors.Black,
   },
 });
