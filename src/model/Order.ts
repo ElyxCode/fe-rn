@@ -298,12 +298,12 @@ export interface OrderRequestDTO {
     method:      string;
     fileId?:     string;
     products:    Product[];
-    cardId:      string;
-    card:        Card;
+    cardId?:      string;
+    card?:        Card;
     billInfo:    BillInfo;
     phone:       string;
-    cardMonth:   string;
-    cardYear:    string;       
+    cardMonth?:   string;
+    cardYear?:    string;       
 }
 
 export interface OrderCreateResponse {
