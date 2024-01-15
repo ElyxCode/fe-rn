@@ -125,8 +125,6 @@ export const TransferScreen = ({navigation, route}: any) => {
       fileData.fileName ?? '',
     );
 
-    console.log({responseFile: responseFile.data});
-
     if (responseFile.ok) {
       let fileIdRecent = (responseFile.data as FileResponse).id.toString();
       const orderReq: OrderRequestDTO = {
@@ -336,7 +334,7 @@ export const TransferScreen = ({navigation, route}: any) => {
           para confirmar tu orden.
         </Text>
         <View style={styles.subTotalContainer}>
-          <ShowTotalInfo quote={quoteData} />
+          <ShowTotalInfo quote={quote} />
         </View>
         <View style={styles.bankListContainer}>
           <FlatList
