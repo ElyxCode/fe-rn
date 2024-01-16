@@ -79,7 +79,7 @@ export const CardFormScreen = ({navigation}: any) => {
               Messages.cardAddedSuccessMessage,
               [
                 {
-                  text: 'ok',
+                  text: Messages.okButton,
                   onPress: () => {
                     resolve('YES');
                     navigation.goBack();

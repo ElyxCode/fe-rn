@@ -98,7 +98,7 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
             Messages.UnAvailableServerMessage,
             [
               {
-                text: 'ok',
+                text: Messages.okButton,
                 onPress: () => {
                   resolve('YES');
                 },

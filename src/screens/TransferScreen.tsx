@@ -158,7 +158,7 @@ export const TransferScreen = ({navigation, route}: any) => {
                   .cancellation_reason ?? '',
                 [
                   {
-                    text: 'ok',
+                    text: Messages.okButton,
                     onPress: () => {
                       resolve('YES');
                     },
@@ -180,7 +180,7 @@ export const TransferScreen = ({navigation, route}: any) => {
               Messages.orderCreatedSuccessTransferMessage,
               [
                 {
-                  text: 'ok',
+                  text: Messages.okButton,
                   onPress: () => {
                     resolve('YES');
                   },
@@ -208,7 +208,7 @@ export const TransferScreen = ({navigation, route}: any) => {
           Messages.UnAvailableServerMessage,
           [
             {
-              text: 'ok',
+              text: Messages.okButton,
             },
           ],
           {cancelable: false},
@@ -220,7 +220,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         (responseFile.data as FileResponseError).error,
         [
           {
-            text: 'ok',
+            text: Messages.okButton,
           },
         ],
         {cancelable: false},
@@ -231,7 +231,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         Messages.UnAvailableServerMessage,
         [
           {
-            text: 'ok',
+            text: Messages.okButton,
           },
         ],
         {cancelable: false},
