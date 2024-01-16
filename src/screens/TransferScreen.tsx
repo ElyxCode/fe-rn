@@ -146,6 +146,33 @@ export const TransferScreen = ({navigation, route}: any) => {
           setIsLoading(false);
           return;
         }
+
+        if (
+          (response.data as OrderCreateResponse).order.state === 'rechazado'
+        ) {
+          const AsyncAlert = async () =>
+            new Promise(resolve => {
+              Alert.alert(
+                Messages.titleMessage,
+                (response.data as OrderCreateResponse).order
+                  .cancellation_reason ?? '',
+                [
+                  {
+                    text: 'ok',
+                    onPress: () => {
+                      resolve('YES');
+                    },
+                  },
+                ],
+                {cancelable: false},
+              );
+            });
+
+          await AsyncAlert();
+          setIsLoading(false);
+          return;
+        }
+
         const AsyncAlert = async () =>
           new Promise(resolve => {
             Alert.alert(
@@ -352,7 +379,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         <View style={styles.fileContainer}>
           <TextInput
             editable={false}
-            style={styles.fileInput}
+            style={[styles.fileInput, {height: isAndroid ? 0 : 40}]}
             placeholder={
               fileData.fileName ? fileData.fileName : 'Adjunta tu comprobante'
             }
