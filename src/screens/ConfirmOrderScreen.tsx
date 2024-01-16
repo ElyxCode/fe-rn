@@ -4,7 +4,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import useAwaitableComponent from 'use-awaitable-component';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 import {useIsFocused} from '@react-navigation/native';
 
 import {
@@ -40,6 +40,8 @@ import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
+import {PhoneNumberModal} from '../components/PhoneNumberModal';
+import {setOrderUserDataTemp} from '../services/user/userSlice';
 
 export type tempCardExpDate = {
   month: string;
@@ -51,10 +53,14 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const currentAddress = useAppSelector(state => state.currentAddress);
   const currentCard = useAppSelector(state => state.currentCard);
   const currentUser = useAppSelector(state => state.user.userData);
+  const orderUserDataTemp = useAppSelector(
+    state => state.user.orderUserDataTemp,
+  );
   const token = useAppSelector(state => state.authToken.token);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isVisibleCardExpValErrorModal, setIsVisibleCardExpValErrorModal] =
+  const [visibleCardExpValErrorModal, setVisibleCardExpValErrorModal] =
     useState<boolean>(false);
+
   const [branchName, setBranchName] = useState<string>('');
   const [tempMonthYearCard, setTempMonthYearCard] = useState<tempCardExpDate>(
     {} as tempCardExpDate,
@@ -73,9 +79,14 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const [currentPayment, setCurrentPayment] = useState<string>(
     currentCard.active ? currentCard.last_numbers : '',
   );
+
   const [currentPhoneNumber, setCurrentPhoneNumber] = useState<string>(
-    currentUser.phone ?? '',
+    orderUserDataTemp?.phoneNumber ?? currentUser.phone ?? '',
   );
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {}, []);
 
   const [status, execute, resolve, reject, reset] = useAwaitableComponent();
   const showModal = status === 'awaiting';
@@ -87,6 +98,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       productsCart.products[productsCart.products.length - 1].branch.name ?? '',
     );
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      setCurrentPhoneNumber(orderUserDataTemp?.phoneNumber ?? '');
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -152,6 +169,23 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       return;
     }
 
+    if (currentCard.last_numbers === alterPaymentMethod.efectivo) {
+      setIsLoading(true);
+      const orderRequest: OrderRequestDTO = {
+        addressId: currentAddress.address.id,
+        branchId: productsCart.products[0].branch.id,
+        products: productsCart.products,
+        couponCode: discountCode,
+        method: 'cash',
+        billInfo: billFormatOrderRequest(currentBilling),
+        phone: currentPhoneNumber,
+      };
+
+      await createOrder(orderRequest);
+      setIsLoading(false);
+      return;
+    }
+
     const result = await handleCardExpDateValidationModal();
     if (String(result).length === 0) return;
     const validationCard = await cardValidation(
@@ -160,7 +194,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       String(result).split('/')[1],
     );
     if (!validationCard) {
-      setIsVisibleCardExpValErrorModal(true);
+      setVisibleCardExpValErrorModal(true);
       return;
     }
 
@@ -179,6 +213,11 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       cardYear: String(result).split('/')[1] ?? '',
     };
 
+    await createOrder(orderRequest);
+    setIsLoading(false);
+  };
+
+  const createOrder = async (orderRequest: OrderRequestDTO) => {
     const response = await createOrderService(token, orderRequest);
     if (response.ok) {
       if ((response.data as OrderCreateErrorResponse).errors) {
@@ -187,14 +226,42 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         return;
       }
 
+      if ((response.data as OrderCreateResponse).order.state === 'rechazado') {
+        const AsyncAlert = async () =>
+          new Promise(resolve => {
+            Alert.alert(
+              Messages.titleMessage,
+              (response.data as OrderCreateResponse).order
+                .cancellation_reason ?? '',
+              [
+                {
+                  text: Messages.okButton,
+                  onPress: () => {
+                    resolve('YES');
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          });
+
+        await AsyncAlert();
+        setIsLoading(false);
+        return;
+      }
+
       const AsyncAlert = async () =>
         new Promise(resolve => {
           Alert.alert(
-            Messages.orderCreatedSuccessTitle,
-            Messages.orderCreatedSuccessMessage,
+            orderRequest.method === 'cash'
+              ? Messages.orderCreatedSuccessMessage
+              : Messages.orderCreatedSuccessTitle,
+            orderRequest.method === 'cash'
+              ? Messages.orderCreatedSuccessCashMessage
+              : Messages.orderCreatedSuccessMessage,
             [
               {
-                text: 'ok',
+                text: Messages.okButton,
                 onPress: () => {
                   resolve('YES');
                 },
@@ -217,8 +284,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         isOrderCreated: true,
       });
     }
-
-    setIsLoading(false);
   };
 
   if (isLoading) return <LoaderScreen />;
@@ -242,7 +307,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
             }
           />
           <CurrentBillingButton billInfo={currentBilling} />
-          <CurrentPhoneButton phoneNumber={currentPhoneNumber} />
+          <CurrentPhoneButton
+            phoneNumber={currentPhoneNumber}
+            onPress={() => navigation.navigate('PhoneNumberModal')}
+          />
         </View>
         <View style={styles.productsContainer}>
           <Text style={styles.titleSection}>Productos</Text>
@@ -286,9 +354,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         setTempMonthYearCard={setTempMonthYearCard}
       />
       <CreditCardValidationErrorModal
-        visible={isVisibleCardExpValErrorModal}
-        setIsVisible={setIsVisibleCardExpValErrorModal}
+        visible={visibleCardExpValErrorModal}
+        setIsVisible={setVisibleCardExpValErrorModal}
       />
+
       <SubmitButton
         textButton="Confirmar pedido"
         customStyles={{marginHorizontal: 35, marginBottom: 10}}
