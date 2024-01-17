@@ -196,7 +196,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     if (currentCard.last_numbers === alterPaymentMethod.transferencia) {
       navigation.navigate('TransferScreen', {
         quoteData: quoteData,
-
+        billing: orderUserBillingTemp,
         discountCode,
         phoneNumber: orderUserPhoneTemp ?? currentUser.phone ?? '',
       });
