@@ -18,15 +18,15 @@ import {SubmitButton} from './SubmitButton';
 import CallIcon from '../assets/call.svg';
 import {colors} from '../styles/colors';
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
-import {setOrderUserDataTemp} from '../services/user/userSlice';
+import {setOrderUserPhoneTemp} from '../services/user/userSlice';
 import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
 
 export const PhoneNumberModal = ({navigation}: any) => {
-  const orderUserDataTemp = useAppSelector(
-    state => state.user.orderUserDataTemp,
+  const orderUserPhoneTemp = useAppSelector(
+    state => state.user.orderUserPhoneTemp?.phoneNumber,
   );
-  const [phone, setPhone] = useState(orderUserDataTemp?.phoneNumber ?? '');
+  const [phone, setPhone] = useState(orderUserPhoneTemp ?? '');
 
   const dispatch = useAppDispatch();
 
@@ -76,7 +76,7 @@ export const PhoneNumberModal = ({navigation}: any) => {
                 );
                 return;
               }
-              dispatch(setOrderUserDataTemp({phoneNumber: phone}));
+              dispatch(setOrderUserPhoneTemp({phoneNumber: phone}));
               navigation.goBack();
             }}
             customStyles={{marginBottom: 10}}
