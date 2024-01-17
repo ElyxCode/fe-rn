@@ -14,7 +14,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import ImagePicker from 'react-native-image-crop-picker';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {SubmitButton} from '../components/SubmitButton';
@@ -35,6 +35,12 @@ import {FileResponse, FileResponseError} from '../model/File';
 import {uploadFileService} from '../services/file';
 import {getBanksService} from '../services/bank';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard} from '../services/card/cardSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+} from '../services/user/userSlice';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 
@@ -44,12 +50,6 @@ import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
-import {clearProduct} from '../services/product/productSlice';
-import {clearCard} from '../services/card/cardSlice';
-import {
-  clearOrderUserBillingTemp,
-  clearOrderUserPhoneTemp,
-} from '../services/user/userSlice';
 
 type BankItemRenderProps = {
   bank: Bank;
@@ -85,6 +85,8 @@ export const TransferScreen = ({navigation, route}: any) => {
     fileName: '',
   });
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const getBanks = async () => {
@@ -197,13 +199,12 @@ export const TransferScreen = ({navigation, route}: any) => {
           });
 
         await AsyncAlert();
+
         const resp = await getOrderByIdService(
           token,
           (response.data as OrderCreateResponse).order.id.toString(),
         );
-
         clearData();
-
         navigation.navigate('OrderDetailScreen', {
           order: resp.data as Order,
           navigationPath: 'HomeNavigation',
@@ -245,7 +246,6 @@ export const TransferScreen = ({navigation, route}: any) => {
         {cancelable: false},
       );
     }
-
     setIsLoading(false);
   };
 
@@ -515,6 +515,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-function dispatch(arg0: any) {
-  throw new Error('Function not implemented.');
-}
