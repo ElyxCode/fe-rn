@@ -50,9 +50,14 @@ import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
 
-export type tempCardExpDate = {
+export type TempCardExpDate = {
   month: string;
   year: string;
+};
+
+export type DiscountCode = {
+  code: string;
+  valid: boolean;
 };
 
 export const ConfirmOrderScreen = ({navigation}: any) => {
@@ -72,11 +77,14 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     useState<boolean>(false);
 
   const [branchName, setBranchName] = useState<string>('');
-  const [tempMonthYearCard, setTempMonthYearCard] = useState<tempCardExpDate>(
-    {} as tempCardExpDate,
+  const [tempMonthYearCard, setTempMonthYearCard] = useState<TempCardExpDate>(
+    {} as TempCardExpDate,
   );
 
-  const [discountCode, setDiscountCode] = useState<string>('');
+  const [discountCode, setDiscountCode] = useState<DiscountCode>({
+    code: '',
+    valid: false,
+  });
   const [quoteData, setQuoteData] = useState<QuoteResponse>(
     {} as QuoteResponse,
   );
@@ -132,29 +140,32 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-
     calculateQuote();
     console.log('called quote');
-
-    setIsLoading(false);
-  }, [currentAddress.address]);
+  }, [currentAddress.address, discountCode.code]);
 
   const calculateQuote = async () => {
+    setIsLoading(true);
     const quote: Quote = {
       branchId:
         productsCart.products[
           productsCart.products.length - 1
         ].branch.id.toString(),
       addressId: currentAddress.address.id.toString(),
-      discountCode: discountCode,
+      discountCode: discountCode.code,
       products: productsCart.products,
     };
 
     const response = await quoteService(quote);
     if (response.ok) {
+      // console.log(response.data as QuoteResponse);
+      setDiscountCode({
+        ...discountCode,
+        valid: (response.data as QuoteResponse).coupon_valid,
+      });
       setQuoteData(response.data as QuoteResponse);
     }
+    setIsLoading(false);
   };
 
   const handleCardExpDateValidationModal = async () => {
@@ -206,7 +217,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         addressId: currentAddress.address.id,
         branchId: productsCart.products[0].branch.id,
         products: productsCart.products,
-        couponCode: discountCode,
+        couponCode: discountCode.code,
         method: 'cash',
         billInfo: billFormatOrderRequest(
           orderUserBillingTemp ?? ({} as BillInfo),
@@ -236,7 +247,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       addressId: currentAddress.address.id,
       branchId: productsCart.products[0].branch.id,
       products: productsCart.products,
-      couponCode: discountCode,
+      couponCode: discountCode.code,
       method: 'card',
       cardId: currentCard.id.toString(),
       card: currentCard,
@@ -324,6 +335,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     }
   };
 
+  const handlePromotionCode = (text: string) => {
+    setDiscountCode({...discountCode, code: text});
+  };
+
   const clearData = (method: string) => {
     if (method === 'card') {
       dispatch(clearProduct());
@@ -391,7 +406,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           <AddProductButton text="Agregar producto" />
         </View>
         <View style={styles.promotionCodeContainer}>
-          <PromotionCodeButton promotionCode={discountCode} />
+          <PromotionCodeButton
+            promotionCode={discountCode.code}
+            onPress={() =>
+              navigation.navigate('PromoCodeModal', {
+                setPromotionCode: (text: string) => handlePromotionCode(text),
+              })
+            }
+            onPressDelete={() => setDiscountCode({code: '', valid: false})}
+            validPromotionCode={discountCode.valid}
+          />
         </View>
         <View style={styles.totalInfoContainer}>
           <CurrentTotalOrder
