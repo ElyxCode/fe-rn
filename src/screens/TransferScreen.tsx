@@ -44,6 +44,12 @@ import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard} from '../services/card/cardSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+} from '../services/user/userSlice';
 
 type BankItemRenderProps = {
   bank: Bank;
@@ -196,6 +202,8 @@ export const TransferScreen = ({navigation, route}: any) => {
           (response.data as OrderCreateResponse).order.id.toString(),
         );
 
+        clearData();
+
         navigation.navigate('OrderDetailScreen', {
           order: resp.data as Order,
           navigationPath: 'HomeNavigation',
@@ -239,6 +247,13 @@ export const TransferScreen = ({navigation, route}: any) => {
     }
 
     setIsLoading(false);
+  };
+
+  const clearData = () => {
+    dispatch(clearProduct());
+    dispatch(clearCard());
+    dispatch(clearOrderUserBillingTemp());
+    dispatch(clearOrderUserPhoneTemp());
   };
 
   const BankItemRender = ({bank}: BankItemRenderProps) => {
@@ -500,3 +515,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+function dispatch(arg0: any) {
+  throw new Error('Function not implemented.');
+}
