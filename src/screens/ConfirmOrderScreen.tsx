@@ -185,9 +185,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   };
 
   const confirmOrder = async () => {
-    if (currentAddress.address === undefined || currentCard === undefined)
-      return;
-
     if (orderUserPhoneTemp === undefined || orderUserPhoneTemp.length === 0) {
       navigation.navigate('PhoneNumberModal');
       return;
@@ -421,8 +418,22 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
       <SubmitButton
         textButton="Confirmar pedido"
-        customStyles={{marginHorizontal: 35, marginBottom: 10}}
+        activeOpacity={
+          currentAddress.address === undefined || currentCard.id === -1
+            ? 1
+            : 0.9
+        }
+        customStyles={{
+          marginHorizontal: 35,
+          marginBottom: 10,
+          backgroundColor:
+            currentAddress.address === undefined || currentCard.id === -1
+              ? colors.disbledButtonColor
+              : colors.PrimaryColor,
+        }}
         onPress={() => {
+          if (currentAddress.address === undefined || currentCard.id === -1)
+            return;
           confirmOrder();
         }}
       />
