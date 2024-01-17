@@ -9,12 +9,14 @@ type PromotionCodeButtonProps = {
   onPress?: () => void;
   onPressDelete?: () => void;
   promotionCode: string;
+  validPromotionCode: boolean;
 };
 
 export const PromotionCodeButton = ({
   onPress,
   promotionCode,
   onPressDelete,
+  validPromotionCode,
 }: PromotionCodeButtonProps) => {
   return (
     <Pressable onPress={onPress}>
@@ -27,6 +29,11 @@ export const PromotionCodeButton = ({
             Código promocional
           </Text>
           <Text style={styles.promoCodeDescriptionText}>{promotionCode}</Text>
+          {!validPromotionCode && promotionCode ? (
+            <Text style={styles.promoCodeErrorText}>
+              Código de descuento inválido
+            </Text>
+          ) : null}
         </View>
         {promotionCode ? (
           <Pressable onPress={onPressDelete}>
@@ -60,5 +67,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.DarkGrayColor,
     fontFamily: 'Poppins-Medium',
+  },
+  promoCodeErrorText: {
+    fontSize: 10,
+    fontFamily: 'Poppins-Medium',
+    color: colors.RedColor,
   },
 });
