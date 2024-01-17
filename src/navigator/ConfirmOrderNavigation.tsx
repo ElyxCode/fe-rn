@@ -5,6 +5,7 @@ import {AddressNavigation} from './AddressNavigation';
 
 import {DeliveryInfoModal} from '../components/DeliveryInfoModal';
 import {PhoneNumberModal} from '../components/PhoneNumberModal';
+import {BillingInfoModal} from '../components/BillingInfoModal';
 
 import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
@@ -19,6 +20,7 @@ export type ConfirmOrderParams = {
   OrderDetailScreen: any;
   TransferScreen: any;
   PhoneNumberModal: any;
+  BillingInfoModal: any;
 };
 
 const ConfirmOrderStack = createStackNavigator<ConfirmOrderParams>();
@@ -54,6 +56,10 @@ export const ConfirmOrderNavigation = () => {
         <ConfirmOrderStack.Screen
           name="PhoneNumberModal"
           component={PhoneNumberModal}
+        />
+        <ConfirmOrderStack.Screen
+          name="BillingInfoModal"
+          component={BillingInfoModal}
         />
       </ConfirmOrderStack.Group>
     </ConfirmOrderStack.Navigator>
