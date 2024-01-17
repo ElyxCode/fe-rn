@@ -77,7 +77,9 @@ export const CurrentPaymentButton = ({
                 {paymentName === alterPaymentMethod.transferencia ||
                 paymentName === alterPaymentMethod.efectivo
                   ? paymentName
-                  : '**** ' + paymentName}
+                  : paymentName?.length !== 0
+                  ? '**** ' + paymentName
+                  : paymentName}
               </Text>
             </>
           )}

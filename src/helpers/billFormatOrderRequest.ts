@@ -1,8 +1,8 @@
 import { BillInfo } from "../model/BillInfo";
 
 export const billFormatOrderRequest = (billing: BillInfo): BillInfo => {
-    billing.billEntity = billing.billType === 'final' ? null : billing.billEntity;
-    billing.dui = billing.billType === 'final' || billing.billEntity === 'natural' ? billing.dui : null; 
-    billing.iva = billing.billType === 'final' ? null : billing.iva;
+    billing.bill_entity = billing.bill_type === 'final' ? null : billing.bill_entity;
+    billing.dui = billing.bill_type === 'final' || billing.bill_entity === 'natural' ? billing.dui : null; 
+    billing.iva = billing.bill_type === 'final' ? null : billing.iva;
     return billing;
 }

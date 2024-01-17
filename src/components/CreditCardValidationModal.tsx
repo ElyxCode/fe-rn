@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     borderColor: colors.PrimaryColor,
     alignItems: 'center',
     textAlign: 'center',
+    height: isAndroid ? 0 : 40,
   },
   acceptButtonText: {
     textAlign: 'center',

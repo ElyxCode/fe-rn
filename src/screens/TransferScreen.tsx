@@ -14,7 +14,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import ImagePicker from 'react-native-image-crop-picker';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {SubmitButton} from '../components/SubmitButton';
@@ -35,6 +35,12 @@ import {FileResponse, FileResponseError} from '../model/File';
 import {uploadFileService} from '../services/file';
 import {getBanksService} from '../services/bank';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard} from '../services/card/cardSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+} from '../services/user/userSlice';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 
@@ -79,6 +85,8 @@ export const TransferScreen = ({navigation, route}: any) => {
     fileName: '',
   });
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const getBanks = async () => {
@@ -146,6 +154,33 @@ export const TransferScreen = ({navigation, route}: any) => {
           setIsLoading(false);
           return;
         }
+
+        if (
+          (response.data as OrderCreateResponse).order.state === 'rechazado'
+        ) {
+          const AsyncAlert = async () =>
+            new Promise(resolve => {
+              Alert.alert(
+                Messages.titleMessage,
+                (response.data as OrderCreateResponse).order
+                  .cancellation_reason ?? '',
+                [
+                  {
+                    text: Messages.okButton,
+                    onPress: () => {
+                      resolve('YES');
+                    },
+                  },
+                ],
+                {cancelable: false},
+              );
+            });
+
+          await AsyncAlert();
+          setIsLoading(false);
+          return;
+        }
+
         const AsyncAlert = async () =>
           new Promise(resolve => {
             Alert.alert(
@@ -153,7 +188,7 @@ export const TransferScreen = ({navigation, route}: any) => {
               Messages.orderCreatedSuccessTransferMessage,
               [
                 {
-                  text: 'ok',
+                  text: Messages.okButton,
                   onPress: () => {
                     resolve('YES');
                   },
@@ -164,11 +199,12 @@ export const TransferScreen = ({navigation, route}: any) => {
           });
 
         await AsyncAlert();
+
         const resp = await getOrderByIdService(
           token,
           (response.data as OrderCreateResponse).order.id.toString(),
         );
-
+        clearData();
         navigation.navigate('OrderDetailScreen', {
           order: resp.data as Order,
           navigationPath: 'HomeNavigation',
@@ -181,7 +217,7 @@ export const TransferScreen = ({navigation, route}: any) => {
           Messages.UnAvailableServerMessage,
           [
             {
-              text: 'ok',
+              text: Messages.okButton,
             },
           ],
           {cancelable: false},
@@ -193,7 +229,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         (responseFile.data as FileResponseError).error,
         [
           {
-            text: 'ok',
+            text: Messages.okButton,
           },
         ],
         {cancelable: false},
@@ -204,14 +240,20 @@ export const TransferScreen = ({navigation, route}: any) => {
         Messages.UnAvailableServerMessage,
         [
           {
-            text: 'ok',
+            text: Messages.okButton,
           },
         ],
         {cancelable: false},
       );
     }
-
     setIsLoading(false);
+  };
+
+  const clearData = () => {
+    dispatch(clearProduct());
+    dispatch(clearCard());
+    dispatch(clearOrderUserBillingTemp());
+    dispatch(clearOrderUserPhoneTemp());
   };
 
   const BankItemRender = ({bank}: BankItemRenderProps) => {
@@ -352,7 +394,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         <View style={styles.fileContainer}>
           <TextInput
             editable={false}
-            style={styles.fileInput}
+            style={[styles.fileInput, {height: isAndroid ? 0 : 40}]}
             placeholder={
               fileData.fileName ? fileData.fileName : 'Adjunta tu comprobante'
             }

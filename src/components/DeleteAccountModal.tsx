@@ -46,7 +46,7 @@ export const DeleteAccountModal = () => {
             Messages.UnAvailableServerMessage,
             [
               {
-                text: 'ok',
+                text: Messages.okButton,
                 onPress: () => {
                   resolve('YES');
                   navigation.goBack();

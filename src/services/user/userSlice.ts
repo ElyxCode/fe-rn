@@ -2,15 +2,26 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { UserProfile } from '../../model/User';
 import { persistConfig } from '../../utils/store';
+import { BillInfo } from '../../model/BillInfo';
 
-// import type { RootState } from '../../utils/store'
+type OrderUserBillingTemp = {
+    billingInfo?: BillInfo,
+}
+
+type OrderUserPhoneTemp = {
+    phoneNumber?: string;
+}
 
 type UserProfileProp = {
-    userData: UserProfile 
+    userData: UserProfile,
+    orderUserBillingTemp? : OrderUserBillingTemp
+    orderUserPhoneTemp? : OrderUserPhoneTemp
 }
 
 const initialState: UserProfileProp = {
-    userData: {}
+    userData: {},
+    orderUserBillingTemp: {},
+    orderUserPhoneTemp: {}
 };
 
 export const userSlice = createSlice({
@@ -20,13 +31,27 @@ export const userSlice = createSlice({
         setUser: (state, action: PayloadAction<UserProfile>) => {
             state.userData = { ...action.payload};
         },
+        setOrderUserBillingTemp: (state, action: PayloadAction<OrderUserBillingTemp>) => {
+            state.orderUserBillingTemp = { ...action.payload};
+        },
+        setOrderUserPhoneTemp: (state, action: PayloadAction<OrderUserPhoneTemp>) => {
+            state.orderUserPhoneTemp = { ...action.payload};
+        },
         clearUserData: (state) => {
             state.userData = initialState.userData;
+            persistConfig.storage.removeItem('persist:root')
+        },
+        clearOrderUserBillingTemp: (state) => {
+            state.orderUserBillingTemp = initialState.orderUserBillingTemp;
+            persistConfig.storage.removeItem('persist:root')
+        },
+        clearOrderUserPhoneTemp: (state) => {
+            state.orderUserPhoneTemp = initialState.orderUserPhoneTemp;
             persistConfig.storage.removeItem('persist:root')
         },
     },
   });
 
-  export const { setUser, clearUserData } = userSlice.actions;
+  export const { setUser, setOrderUserBillingTemp, setOrderUserPhoneTemp, clearUserData, clearOrderUserBillingTemp, clearOrderUserPhoneTemp} = userSlice.actions;
 
   export default userSlice.reducer;
