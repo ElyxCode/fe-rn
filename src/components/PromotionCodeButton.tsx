@@ -2,16 +2,19 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import CardsIcon from '../assets/cards_primary.svg';
 import ArrowRightIcon from '../assets/arrow_right_blue.svg';
+import TrashIcon from '../assets/trash_primary.svg';
 import {colors} from '../styles/colors';
 
 type PromotionCodeButtonProps = {
   onPress?: () => void;
+  onPressDelete?: () => void;
   promotionCode: string;
 };
 
 export const PromotionCodeButton = ({
   onPress,
   promotionCode,
+  onPressDelete,
 }: PromotionCodeButtonProps) => {
   return (
     <Pressable onPress={onPress}>
@@ -21,10 +24,17 @@ export const PromotionCodeButton = ({
         </View>
         <View style={styles.promoCodeDescription}>
           <Text style={styles.promoCodeDescriptionText}>
-            {promotionCode.length === 0 && 'Código promocional'}
+            Código promocional
           </Text>
+          <Text style={styles.promoCodeDescriptionText}>{promotionCode}</Text>
         </View>
-        <ArrowRightIcon height={25} width={25} />
+        {promotionCode ? (
+          <Pressable onPress={onPressDelete}>
+            <TrashIcon height={25} width={25} />
+          </Pressable>
+        ) : (
+          <ArrowRightIcon height={25} width={25} />
+        )}
       </View>
     </Pressable>
   );
