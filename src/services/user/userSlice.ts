@@ -4,19 +4,24 @@ import { UserProfile } from '../../model/User';
 import { persistConfig } from '../../utils/store';
 import { BillInfo } from '../../model/BillInfo';
 
-type OrderUserDataTemp = {
+type OrderUserBillingTemp = {
     billingInfo?: BillInfo,
+}
+
+type OrderUserPhoneTemp = {
     phoneNumber?: string;
 }
 
 type UserProfileProp = {
     userData: UserProfile,
-    orderUserDataTemp? : OrderUserDataTemp
+    orderUserBillingTemp? : OrderUserBillingTemp
+    orderUserPhoneTemp? : OrderUserPhoneTemp
 }
 
 const initialState: UserProfileProp = {
     userData: {},
-    orderUserDataTemp: {}
+    orderUserBillingTemp: {},
+    orderUserPhoneTemp: {}
 };
 
 export const userSlice = createSlice({
@@ -26,20 +31,27 @@ export const userSlice = createSlice({
         setUser: (state, action: PayloadAction<UserProfile>) => {
             state.userData = { ...action.payload};
         },
-        setOrderUserDataTemp: (state, action: PayloadAction<OrderUserDataTemp>) => {
-            state.orderUserDataTemp = { ...action.payload};
+        setOrderUserBillingTemp: (state, action: PayloadAction<OrderUserBillingTemp>) => {
+            state.orderUserBillingTemp = { ...action.payload};
+        },
+        setOrderUserPhoneTemp: (state, action: PayloadAction<OrderUserPhoneTemp>) => {
+            state.orderUserPhoneTemp = { ...action.payload};
         },
         clearUserData: (state) => {
             state.userData = initialState.userData;
             persistConfig.storage.removeItem('persist:root')
         },
-        clearOrderUserDataTemp: (state) => {
-            state.orderUserDataTemp = initialState.orderUserDataTemp;
+        clearOrderUserBillingTemp: (state) => {
+            state.orderUserBillingTemp = initialState.orderUserBillingTemp;
+            persistConfig.storage.removeItem('persist:root')
+        },
+        clearOrderUserPhoneTemp: (state) => {
+            state.orderUserPhoneTemp = initialState.orderUserPhoneTemp;
             persistConfig.storage.removeItem('persist:root')
         },
     },
   });
 
-  export const { setUser, setOrderUserDataTemp, clearUserData, clearOrderUserDataTemp } = userSlice.actions;
+  export const { setUser, setOrderUserBillingTemp, setOrderUserPhoneTemp, clearUserData, clearOrderUserBillingTemp, clearOrderUserPhoneTemp} = userSlice.actions;
 
   export default userSlice.reducer;
