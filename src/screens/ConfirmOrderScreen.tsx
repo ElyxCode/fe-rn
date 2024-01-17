@@ -15,10 +15,19 @@ import {
 } from '../model/Order';
 import {Quote, QuoteResponse} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
+import {Card} from '../model/Card';
 
 import {quoteService} from '../services/quote';
-import {validationCardService} from '../services/card/card';
+import {getCardsService, validationCardService} from '../services/card/card';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
+import {clearCard, setCard} from '../services/card/cardSlice';
+import {clearProduct} from '../services/product/productSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+  setOrderUserBillingTemp,
+  setOrderUserPhoneTemp,
+} from '../services/user/userSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 import {alterPaymentMethod} from './CardsScreen';
@@ -40,8 +49,6 @@ import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
-import {PhoneNumberModal} from '../components/PhoneNumberModal';
-import {setOrderUserDataTemp} from '../services/user/userSlice';
 
 export type tempCardExpDate = {
   month: string;
@@ -53,8 +60,11 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const currentAddress = useAppSelector(state => state.currentAddress);
   const currentCard = useAppSelector(state => state.currentCard);
   const currentUser = useAppSelector(state => state.user.userData);
-  const orderUserDataTemp = useAppSelector(
-    state => state.user.orderUserDataTemp,
+  const orderUserPhoneTemp = useAppSelector(
+    state => state.user.orderUserPhoneTemp?.phoneNumber,
+  );
+  const orderUserBillingTemp = useAppSelector(
+    state => state.user.orderUserBillingTemp?.billingInfo,
   );
   const token = useAppSelector(state => state.authToken.token);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -65,28 +75,17 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const [tempMonthYearCard, setTempMonthYearCard] = useState<tempCardExpDate>(
     {} as tempCardExpDate,
   );
-  const [currentOrder, setCurrentOrder] = useState<Order>({} as Order);
+
   const [discountCode, setDiscountCode] = useState<string>('');
   const [quoteData, setQuoteData] = useState<QuoteResponse>(
     {} as QuoteResponse,
   );
-  const [currentBilling, setCurrentBilling] = useState<BillInfo>({
-    bill_type: currentUser.bill_type ?? '',
-    bill_entity: currentUser.bill_entity ?? '',
-    dui: currentUser.dui ?? '',
-    iva: currentUser.iva ?? '',
-  });
+
   const [currentPayment, setCurrentPayment] = useState<string>(
     currentCard.active ? currentCard.last_numbers : '',
   );
 
-  const [currentPhoneNumber, setCurrentPhoneNumber] = useState<string>(
-    orderUserDataTemp?.phoneNumber ?? currentUser.phone ?? '',
-  );
-
   const dispatch = useAppDispatch();
-
-  useEffect(() => {}, []);
 
   const [status, execute, resolve, reject, reset] = useAwaitableComponent();
   const showModal = status === 'awaiting';
@@ -100,10 +99,37 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
-    if (isFocused) {
-      setCurrentPhoneNumber(orderUserDataTemp?.phoneNumber ?? '');
+    if (orderUserBillingTemp === undefined) {
+      const bill: BillInfo = {
+        bill_type: currentUser.bill_type ?? '',
+        bill_entity: currentUser.bill_entity ?? '',
+        dui: currentUser.dui ?? '',
+        iva: currentUser.iva ?? '',
+      };
+      dispatch(setOrderUserBillingTemp({billingInfo: bill}));
     }
-  }, [isFocused]);
+  }, []);
+
+  useEffect(() => {
+    if (orderUserPhoneTemp === undefined ?? orderUserPhoneTemp?.length === 0) {
+      dispatch(setOrderUserPhoneTemp({phoneNumber: currentUser.phone ?? ''}));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentCard.id === -1) {
+      setIsLoading(true);
+      const getCards = async () => {
+        const resp = await getCardsService(token);
+
+        dispatch(
+          setCard((resp.data?.find(i => i.active) as Card) ?? ({} as Card)),
+        );
+      };
+      getCards();
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -159,12 +185,20 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   };
 
   const confirmOrder = async () => {
+    if (currentAddress.address === undefined || currentCard === undefined)
+      return;
+
+    if (orderUserPhoneTemp === undefined || orderUserPhoneTemp.length === 0) {
+      navigation.navigate('PhoneNumberModal');
+      return;
+    }
+
     if (currentCard.last_numbers === alterPaymentMethod.transferencia) {
       navigation.navigate('TransferScreen', {
         quoteData: quoteData,
-        billing: currentBilling,
+
         discountCode,
-        phoneNumber: currentPhoneNumber,
+        phoneNumber: orderUserPhoneTemp ?? currentUser.phone ?? '',
       });
       return;
     }
@@ -177,8 +211,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         products: productsCart.products,
         couponCode: discountCode,
         method: 'cash',
-        billInfo: billFormatOrderRequest(currentBilling),
-        phone: currentPhoneNumber,
+        billInfo: billFormatOrderRequest(
+          orderUserBillingTemp ?? ({} as BillInfo),
+        ),
+        phone: orderUserPhoneTemp ?? currentUser.phone ?? '',
       };
 
       await createOrder(orderRequest);
@@ -207,8 +243,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       method: 'card',
       cardId: currentCard.id.toString(),
       card: currentCard,
-      billInfo: billFormatOrderRequest(currentBilling),
-      phone: currentPhoneNumber,
+      billInfo: billFormatOrderRequest(
+        orderUserBillingTemp ?? ({} as BillInfo),
+      ),
+      phone: orderUserPhoneTemp ?? '',
       cardMonth: String(result).split('/')[0] ?? '',
       cardYear: String(result).split('/')[1] ?? '',
     };
@@ -272,10 +310,13 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         });
 
       await AsyncAlert();
+
       const resp = await getOrderByIdService(
         token,
         (response.data as OrderCreateResponse).order.id.toString(),
       );
+
+      clearData(orderRequest.method);
 
       navigation.navigate('OrderDetailScreen', {
         order: resp.data as Order,
@@ -283,6 +324,19 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         resetRootNavigation: true,
         isOrderCreated: true,
       });
+    }
+  };
+
+  const clearData = (method: string) => {
+    if (method === 'card') {
+      dispatch(clearProduct());
+      dispatch(clearOrderUserBillingTemp());
+      dispatch(clearOrderUserPhoneTemp());
+    } else {
+      dispatch(clearProduct());
+      dispatch(clearCard());
+      dispatch(clearOrderUserBillingTemp());
+      dispatch(clearOrderUserPhoneTemp());
     }
   };
 
@@ -306,9 +360,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
               })
             }
           />
-          <CurrentBillingButton billInfo={currentBilling} />
+          <CurrentBillingButton
+            billInfo={orderUserBillingTemp ?? ({} as BillInfo)}
+            onPress={() =>
+              navigation.navigate('BillingInfoModal', {
+                billingData: orderUserBillingTemp ?? ({} as BillInfo),
+              })
+            }
+          />
           <CurrentPhoneButton
-            phoneNumber={currentPhoneNumber}
+            phoneNumber={orderUserPhoneTemp ?? currentUser.phone ?? ''}
             onPress={() => navigation.navigate('PhoneNumberModal')}
           />
         </View>
