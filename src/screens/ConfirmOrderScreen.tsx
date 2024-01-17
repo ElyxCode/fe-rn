@@ -425,6 +425,9 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
             specialDiscount={quoteData.special_discount}
             discount={quoteData.discount}
             deliveryTotal={quoteData.transport}
+            discountCode={discountCode.code}
+            hasDiscount={discountCode.valid}
+            discountAmount={quoteData.promo}
           />
         </View>
       </ScrollView>
@@ -443,7 +446,8 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       <SubmitButton
         textButton="Confirmar pedido"
         activeOpacity={
-          currentAddress.address === undefined || currentCard.id === -1
+          currentAddress.address === undefined ||
+          currentCard.last_numbers === undefined
             ? 1
             : 0.9
         }
@@ -451,12 +455,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           marginHorizontal: 35,
           marginBottom: 10,
           backgroundColor:
-            currentAddress.address === undefined || currentCard.id === -1
+            currentAddress.address === undefined ||
+            currentCard.last_numbers === undefined
               ? colors.disbledButtonColor
               : colors.PrimaryColor,
         }}
         onPress={() => {
-          if (currentAddress.address === undefined || currentCard.id === -1)
+          if (
+            currentAddress.address === undefined ||
+            currentCard.last_numbers === undefined
+          )
             return;
           confirmOrder();
         }}
