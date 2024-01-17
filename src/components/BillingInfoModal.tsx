@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Alert, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch} from '../hooks/useRedux';
 
 import {SubmitButton} from './SubmitButton';
-import {BillingInfo, SwitchControlButton} from './SwitchControlButton';
+import {BillingInfo, SwitchBillControlButton} from './SwitchBillControlButton';
 
 import {BillInfo} from '../model/BillInfo';
 
@@ -17,9 +17,6 @@ import {colors} from '../styles/colors';
 
 export const BillingInfoModal = ({route, navigation}: any) => {
   const {billingData} = route.params;
-  const orderUserBillingTemp = useAppSelector(
-    state => state.user.orderUserBillingTemp?.billingInfo,
-  );
 
   const [billing, setBilling] = useState<string>(billingData.bill_type ?? '');
   const [typePerson, setTypePerson] = useState<string>(
@@ -103,7 +100,7 @@ export const BillingInfoModal = ({route, navigation}: any) => {
           ¿Que tipo de facturación deseas?
         </Text>
         <View style={styles.billingContainer}>
-          <SwitchControlButton
+          <SwitchBillControlButton
             personSelected={value => setTypePerson(value)}
             billSelected={value => setBilling(value)}
             setDui={setDui}
