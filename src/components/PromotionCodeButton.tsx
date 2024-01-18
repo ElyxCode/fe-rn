@@ -28,11 +28,17 @@ export const PromotionCodeButton = ({
           <Text style={styles.promoCodeDescriptionText}>
             Código promocional
           </Text>
-          <Text style={styles.promoCodeDescriptionText}>{promotionCode}</Text>
-          {!validPromotionCode && promotionCode ? (
-            <Text style={styles.promoCodeErrorText}>
-              Código de descuento inválido
-            </Text>
+          {promotionCode ? (
+            <>
+              <Text style={styles.promoCodeDescriptionText}>
+                {promotionCode}
+              </Text>
+              {!validPromotionCode && promotionCode && (
+                <Text style={styles.promoCodeErrorText}>
+                  Código de descuento inválido
+                </Text>
+              )}
+            </>
           ) : null}
         </View>
         {promotionCode ? (
