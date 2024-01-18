@@ -404,7 +404,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
                 quantity={item.quantity.toString()}
                 productName={item.name}
                 brand={item.brand.name}
-                price={item.price}
+                price={item.sale_price}
               />
             ))
           ) : (
