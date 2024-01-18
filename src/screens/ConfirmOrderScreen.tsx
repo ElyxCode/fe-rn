@@ -126,6 +126,11 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
+    if (
+      currentCard.last_numbers === alterPaymentMethod.transferencia ||
+      currentCard.last_numbers === alterPaymentMethod.efectivo
+    )
+      return;
     if (currentCard.id === -1) {
       setIsLoading(true);
       const getCards = async () => {
@@ -166,7 +171,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         setIsLoading(false);
         return;
       }
-      console.log(response.data as QuoteResponse);
       setDiscountCode({
         ...discountCode,
         valid: (response.data as QuoteResponse).coupon_valid,
@@ -274,6 +278,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   const createOrder = async (orderRequest: OrderRequestDTO) => {
     const response = await createOrderService(token, orderRequest);
+
     if (response.ok) {
       if ((response.data as OrderCreateErrorResponse).errors) {
         showServiceErrors((response.data as OrderCreateErrorResponse).errors);
@@ -341,6 +346,30 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         resetRootNavigation: true,
         isOrderCreated: true,
       });
+    } else {
+      if ((response.data as OrderCreateErrorResponse).errors) {
+        showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+        return;
+      }
+
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.UnAvailableServerMessage,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
     }
   };
 
