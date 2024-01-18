@@ -284,7 +284,11 @@ export const CardsScreen = ({route, navigation}: any) => {
       </View>
       <AddButton
         text="Agregar tarjeta"
-        onPress={() => navigation.navigate('CardFormScreen')}
+        onPress={() =>
+          navigation.navigate('CardFormScreen', {
+            confirmOrder,
+          })
+        }
       />
     </SafeAreaView>
   );
