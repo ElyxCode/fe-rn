@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
   plusAddContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.SecondaryColor,
