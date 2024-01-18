@@ -20,6 +20,7 @@ import {CustomNavBar} from '../components/CustomNavBar';
 import {SubmitButton} from '../components/SubmitButton';
 
 import {LoaderScreen} from './LoaderScreen';
+import {DiscountCode} from './ConfirmOrderScreen';
 
 import {QuoteResponse} from '../model/Quote';
 import {Bank} from '../model/bank';
@@ -77,7 +78,7 @@ export const TransferScreen = ({navigation, route}: any) => {
   const [quote] = useState<QuoteResponse>(quoteData);
   const [currentBilling] = useState<BillInfo>(billing);
   const [banks, setBanks] = useState<Bank[]>([]);
-  const [discountCodes] = useState<string>(discountCode);
+  const [discountCodes] = useState<DiscountCode>(discountCode);
   const [currentPhoneNumber] = useState<string>(phoneNumber);
   const [selectBank, setSelectBank] = useState<Bank>({} as Bank);
   const [fileData, setFileData] = useState<FileData>({
@@ -140,7 +141,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         branchId: productsCart.products[0].branch.id,
         products: productsCart.products,
         fileId: fileIdRecent,
-        couponCode: discountCodes,
+        couponCode: discountCodes.code,
         method: 'transfer',
         billInfo: billFormatOrderRequest(currentBilling),
         phone: currentPhoneNumber,
@@ -294,52 +295,57 @@ export const TransferScreen = ({navigation, route}: any) => {
           {label: 'Descuento Cupón', value: quote.promo},
           {label: 'Total', value: quote.total},
         ].map(item => (
-          <View style={styles.subTotalItem} key={item.label}>
-            {item.label === 'Costo de envío' ? (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  columnGap: 5,
-                }}>
-                <Text style={styles.subTotalItemLabel}>Costo de envío</Text>
-                <Pressable
-                  onPress={() =>
-                    navigation.navigate('DeliveryInfoModal' as never)
-                  }>
-                  <InfoCircleIcon width={17} height={17} />
-                </Pressable>
-              </View>
-            ) : (
-              <Text
-                style={[
-                  styles.subTotalItemLabel,
-                  {
-                    color:
-                      item.label === 'Total'
-                        ? colors.PrimaryTextColor
-                        : colors.DarkGrayColor,
-                  },
-                ]}>
-                {item.label}
-              </Text>
-            )}
+          <>
+            {item.label === 'Descuento Cupón' &&
+            discountCodes.code.length === 0 ? null : (
+              <View style={styles.subTotalItem} key={item.label}>
+                {item.label === 'Costo de envío' ? (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      columnGap: 5,
+                    }}>
+                    <Text style={styles.subTotalItemLabel}>Costo de envío</Text>
+                    <Pressable
+                      onPress={() =>
+                        navigation.navigate('DeliveryInfoModal' as never)
+                      }>
+                      <InfoCircleIcon width={17} height={17} />
+                    </Pressable>
+                  </View>
+                ) : (
+                  <Text
+                    style={[
+                      styles.subTotalItemLabel,
+                      {
+                        color:
+                          item.label === 'Total'
+                            ? colors.PrimaryTextColor
+                            : colors.DarkGrayColor,
+                      },
+                    ]}>
+                    {item.label}
+                  </Text>
+                )}
 
-            <Text
-              style={[
-                styles.subTotalItemValue,
-                {
-                  color:
-                    item.label === 'Total'
-                      ? colors.SecondaryTextColor
-                      : colors.LightGrayColor,
-                },
-              ]}>
-              {item.label === 'Descuento Cupón'
-                ? '-' + formatter.format(Number(item.value))
-                : formatter.format(Number(item.value))}
-            </Text>
-          </View>
+                <Text
+                  style={[
+                    styles.subTotalItemValue,
+                    {
+                      color:
+                        item.label === 'Total'
+                          ? colors.SecondaryTextColor
+                          : colors.LightGrayColor,
+                    },
+                  ]}>
+                  {item.label === 'Descuento Cupón'
+                    ? '-' + formatter.format(Number(item.value))
+                    : formatter.format(Number(item.value))}
+                </Text>
+              </View>
+            )}
+          </>
         ))}
       </View>
     );

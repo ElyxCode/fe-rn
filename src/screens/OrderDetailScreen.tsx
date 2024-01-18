@@ -29,6 +29,8 @@ export const OrderDetailScreen = ({navigation, route}: any) => {
   const [showReview, setShowReview] = useState<boolean>(
     Boolean(currentOrder.review),
   );
+
+  console.log(currentOrder.coupon_discount);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
 
@@ -125,6 +127,8 @@ export const OrderDetailScreen = ({navigation, route}: any) => {
                   totalAmount={currentOrder.total}
                   specialDiscount={currentOrder.special_discount}
                   subtotalWithDiscount={currentOrder.subtotal_with_discount}
+                  discountAmount={currentOrder.coupon_discount}
+                  hasDiscount={Number(currentOrder.coupon_discount) > 0}
                 />
               </View>
             </View>

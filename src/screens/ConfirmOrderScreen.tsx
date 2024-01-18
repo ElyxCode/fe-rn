@@ -13,7 +13,7 @@ import {
   OrderCreateResponse,
   OrderRequestDTO,
 } from '../model/Order';
-import {Quote, QuoteResponse} from '../model/Quote';
+import {Quote, QuoteResponse, QuoteResponseError} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
 import {Card} from '../model/Card';
 
@@ -50,9 +50,14 @@ import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
 
-export type tempCardExpDate = {
+export type TempCardExpDate = {
   month: string;
   year: string;
+};
+
+export type DiscountCode = {
+  code: string;
+  valid: boolean;
 };
 
 export const ConfirmOrderScreen = ({navigation}: any) => {
@@ -68,15 +73,19 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   );
   const token = useAppSelector(state => state.authToken.token);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [quoteError, setQuoteError] = useState<string>('');
   const [visibleCardExpValErrorModal, setVisibleCardExpValErrorModal] =
     useState<boolean>(false);
 
   const [branchName, setBranchName] = useState<string>('');
-  const [tempMonthYearCard, setTempMonthYearCard] = useState<tempCardExpDate>(
-    {} as tempCardExpDate,
+  const [tempMonthYearCard, setTempMonthYearCard] = useState<TempCardExpDate>(
+    {} as TempCardExpDate,
   );
 
-  const [discountCode, setDiscountCode] = useState<string>('');
+  const [discountCode, setDiscountCode] = useState<DiscountCode>({
+    code: '',
+    valid: false,
+  });
   const [quoteData, setQuoteData] = useState<QuoteResponse>(
     {} as QuoteResponse,
   );
@@ -117,6 +126,11 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
+    if (
+      currentCard.last_numbers === alterPaymentMethod.transferencia ||
+      currentCard.last_numbers === alterPaymentMethod.efectivo
+    )
+      return;
     if (currentCard.id === -1) {
       setIsLoading(true);
       const getCards = async () => {
@@ -132,29 +146,39 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-
     calculateQuote();
-    console.log('called quote');
 
-    setIsLoading(false);
-  }, [currentAddress.address]);
+    console.log('called quote');
+  }, [currentAddress.address, discountCode.code]);
 
   const calculateQuote = async () => {
+    setIsLoading(true);
     const quote: Quote = {
       branchId:
         productsCart.products[
           productsCart.products.length - 1
         ].branch.id.toString(),
       addressId: currentAddress.address.id.toString(),
-      discountCode: discountCode,
+      discountCode: discountCode.code,
       products: productsCart.products,
     };
 
     const response = await quoteService(quote);
     if (response.ok) {
+      if ((response.data as QuoteResponseError).errors) {
+        setQuoteError((response.data as QuoteResponseError).errors.address_id);
+        setQuoteData({} as QuoteResponse);
+        setIsLoading(false);
+        return;
+      }
+      setDiscountCode({
+        ...discountCode,
+        valid: (response.data as QuoteResponse).coupon_valid,
+      });
       setQuoteData(response.data as QuoteResponse);
+      setQuoteError('');
     }
+    setIsLoading(false);
   };
 
   const handleCardExpDateValidationModal = async () => {
@@ -206,7 +230,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         addressId: currentAddress.address.id,
         branchId: productsCart.products[0].branch.id,
         products: productsCart.products,
-        couponCode: discountCode,
+        couponCode: discountCode.code,
         method: 'cash',
         billInfo: billFormatOrderRequest(
           orderUserBillingTemp ?? ({} as BillInfo),
@@ -236,7 +260,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       addressId: currentAddress.address.id,
       branchId: productsCart.products[0].branch.id,
       products: productsCart.products,
-      couponCode: discountCode,
+      couponCode: discountCode.code,
       method: 'card',
       cardId: currentCard.id.toString(),
       card: currentCard,
@@ -254,6 +278,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   const createOrder = async (orderRequest: OrderRequestDTO) => {
     const response = await createOrderService(token, orderRequest);
+
     if (response.ok) {
       if ((response.data as OrderCreateErrorResponse).errors) {
         showServiceErrors((response.data as OrderCreateErrorResponse).errors);
@@ -321,7 +346,35 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         resetRootNavigation: true,
         isOrderCreated: true,
       });
+    } else {
+      if ((response.data as OrderCreateErrorResponse).errors) {
+        showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+        return;
+      }
+
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.UnAvailableServerMessage,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
     }
+  };
+
+  const handlePromotionCode = (text: string) => {
+    setDiscountCode({...discountCode, code: text});
   };
 
   const clearData = (method: string) => {
@@ -380,7 +433,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
                 quantity={item.quantity.toString()}
                 productName={item.name}
                 brand={item.brand.name}
-                price={item.price}
+                price={item.sale_price}
               />
             ))
           ) : (
@@ -390,17 +443,34 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           )}
           <AddProductButton text="Agregar producto" />
         </View>
+        {quoteError.length !== 0 && (
+          <View style={styles.quoteErrorContainer}>
+            <Text style={styles.quoteErrorText}>{quoteError}</Text>
+          </View>
+        )}
         <View style={styles.promotionCodeContainer}>
-          <PromotionCodeButton promotionCode={discountCode} />
+          <PromotionCodeButton
+            promotionCode={discountCode.code}
+            onPress={() =>
+              navigation.navigate('PromoCodeModal', {
+                setPromotionCode: (text: string) => handlePromotionCode(text),
+              })
+            }
+            onPressDelete={() => setDiscountCode({code: '', valid: false})}
+            validPromotionCode={discountCode.valid}
+          />
         </View>
         <View style={styles.totalInfoContainer}>
           <CurrentTotalOrder
-            subtotal={quoteData.subtotal}
-            subtotalWithDiscount={quoteData.subtotal_with_discount}
-            totalAmount={quoteData.total}
-            specialDiscount={quoteData.special_discount}
-            discount={quoteData.discount}
-            deliveryTotal={quoteData.transport}
+            subtotal={quoteData.subtotal ?? 0}
+            subtotalWithDiscount={quoteData.subtotal_with_discount ?? 0}
+            totalAmount={quoteData.total ?? 0}
+            specialDiscount={quoteData.special_discount ?? 0}
+            discount={quoteData.discount ?? 0}
+            deliveryTotal={quoteData.transport ?? 0}
+            discountCode={discountCode.code}
+            hasDiscount={discountCode.valid}
+            discountAmount={quoteData.promo}
           />
         </View>
       </ScrollView>
@@ -419,7 +489,8 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       <SubmitButton
         textButton="Confirmar pedido"
         activeOpacity={
-          currentAddress.address === undefined || currentCard.id === -1
+          currentAddress.address === undefined ||
+          currentCard.last_numbers === undefined
             ? 1
             : 0.9
         }
@@ -427,12 +498,18 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           marginHorizontal: 35,
           marginBottom: 10,
           backgroundColor:
-            currentAddress.address === undefined || currentCard.id === -1
+            currentAddress.address === undefined ||
+            currentCard.last_numbers === undefined ||
+            quoteError.length !== 0
               ? colors.disbledButtonColor
               : colors.PrimaryColor,
         }}
         onPress={() => {
-          if (currentAddress.address === undefined || currentCard.id === -1)
+          if (
+            currentAddress.address === undefined ||
+            currentCard.last_numbers === undefined ||
+            quoteError.length !== 0
+          )
             return;
           confirmOrder();
         }}
@@ -471,5 +548,14 @@ const styles = StyleSheet.create({
   totalInfoContainer: {
     paddingHorizontal: 25,
     marginBottom: 10,
+  },
+  quoteErrorText: {
+    color: colors.RedColor,
+    fontSize: 16,
+  },
+  quoteErrorContainer: {
+    paddingVertical: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

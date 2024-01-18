@@ -5,6 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 
+import {formatter} from '../utils/utilities';
 import {colors} from '../styles/colors';
 
 type CurrentTotalOrderProps = {
@@ -15,6 +16,9 @@ type CurrentTotalOrderProps = {
   totalAmount: string;
   specialDiscount: boolean;
   subtotalWithDiscount?: string;
+  discountCode?: string;
+  hasDiscount: boolean;
+  discountAmount: string;
 };
 
 export const CurrentTotalOrder = ({
@@ -25,6 +29,9 @@ export const CurrentTotalOrder = ({
   totalAmount,
   specialDiscount,
   subtotalWithDiscount,
+  discountCode,
+  hasDiscount,
+  discountAmount,
 }: CurrentTotalOrderProps) => {
   const navigation = useNavigation();
 
@@ -42,15 +49,19 @@ export const CurrentTotalOrder = ({
                   styles.totalText,
                   {textDecorationLine: 'line-through'},
                 ]}>
-                ${subtotal}
+                {formatter.format(Number(subtotal))}
               </Text>
-              <Text style={styles.totalText}>${subtotalWithDiscount}</Text>
+              <Text style={styles.totalText}>
+                {formatter.format(Number(subtotalWithDiscount))}
+              </Text>
             </View>
           </>
         ) : (
           <>
             <Text style={styles.totalLabelText}>Subtotal</Text>
-            <Text style={styles.totalText}>${subtotal}</Text>
+            <Text style={styles.totalText}>
+              {formatter.format(Number(subtotal))}
+            </Text>
           </>
         )}
       </View>
@@ -106,14 +117,33 @@ export const CurrentTotalOrder = ({
               )}
             </View>
 
-            <Text style={styles.totalText}>${deliveryTotal}</Text>
+            <Text style={styles.totalText}>
+              {formatter.format(Number(deliveryTotal))}
+            </Text>
           </>
         )}
       </View>
       <View style={styles.totalTextContainer}>
         <Text style={styles.totalLabelText}>Ahorro</Text>
-        <Text style={styles.totalText}>${discount}</Text>
+        <Text style={styles.totalText}>
+          {formatter.format(Number(discount))}
+        </Text>
       </View>
+      {hasDiscount && (
+        <View>
+          <View style={styles.totalTextContainer}>
+            <Text style={styles.totalLabelText}>Descuento Cupón</Text>
+            <Text style={styles.totalText}>
+              -{formatter.format(Number(discountAmount))}
+            </Text>
+          </View>
+          {isOrderDetail ? null : (
+            <Text style={[styles.totalLabelText, {fontSize: 12}]}>
+              {discountCode}
+            </Text>
+          )}
+        </View>
+      )}
       <View style={styles.totalTextContainer}>
         <Text
           style={[
@@ -127,7 +157,7 @@ export const CurrentTotalOrder = ({
             styles.totalText,
             {fontSize: 16, color: colors.SecondaryTextColor},
           ]}>
-          ${totalAmount}
+          {formatter.format(Number(totalAmount))}
         </Text>
       </View>
     </View>

@@ -70,17 +70,22 @@ export const CurrentPaymentButton = ({
                 lineBreakMode="tail">
                 {'Método de pago'}
               </Text>
-              <Text
-                style={styles.addressDescriptionText}
-                numberOfLines={1}
-                lineBreakMode="tail">
-                {paymentName === alterPaymentMethod.transferencia ||
-                paymentName === alterPaymentMethod.efectivo
-                  ? paymentName
-                  : paymentName?.length !== 0
-                  ? '**** ' + paymentName
-                  : paymentName}
-              </Text>
+              {paymentName ? (
+                <Text
+                  style={styles.addressDescriptionText}
+                  numberOfLines={1}
+                  lineBreakMode="tail">
+                  {paymentName === alterPaymentMethod.transferencia ||
+                  paymentName === alterPaymentMethod.efectivo
+                    ? paymentName
+                    : '**** ' + paymentName}
+                </Text>
+              ) : (
+                <Text
+                  style={styles.addressDescriptionText}
+                  numberOfLines={1}
+                  lineBreakMode="tail"></Text>
+              )}
             </>
           )}
         </View>

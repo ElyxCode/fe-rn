@@ -25,7 +25,11 @@ export const CurrentPhoneButton = ({
           <Text style={styles.phoneDescriptionText}>
             Información de contacto
           </Text>
-          <Text style={styles.phoneDescriptionText}>{phoneNumber}</Text>
+          <Text style={styles.phoneDescriptionText}>
+            {phoneNumber.length !== 0
+              ? phoneNumber
+              : 'Ingresa un número de teléfono'}
+          </Text>
         </View>
         <ArrowRightIcon height={25} width={25} />
       </View>

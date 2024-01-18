@@ -26,5 +26,5 @@ export interface QuoteResponseError {
 }
 
 export interface Errors {
-    address_id: string[];
+    address_id: string;
 }
