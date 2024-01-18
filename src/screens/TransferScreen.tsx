@@ -213,6 +213,12 @@ export const TransferScreen = ({navigation, route}: any) => {
           isOrderCreated: true,
         });
       } else {
+        if ((response.data as OrderCreateErrorResponse).errors) {
+          showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+          setIsLoading(false);
+          return;
+        }
+
         Alert.alert(
           Messages.titleMessage,
           Messages.UnAvailableServerMessage,
