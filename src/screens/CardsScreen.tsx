@@ -263,8 +263,10 @@ export const CardsScreen = ({route, navigation}: any) => {
               />
             ))
           ) : (
-            <View style={{alignItems: 'center', marginTop: 15}}>
-              <Text>No tienes tarjetas</Text>
+            <View style={{alignItems: 'center', marginVertical: 15}}>
+              <Text style={{color: colors.LightGrayColor}}>
+                No tienes tarjetas
+              </Text>
             </View>
           )}
 
