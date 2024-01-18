@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useIsFocused} from '@react-navigation/native';
@@ -20,7 +20,11 @@ import {Card} from '../model/Card';
 import {quoteService} from '../services/quote';
 import {getCardsService, validationCardService} from '../services/card/card';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
-import {clearCard, setCard} from '../services/card/cardSlice';
+import {
+  clearCard,
+  clearCardConfirmAdded,
+  setCard,
+} from '../services/card/cardSlice';
 import {clearProduct} from '../services/product/productSlice';
 import {
   clearOrderUserBillingTemp,
@@ -64,7 +68,10 @@ export type DiscountCode = {
 export const ConfirmOrderScreen = ({navigation}: any) => {
   const productsCart = useAppSelector(state => state.productsCart);
   const currentAddress = useAppSelector(state => state.currentAddress);
-  const currentCard = useAppSelector(state => state.currentCard);
+  const currentCard = useAppSelector(state => state.currentCard.card);
+  const recentCardAdded = useAppSelector(
+    state => state.currentCard.cardConfirmAdded,
+  );
   const currentUser = useAppSelector(state => state.user.userData);
   const orderUserPhoneTemp = useAppSelector(
     state => state.user.orderUserPhoneTemp?.phoneNumber,
@@ -83,9 +90,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const [callAddressButton, setCallAddressButton] = useState<boolean>(true);
 
   const [branchName, setBranchName] = useState<string>('');
-  const [tempMonthYearCard, setTempMonthYearCard] = useState<TempCardExpDate>(
-    {} as TempCardExpDate,
-  );
 
   const [discountCode, setDiscountCode] = useState<DiscountCode>({
     code: '',
@@ -98,8 +102,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const dispatch = useAppDispatch();
 
   const isFocused = useIsFocused();
-
-  const call = useRef<Boolean>(true);
 
   const [status, execute, resolve, reject, reset] = useAwaitableComponent();
   const showModal = status === 'awaiting';
@@ -150,12 +152,11 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   useEffect(() => {
     calculateQuote();
-
-    console.log('called quote');
-  }, [currentAddress.address, discountCode.code, isFocused]);
+  }, [isFocused]);
 
   const calculateQuote = async () => {
     if (!isFocused) return;
+
     setIsLoading(true);
 
     const quote: Quote = {
@@ -291,18 +292,36 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       return;
     }
 
-    const result = await handleCardExpDateValidationModal();
-    if (String(result).length === 0) return;
-    const validationCard = await cardValidation(
-      currentCard.id.toString(),
-      String(result).split('/')[0],
-      String(result).split('/')[1],
-    );
-    if (!validationCard) {
-      setVisibleCardExpValErrorModal(true);
-      return;
+    if (
+      currentCard.id === recentCardAdded.id &&
+      currentCard.last_numbers === recentCardAdded.last_numbers
+    ) {
+      await createOrderWithCard(
+        recentCardAdded.month ?? '',
+        recentCardAdded.year ?? '',
+      );
+    } else {
+      const result = await handleCardExpDateValidationModal();
+      if (String(result).length === 0) return;
+      const validationCard = await cardValidation(
+        currentCard.id.toString(),
+        String(result).split('/')[0],
+        String(result).split('/')[1],
+      );
+      if (!validationCard) {
+        setVisibleCardExpValErrorModal(true);
+        return;
+      }
+      await createOrderWithCard(
+        String(result).split('/')[0] ?? '',
+        String(result).split('/')[1] ?? '',
+      );
     }
 
+    setIsLoading(false);
+  };
+
+  const createOrderWithCard = async (month: string, year: string) => {
     setIsLoading(true);
     const orderRequest: OrderRequestDTO = {
       addressId: currentAddress.address.id,
@@ -316,12 +335,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         orderUserBillingTemp ?? ({} as BillInfo),
       ),
       phone: orderUserPhoneTemp ?? '',
-      cardMonth: String(result).split('/')[0] ?? '',
-      cardYear: String(result).split('/')[1] ?? '',
+      cardMonth: month,
+      cardYear: year,
     };
-
     await createOrder(orderRequest);
-    setIsLoading(false);
   };
 
   const createOrder = async (orderRequest: OrderRequestDTO) => {
@@ -451,6 +468,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       dispatch(clearProduct());
       dispatch(clearOrderUserBillingTemp());
       dispatch(clearOrderUserPhoneTemp());
+      dispatch(clearCardConfirmAdded());
     } else {
       dispatch(clearProduct());
       dispatch(clearCard());
@@ -558,7 +576,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         onCancel={reject}
         visible={showModal}
         lastNumber={currentCard.last_numbers}
-        setTempMonthYearCard={setTempMonthYearCard}
       />
       <CreditCardValidationErrorModal
         visible={visibleCardExpValErrorModal}
