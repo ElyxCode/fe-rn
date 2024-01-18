@@ -13,7 +13,7 @@ import {
   OrderCreateResponse,
   OrderRequestDTO,
 } from '../model/Order';
-import {Quote, QuoteResponse} from '../model/Quote';
+import {Quote, QuoteResponse, QuoteResponseError} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
 import {Card} from '../model/Card';
 
@@ -73,6 +73,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   );
   const token = useAppSelector(state => state.authToken.token);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [quoteError, setQuoteError] = useState<string>('');
   const [visibleCardExpValErrorModal, setVisibleCardExpValErrorModal] =
     useState<boolean>(false);
 
@@ -141,6 +142,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   useEffect(() => {
     calculateQuote();
+
     console.log('called quote');
   }, [currentAddress.address, discountCode.code]);
 
@@ -158,12 +160,19 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
     const response = await quoteService(quote);
     if (response.ok) {
-      // console.log(response.data as QuoteResponse);
+      if ((response.data as QuoteResponseError).errors) {
+        setQuoteError((response.data as QuoteResponseError).errors.address_id);
+        setQuoteData({} as QuoteResponse);
+        setIsLoading(false);
+        return;
+      }
+      console.log(response.data as QuoteResponse);
       setDiscountCode({
         ...discountCode,
         valid: (response.data as QuoteResponse).coupon_valid,
       });
       setQuoteData(response.data as QuoteResponse);
+      setQuoteError('');
     }
     setIsLoading(false);
   };
@@ -405,6 +414,11 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           )}
           <AddProductButton text="Agregar producto" />
         </View>
+        {quoteError.length !== 0 && (
+          <View style={styles.quoteErrorContainer}>
+            <Text style={styles.quoteErrorText}>{quoteError}</Text>
+          </View>
+        )}
         <View style={styles.promotionCodeContainer}>
           <PromotionCodeButton
             promotionCode={discountCode.code}
@@ -419,12 +433,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         </View>
         <View style={styles.totalInfoContainer}>
           <CurrentTotalOrder
-            subtotal={quoteData.subtotal}
-            subtotalWithDiscount={quoteData.subtotal_with_discount}
-            totalAmount={quoteData.total}
-            specialDiscount={quoteData.special_discount}
-            discount={quoteData.discount}
-            deliveryTotal={quoteData.transport}
+            subtotal={quoteData.subtotal ?? 0}
+            subtotalWithDiscount={quoteData.subtotal_with_discount ?? 0}
+            totalAmount={quoteData.total ?? 0}
+            specialDiscount={quoteData.special_discount ?? 0}
+            discount={quoteData.discount ?? 0}
+            deliveryTotal={quoteData.transport ?? 0}
             discountCode={discountCode.code}
             hasDiscount={discountCode.valid}
             discountAmount={quoteData.promo}
@@ -456,14 +470,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           marginBottom: 10,
           backgroundColor:
             currentAddress.address === undefined ||
-            currentCard.last_numbers === undefined
+            currentCard.last_numbers === undefined ||
+            quoteError.length !== 0
               ? colors.disbledButtonColor
               : colors.PrimaryColor,
         }}
         onPress={() => {
           if (
             currentAddress.address === undefined ||
-            currentCard.last_numbers === undefined
+            currentCard.last_numbers === undefined ||
+            quoteError.length !== 0
           )
             return;
           confirmOrder();
@@ -503,5 +519,14 @@ const styles = StyleSheet.create({
   totalInfoContainer: {
     paddingHorizontal: 25,
     marginBottom: 10,
+  },
+  quoteErrorText: {
+    color: colors.RedColor,
+    fontSize: 16,
+  },
+  quoteErrorContainer: {
+    paddingVertical: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
