@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useIsFocused} from '@react-navigation/native';
 
 import useAwaitableComponent from 'use-awaitable-component';
 
@@ -77,6 +78,9 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const [visibleCardExpValErrorModal, setVisibleCardExpValErrorModal] =
     useState<boolean>(false);
   const [phoneRequiredModal, setPhoneRequiredModal] = useState<boolean>(false);
+  const [showDistanceDiscount, setShowDistanceDiscount] =
+    useState<boolean>(true);
+  const [callAddressButton, setCallAddressButton] = useState<boolean>(true);
 
   const [branchName, setBranchName] = useState<string>('');
   const [tempMonthYearCard, setTempMonthYearCard] = useState<TempCardExpDate>(
@@ -92,6 +96,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   );
 
   const dispatch = useAppDispatch();
+
+  const isFocused = useIsFocused();
+
+  const call = useRef<Boolean>(true);
 
   const [status, execute, resolve, reject, reset] = useAwaitableComponent();
   const showModal = status === 'awaiting';
@@ -144,10 +152,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     calculateQuote();
 
     console.log('called quote');
-  }, [currentAddress.address, discountCode.code]);
+  }, [currentAddress.address, discountCode.code, isFocused]);
 
   const calculateQuote = async () => {
+    if (!isFocused) return;
     setIsLoading(true);
+
     const quote: Quote = {
       branchId:
         productsCart.products[
@@ -172,8 +182,51 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       });
       setQuoteData(response.data as QuoteResponse);
       setQuoteError('');
+
+      if (callAddressButton && isFocused) {
+        await freeShipping(response.data as QuoteResponse);
+      }
     }
     setIsLoading(false);
+  };
+
+  const freeShipping = async (quoteResponse: QuoteResponse) => {
+    // if (!quoteResponse.special_discount) return;
+
+    if (
+      Number(
+        productsCart.products[productsCart.products.length - 1].branch
+          .distance_for_free,
+      ) !== 0
+    ) {
+      if (quoteResponse.special_discount) {
+        await handleFreeShippingAlert(Messages.freeShippingForDistanceMessage);
+        return;
+      }
+
+      if (
+        quoteResponse.coupon_valid &&
+        Number(quoteResponse.distance) <=
+          Number(
+            productsCart.products[productsCart.products.length - 1].branch
+              .distance_for_free,
+          ) &&
+        showDistanceDiscount
+      ) {
+        await handleFreeShippingAlert(
+          Messages.freeShippingWithTwoPromotionsMessage,
+        );
+        setShowDistanceDiscount(false);
+        return;
+      }
+
+      if (quoteResponse.coupon_valid) {
+        setShowDistanceDiscount(false);
+        return;
+      }
+
+      await handleFreeShippingAlert(Messages.notFreeShippingForDistanceMessage);
+    }
   };
 
   const handleCardExpDateValidationModal = async () => {
@@ -372,6 +425,27 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     setDiscountCode({...discountCode, code: text});
   };
 
+  const handleFreeShippingAlert = async (description: string) => {
+    const AsyncAlert = async () =>
+      new Promise(resolve => {
+        Alert.alert(
+          Messages.titleMessage,
+          description,
+          [
+            {
+              text: Messages.okButton,
+              onPress: () => {
+                resolve('YES');
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+      });
+
+    await AsyncAlert();
+  };
+
   const clearData = (method: string) => {
     if (method === 'card') {
       dispatch(clearProduct());
@@ -394,24 +468,29 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         <View style={styles.infoUserContainer}>
           <CurrentAddressButton
             address={currentAddress.address}
-            onPress={() => navigation.navigate('AddressNavigation')}
+            onPress={() => {
+              setCallAddressButton(true);
+              navigation.navigate('AddressNavigation');
+            }}
           />
           <CurrentPaymentButton
             paymentName={currentCard.last_numbers}
-            onPress={() =>
+            onPress={() => {
+              setCallAddressButton(false);
               navigation.navigate('CardNavigation', {
                 screen: 'CardsScreen',
                 params: {confirmOrder: true},
-              })
-            }
+              });
+            }}
           />
           <CurrentBillingButton
             billInfo={orderUserBillingTemp ?? ({} as BillInfo)}
-            onPress={() =>
+            onPress={() => {
+              setCallAddressButton(false);
               navigation.navigate('BillingInfoModal', {
                 billingData: orderUserBillingTemp ?? ({} as BillInfo),
-              })
-            }
+              });
+            }}
           />
           <CurrentPhoneButton
             phoneNumber={orderUserPhoneTemp ?? currentUser.phone ?? ''}
@@ -446,12 +525,17 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         <View style={styles.promotionCodeContainer}>
           <PromotionCodeButton
             promotionCode={discountCode.code}
-            onPress={() =>
+            onPress={() => {
+              setCallAddressButton(true);
               navigation.navigate('PromoCodeModal', {
                 setPromotionCode: (text: string) => handlePromotionCode(text),
-              })
-            }
-            onPressDelete={() => setDiscountCode({code: '', valid: false})}
+              });
+            }}
+            onPressDelete={() => {
+              setDiscountCode({code: '', valid: false});
+              setCallAddressButton(true);
+              setShowDistanceDiscount(true);
+            }}
             validPromotionCode={discountCode.valid}
           />
         </View>
