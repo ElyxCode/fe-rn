@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -11,8 +11,6 @@ import {
 
 import {useForm, Controller} from 'react-hook-form';
 
-import {tempCardExpDate} from '../screens/ConfirmOrderScreen';
-
 import CloseCircleIcon from '../assets/close_circle.svg';
 
 import {isAndroid} from '../constants/Platform';
@@ -24,14 +22,12 @@ export type CreditCardValidationModalProps = {
   onSubmit: (val: any) => void;
   onCancel: (err: any) => void;
   lastNumber: string;
-  setTempMonthYearCard: React.Dispatch<React.SetStateAction<tempCardExpDate>>;
 };
 
 export const CreditCardValidationModal = ({
   visible,
   lastNumber,
   onSubmit,
-  setTempMonthYearCard,
   onCancel,
 }: CreditCardValidationModalProps) => {
   const {
@@ -49,10 +45,6 @@ export const CreditCardValidationModal = ({
   };
 
   const handleOnSubmit = ({expCard}: {expCard: string}) => {
-    setTempMonthYearCard({
-      month: expCard.split('/')[0],
-      year: expCard.split('/')[1],
-    });
     onSubmit(expCard);
     expCard = '';
   };
