@@ -5,7 +5,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import useAwaitableComponent from 'use-awaitable-component';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
-import {useIsFocused} from '@react-navigation/native';
 
 import {
   Order,
@@ -44,6 +43,7 @@ import {PromotionCodeButton} from '../components/PromotionCodeButton';
 import {CurrentTotalOrder} from '../components/CurrentTotalOrder';
 import {CreditCardValidationModal} from '../components/CreditCardValidationModal';
 import {CreditCardValidationErrorModal} from '../components/CreditCardValidationErrorModal';
+import {PhoneRequiredModal} from '../components/PhoneRequiredModal';
 
 import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
@@ -76,6 +76,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const [quoteError, setQuoteError] = useState<string>('');
   const [visibleCardExpValErrorModal, setVisibleCardExpValErrorModal] =
     useState<boolean>(false);
+  const [phoneRequiredModal, setPhoneRequiredModal] = useState<boolean>(false);
 
   const [branchName, setBranchName] = useState<string>('');
   const [tempMonthYearCard, setTempMonthYearCard] = useState<TempCardExpDate>(
@@ -90,16 +91,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     {} as QuoteResponse,
   );
 
-  const [currentPayment, setCurrentPayment] = useState<string>(
-    currentCard.active ? currentCard.last_numbers : '',
-  );
-
   const dispatch = useAppDispatch();
 
   const [status, execute, resolve, reject, reset] = useAwaitableComponent();
   const showModal = status === 'awaiting';
-
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     setBranchName(
@@ -210,7 +205,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   const confirmOrder = async () => {
     if (orderUserPhoneTemp === undefined || orderUserPhoneTemp.length === 0) {
-      navigation.navigate('PhoneNumberModal');
+      setPhoneRequiredModal(true);
       return;
     }
 
@@ -485,7 +480,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         visible={visibleCardExpValErrorModal}
         setIsVisible={setVisibleCardExpValErrorModal}
       />
-
+      <PhoneRequiredModal
+        visible={phoneRequiredModal}
+        setIsVisible={setPhoneRequiredModal}
+      />
       <SubmitButton
         textButton="Confirmar pedido"
         activeOpacity={
