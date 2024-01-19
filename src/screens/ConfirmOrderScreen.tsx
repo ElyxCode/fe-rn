@@ -264,31 +264,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     }
 
     if (currentCard.last_numbers === alterPaymentMethod.transferencia) {
-      navigation.navigate('TransferScreen', {
-        quoteData: quoteData,
-        billing: orderUserBillingTemp,
-        discountCode,
-        phoneNumber: orderUserPhoneTemp ?? currentUser.phone ?? '',
-      });
+      transferFlow();
       return;
     }
 
     if (currentCard.last_numbers === alterPaymentMethod.efectivo) {
-      setIsLoading(true);
-      const orderRequest: OrderRequestDTO = {
-        addressId: currentAddress.address.id,
-        branchId: productsCart.products[0].branch.id,
-        products: productsCart.products,
-        couponCode: discountCode.code,
-        method: 'cash',
-        billInfo: billFormatOrderRequest(
-          orderUserBillingTemp ?? ({} as BillInfo),
-        ),
-        phone: orderUserPhoneTemp ?? currentUser.phone ?? '',
-      };
-
-      await createOrder(orderRequest);
-      setIsLoading(false);
+      cashFlow();
       return;
     }
 
@@ -296,10 +277,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       currentCard.id === recentCardAdded.id &&
       currentCard.last_numbers === recentCardAdded.last_numbers
     ) {
-      await createOrderWithCard(
-        recentCardAdded.month ?? '',
-        recentCardAdded.year ?? '',
-      );
+      await cardFlow(recentCardAdded.month ?? '', recentCardAdded.year ?? '');
     } else {
       const result = await handleCardExpDateValidationModal();
       if (String(result).length === 0) return;
@@ -312,16 +290,41 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         setVisibleCardExpValErrorModal(true);
         return;
       }
-      await createOrderWithCard(
+      await cardFlow(
         String(result).split('/')[0] ?? '',
         String(result).split('/')[1] ?? '',
       );
     }
+  };
 
+  const transferFlow = () => {
+    navigation.navigate('TransferScreen', {
+      quoteData: quoteData,
+      billing: orderUserBillingTemp,
+      discountCode,
+      phoneNumber: orderUserPhoneTemp ?? currentUser.phone ?? '',
+    });
+  };
+
+  const cashFlow = async () => {
+    setIsLoading(true);
+    const orderRequest: OrderRequestDTO = {
+      addressId: currentAddress.address.id,
+      branchId: productsCart.products[0].branch.id,
+      products: productsCart.products,
+      couponCode: discountCode.code,
+      method: 'cash',
+      billInfo: billFormatOrderRequest(
+        orderUserBillingTemp ?? ({} as BillInfo),
+      ),
+      phone: orderUserPhoneTemp ?? currentUser.phone ?? '',
+    };
+
+    await createOrder(orderRequest);
     setIsLoading(false);
   };
 
-  const createOrderWithCard = async (month: string, year: string) => {
+  const cardFlow = async (month: string, year: string) => {
     setIsLoading(true);
     const orderRequest: OrderRequestDTO = {
       addressId: currentAddress.address.id,
@@ -339,6 +342,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       cardYear: year,
     };
     await createOrder(orderRequest);
+    setIsLoading(false);
   };
 
   const createOrder = async (orderRequest: OrderRequestDTO) => {
@@ -533,7 +537,19 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
               <Text>No tienes productos</Text>
             </View>
           )}
-          <AddProductButton text="Agregar producto" />
+          <AddProductButton
+            text="Agregar producto"
+            onPress={() => {
+              navigation.navigate('BranchNavigation', {
+                screen: 'BranchDetailScreen',
+                params: {
+                  branchId:
+                    productsCart.products[productsCart.products.length - 1]
+                      .branch.id,
+                },
+              });
+            }}
+          />
         </View>
         {quoteError.length !== 0 && (
           <View style={styles.quoteErrorContainer}>
