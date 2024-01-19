@@ -31,6 +31,19 @@ export const updateUserService = async (token: string, user: UserProfile) : Prom
     return api.post('/me', {...userDataRequest});
 };
 
+export const updateNotificationService = async (token: string, user: UserProfile) : Promise<ApiResponse<UserProfile, ErrorMessageLogin>> => {
+    const userDataRequest = {     
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        notifications: !user.notifications,
+    }
+    api.setHeader(
+        'Authorization', "Bearer "+token
+      )
+    return api.post('/me', {...userDataRequest});
+};
+
 //TODO: colocar el tipo de repuesta correcto para este servicio
 export const updateDeviceIdService = async (token: string, name: string, email: string, deviceId: string, device: string) : Promise<ApiResponse<string[]>> => {
   api.setHeader(
