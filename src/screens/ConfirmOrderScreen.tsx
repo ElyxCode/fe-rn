@@ -15,7 +15,7 @@ import {
 } from '../model/Order';
 import {Quote, QuoteResponse, QuoteResponseError} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
-import {Card} from '../model/Card';
+import {Card, ValidationCardError, ValidationCardResponse} from '../model/Card';
 
 import {quoteService} from '../services/quote';
 import {getCardsService, validationCardService} from '../services/card/card';
@@ -252,9 +252,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       cardYear,
     );
     if (response.ok) {
-      return Boolean(response?.data['valid']);
+      return Boolean((response?.data as ValidationCardResponse).valid);
+    } else {
+      return response?.data as ValidationCardError;
     }
-    return false;
   };
 
   const confirmOrder = async () => {
@@ -274,18 +275,45 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
     }
 
     if (
+      currentCard !== undefined &&
+      recentCardAdded !== undefined &&
       currentCard.id === recentCardAdded.id &&
       currentCard.last_numbers === recentCardAdded.last_numbers
     ) {
       await cardFlow(recentCardAdded.month ?? '', recentCardAdded.year ?? '');
     } else {
       const result = await handleCardExpDateValidationModal();
+
       if (String(result).length === 0) return;
+
       const validationCard = await cardValidation(
         currentCard.id.toString(),
         String(result).split('/')[0],
         String(result).split('/')[1],
       );
+
+      if ((validationCard as ValidationCardError).error) {
+        const AsyncAlert = async () =>
+          new Promise(resolve => {
+            Alert.alert(
+              Messages.titleMessage,
+              (validationCard as ValidationCardError).error,
+              [
+                {
+                  text: Messages.okButton,
+                  onPress: () => {
+                    resolve('YES');
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          });
+
+        await AsyncAlert();
+        return;
+      }
+
       if (!validationCard) {
         setVisibleCardExpValErrorModal(true);
         return;
