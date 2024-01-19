@@ -540,7 +540,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           <AddProductButton
             text="Agregar producto"
             onPress={() => {
-              navigation.navigate('BranchNavigation', {
+              navigation.navigate('BranchConfirmOrderNavigation', {
                 screen: 'BranchDetailScreen',
                 params: {
                   branchId:
