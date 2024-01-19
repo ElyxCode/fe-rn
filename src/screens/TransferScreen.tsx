@@ -301,10 +301,10 @@ export const TransferScreen = ({navigation, route}: any) => {
           {label: 'Descuento Cupón', value: quote.promo},
           {label: 'Total', value: quote.total},
         ].map(item => (
-          <>
+          <View style={styles.subTotalItem} key={item.label}>
             {item.label === 'Descuento Cupón' &&
             discountCodes.code.length === 0 ? null : (
-              <View style={styles.subTotalItem} key={item.label}>
+              <>
                 {item.label === 'Costo de envío' ? (
                   <View
                     style={{
@@ -312,7 +312,7 @@ export const TransferScreen = ({navigation, route}: any) => {
                       alignItems: 'center',
                       columnGap: 5,
                     }}>
-                    <Text style={styles.subTotalItemLabel}>Costo de envío</Text>
+                    <Text style={styles.subTotalItemLabel}>{item.label}</Text>
                     <Pressable
                       onPress={() =>
                         navigation.navigate('DeliveryInfoModal' as never)
@@ -349,9 +349,9 @@ export const TransferScreen = ({navigation, route}: any) => {
                     ? '-' + formatter.format(Number(item.value))
                     : formatter.format(Number(item.value))}
                 </Text>
-              </View>
+              </>
             )}
-          </>
+          </View>
         ))}
       </View>
     );
@@ -406,7 +406,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         <View style={styles.fileContainer}>
           <TextInput
             editable={false}
-            style={[styles.fileInput, {height: isAndroid ? 0 : 40}]}
+            style={styles.fileInput}
             placeholder={
               fileData.fileName ? fileData.fileName : 'Adjunta tu comprobante'
             }
@@ -525,5 +525,6 @@ const styles = StyleSheet.create({
     borderColor: colors.PrimaryColor,
     flex: 1,
     textAlign: 'center',
+    height: 40,
   },
 });
