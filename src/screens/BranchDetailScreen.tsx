@@ -32,7 +32,7 @@ import {clearCategorySelected} from '../services/category/categorySlice';
 
 import {Branch} from '../model/Branch';
 import {Promotion} from '../model/Promotion';
-import {Product} from '../model/product';
+import {Product, ProductResponse} from '../model/product';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 import RatingStarIcon from '../assets/Rating_Star.svg';
@@ -48,7 +48,7 @@ import {CartButton} from '../components/CartButton';
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [productResponse, setProductResponse] = useState<ProductResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingPromo, setIsLoadingPromo] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
@@ -81,7 +81,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         );
 
         if (response.ok) {
-          setProducts(response.data?.data as Product[]);
+          setProductResponse(response.data  );
         } else {
           console.log({error: response.originalError});
         }
@@ -136,7 +136,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         const response = await productsService(branchId);
         if (response.ok) {
           setNextPageProduct(response.data?.links.next);
-          setProducts(response.data?.data as Product[]);
+          setProductResponse(response.data);
         } else {
           console.log({error: response.originalError});
         }
@@ -146,6 +146,12 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
 
     getProductData();
   }, [category]);
+
+  const NavigateToSearchScreen = async () => {
+
+    navigation.navigate('SearchProductsScreen', {productResponse, branchData});
+
+  }
 
   // carga mas productos
   const loadMoreProducts = async () => {
@@ -157,9 +163,9 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       category.categoryId,
     );
 
-    if (response.ok) {
+    if (response.ok ) {
       setNextPageProduct(response.data?.links.next);
-      setProducts([...products, ...(response.data?.data ?? [])]);
+      setProductResponse(response.data);
     } else {
       console.log({error: response.originalError});
     }
@@ -265,11 +271,11 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomNavBar />
+      <CustomNavBar showSearchIcon={true} onSearchIconPress={() => NavigateToSearchScreen()}/>
       <View style={styles.productListContainer}>
         <FlatList
           ListHeaderComponent={<HeaderBranchDetail />}
-          data={products}
+          data={productResponse?.data}
           contentContainerStyle={{
             paddingBottom: 20,
           }}
