@@ -3,13 +3,14 @@ import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Controller, useForm} from 'react-hook-form';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {LoaderScreen} from './LoaderScreen';
 
 import {createCardService} from '../services/card/card';
+import {setCardConfirmAdded} from '../services/card/cardSlice';
 
-import {CardRequest, ErrorsFields} from '../model/Card';
+import {Card, CardRequest} from '../model/Card';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
@@ -32,9 +33,11 @@ import {
 
 import {isAndroid} from '../constants/Platform';
 
-export const CardFormScreen = ({navigation}: any) => {
+export const CardFormScreen = ({navigation, route}: any) => {
+  const {confirmOrder} = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
+  const dispatch = useAppDispatch();
   const {
     control,
     handleSubmit,
@@ -81,6 +84,18 @@ export const CardFormScreen = ({navigation}: any) => {
                 {
                   text: Messages.okButton,
                   onPress: () => {
+                    if (confirmOrder) {
+                      const newCard: Card = {
+                        id: response.data?.id ?? -1,
+                        name: response.data?.name ?? '',
+                        last_numbers: response.data?.last_numbers ?? '',
+                        month: newCardRequest.month,
+                        year: newCardRequest.year,
+                        verified: response.data?.verified ?? false,
+                        active: response.data?.active ?? false,
+                      };
+                      dispatch(setCardConfirmAdded({...newCard}));
+                    }
                     resolve('YES');
                     navigation.goBack();
                   },

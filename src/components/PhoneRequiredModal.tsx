@@ -9,82 +9,38 @@ import {
   Modal,
 } from 'react-native';
 
-import {useForm, Controller} from 'react-hook-form';
-
 import CloseCircleIcon from '../assets/close_circle.svg';
 
-import {isAndroid} from '../constants/Platform';
-import {normalizeExpirationCard} from '../utils/utilities';
 import {colors} from '../styles/colors';
 
-export type CreditCardValidationModalProps = {
+export type CreditCardValidationErrorModalProps = {
   visible: boolean;
-  onSubmit: (val: any) => void;
-  onCancel: (err: any) => void;
-  lastNumber: string;
+  setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const CreditCardValidationModal = ({
+export const PhoneRequiredModal = ({
   visible,
-  lastNumber,
-  onSubmit,
-  onCancel,
-}: CreditCardValidationModalProps) => {
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm({
-    defaultValues: {
-      expCard: '',
-    },
-  });
-
-  const handleCancel = () => {
-    onCancel('');
-  };
-
-  const handleOnSubmit = ({expCard}: {expCard: string}) => {
-    onSubmit(expCard);
-    expCard = '';
-  };
-
+  setIsVisible,
+}: CreditCardValidationErrorModalProps) => {
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <SafeAreaView style={styles.container}>
         <View style={styles.popUpContainer}>
           <View style={styles.closeButtonContainer}>
-            <Pressable onPress={() => handleCancel()}>
+            <Pressable onPress={() => setIsVisible(false)}>
               <CloseCircleIcon height={25} width={25} />
             </Pressable>
           </View>
           <View style={styles.popUpBody}>
             <Text style={styles.titleText}>Ferreplace</Text>
             <Text style={styles.descriptionText}>
-              Para comprar ingresa la fecha de vencimiento de tu tarjeta
-              seleccionada **** {lastNumber}
+              Para completar la orden y poder contactarte, es necesario que
+              ingreses tu número de teléfono
             </Text>
-            <Controller
-              control={control}
-              rules={{}}
-              render={({field: {onChange, value, onBlur}}) => (
-                <TextInput
-                  onChangeText={(text: any) =>
-                    onChange(normalizeExpirationCard(text))
-                  }
-                  onBlur={onBlur}
-                  value={value}
-                  style={styles.textInput}
-                  placeholder="MM/YY"
-                  keyboardType={isAndroid ? 'numeric' : 'number-pad'}
-                />
-              )}
-              name="expCard"
-            />
 
             <Text
               style={styles.acceptButtonText}
-              onPress={handleSubmit(handleOnSubmit)}>
+              onPress={() => setIsVisible(false)}>
               Aceptar
             </Text>
           </View>
@@ -124,14 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.DarkGrayColor,
     textAlign: 'center',
-  },
-  textInput: {
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.PrimaryColor,
-    alignItems: 'center',
-    textAlign: 'center',
-    height: 40,
+    marginVertical: 20,
   },
   acceptButtonText: {
     textAlign: 'center',

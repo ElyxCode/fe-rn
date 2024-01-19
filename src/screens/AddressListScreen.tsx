@@ -1,6 +1,6 @@
-import {Route, useFocusEffect} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, Text, View} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {FlatList, SafeAreaView, View} from 'react-native';
 import {AddButton} from '../components/AddButton';
 import {AddressListCell} from '../components/AddressListCell';
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -11,7 +11,7 @@ import {
   ReadAll,
   UpdateAddress,
 } from '../services/address/Address';
-import {updateUserService} from '../services/user/user';
+
 import {LoaderScreen} from './LoaderScreen';
 import {MapFlow} from './MapConfirmationScreen';
 import {setAddress} from '../services/address/addressSlice';
@@ -19,7 +19,7 @@ import {setAddress} from '../services/address/addressSlice';
 export const AddressListScreen = ({navigation, route}: any) => {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {token, social} = useAppSelector(state => state.authToken);
+  const {token} = useAppSelector(state => state.authToken);
   const dispatch = useAppDispatch();
 
   const {addressWassAdded = false, newAddress = {}} = route.params ?? {};
@@ -55,7 +55,12 @@ export const AddressListScreen = ({navigation, route}: any) => {
   );
 
   const setActiveAddress = async (currentAddress: Address) => {
-    if (currentAddress.active && !addressWassAdded) return;
+    setIsLoading(true);
+    if (currentAddress.active && !addressWassAdded) {
+      navigation.goBack();
+      setIsLoading(false);
+      return;
+    }
 
     if (addresses.some(x => x.active)) {
       let oldAddress = addresses.find(x => x.active);
@@ -83,6 +88,8 @@ export const AddressListScreen = ({navigation, route}: any) => {
     }
 
     dispatch(setAddress(addresses.find(x => x.active) ?? ({} as Address)));
+    navigation.goBack();
+    setIsLoading(false);
   };
 
   const GoToCreateAddress = () => {
@@ -101,36 +108,32 @@ export const AddressListScreen = ({navigation, route}: any) => {
     }
   };
 
+  if (isLoading) return <LoaderScreen />;
+
   return (
     <>
       <SafeAreaView style={{flex: 1}}>
-        {isLoading ? (
-          <LoaderScreen />
-        ) : (
-          <>
-            <CustomNavBar titleText="Direcciones de envío"></CustomNavBar>
+        <CustomNavBar titleText="Direcciones de envío"></CustomNavBar>
 
-            <FlatList
-              contentContainerStyle={{paddingHorizontal: 20}}
-              data={addresses}
-              renderItem={({item}) => (
-                <AddressListCell
-                  onPress={() => setActiveAddress(item)}
-                  address={item}
-                  onPressDelete={() => DeleteItem({address: item})}
-                />
-              )}
-              keyExtractor={item => item.id.toString()}
-              ItemSeparatorComponent={() => (
-                <View style={{width: 12, backgroundColor: 'red'}}></View>
-              )}
+        <FlatList
+          contentContainerStyle={{paddingHorizontal: 20}}
+          data={addresses}
+          renderItem={({item}) => (
+            <AddressListCell
+              onPress={() => setActiveAddress(item)}
+              address={item}
+              onPressDelete={() => DeleteItem({address: item})}
             />
+          )}
+          keyExtractor={item => item.id.toString()}
+          ItemSeparatorComponent={() => (
+            <View style={{width: 12, backgroundColor: 'red'}}></View>
+          )}
+        />
 
-            <AddButton
-              text="Agregar dirección"
-              onPress={GoToCreateAddress}></AddButton>
-          </>
-        )}
+        <AddButton
+          text="Agregar dirección"
+          onPress={GoToCreateAddress}></AddButton>
       </SafeAreaView>
     </>
   );

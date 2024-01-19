@@ -32,7 +32,7 @@ export const PromoCodeModal = ({route, navigation}: any) => {
       </View>
       <SubmitButton
         textButton="Agregar código"
-        customStyles={{marginHorizontal: 40}}
+        customStyles={{marginHorizontal: 40, marginBottom: 10}}
         onPress={() => {
           setPromotionCode(promoCode);
           navigation.goBack();

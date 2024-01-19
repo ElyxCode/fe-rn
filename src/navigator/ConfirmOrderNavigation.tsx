@@ -11,11 +11,13 @@ import {PromoCodeModal} from '../components/PromoCodeModal';
 import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
 import {TransferScreen} from '../screens/TransferScreen';
+import {BranchConfirmOrderNavigation} from './BranchConfirmOrderNavigation';
 
 export type ConfirmOrderParams = {
   HomeNavigation: undefined;
   AddressNavigation: any;
   CardNavigation: any;
+  BranchConfirmOrderNavigation: any;
   ConfirmOrderScreen: any;
   DeliveryInfoModal: any;
   OrderDetailScreen: any;
@@ -49,6 +51,10 @@ export const ConfirmOrderNavigation = () => {
       <ConfirmOrderStack.Screen
         name="TransferScreen"
         component={TransferScreen}
+      />
+      <ConfirmOrderStack.Screen
+        name="BranchConfirmOrderNavigation"
+        component={BranchConfirmOrderNavigation}
       />
       <ConfirmOrderStack.Group screenOptions={{presentation: 'modal'}}>
         <ConfirmOrderStack.Screen
