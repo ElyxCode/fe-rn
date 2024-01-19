@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -10,6 +11,20 @@ import {
 
 import {SvgProps} from 'react-native-svg';
 
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+
+import {UserProfile} from '../model/User';
+
+import {
+  updateNotificationService,
+  updateUserService,
+} from '../services/user/user';
+import {setUser} from '../services/user/userSlice';
+
+import {CustomNavBar} from '../components/CustomNavBar';
+
+import {LoaderScreen} from './LoaderScreen';
+
 import FingerScanIcon from '../assets/finger_scan_settings.svg';
 import DocumentIcon from '../assets/document.svg';
 import SecurityIcon from '../assets/security_card.svg';
@@ -17,15 +32,19 @@ import ProfileDeleteIcon from '../assets/profile_delete.svg';
 import NotificationBingIcon from '../assets/notification_bing.svg';
 import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
+import {clearObjectUserData} from '../utils/utilities';
+import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
-import {CustomNavBar} from '../components/CustomNavBar';
-import {useNavigation} from '@react-navigation/native';
 
 type OptionsMenu = {
   OptionIcon: React.FC<SvgProps>;
   optionText: string;
   hasSwitch: boolean;
   navigationPath?: string | undefined;
+  notificationValue?: boolean;
+  biometricValue?: boolean;
+  toggleNotification?: () => void;
+  toggleBiometric?: () => void;
 };
 
 const options: OptionsMenu[] = [
@@ -54,11 +73,64 @@ const options: OptionsMenu[] = [
 ];
 
 export const SettingsScreen = ({navigation}: any) => {
+  const userData = useAppSelector(state => state.user.userData);
+  const token = useAppSelector(state => state.authToken.token);
+  const [enableBiometric, setEnableBiometric] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+
+  const toggleNotificationSwitch = () => {
+    updateNotificatationsOption();
+  };
+
+  const toggleBiometricSwitch = () =>
+    setEnableBiometric(previousState => !previousState);
+
+  const updateNotificatationsOption = async () => {
+    setIsLoading(true);
+    const currentUser: UserProfile = {
+      ...userData,
+      notifications: userData.notifications,
+    };
+    const resp = await updateNotificationService(token, currentUser);
+
+    if (resp.ok) {
+      const {user} = clearObjectUserData(resp.data);
+
+      dispatch(setUser(user as UserProfile));
+    } else {
+      setIsLoading(false);
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.UnAvailableServerMessage,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      return await AsyncAlert();
+    }
+    setIsLoading(false);
+  };
+
   const OptionMenu = ({
     OptionIcon,
     optionText,
     hasSwitch,
     navigationPath,
+    notificationValue,
+    biometricValue,
+    toggleNotification,
+    toggleBiometric,
   }: OptionsMenu) => {
     return (
       <Pressable
@@ -80,13 +152,31 @@ export const SettingsScreen = ({navigation}: any) => {
             {hasSwitch ? (
               <Text
                 style={[styles.optionText, {fontSize: hasSwitch ? 12 : 10}]}>
-                Activo
+                {optionText === 'Notificaciones'
+                  ? notificationValue
+                    ? 'Activas'
+                    : 'Desactivadas'
+                  : biometricValue
+                  ? 'Activa'
+                  : 'Desactivada'}
               </Text>
             ) : null}
           </View>
           <View style={styles.switchContainer}>
             {hasSwitch ? (
-              <Switch thumbColor={colors.SwitchThumbColor} />
+              <Switch
+                thumbColor={colors.SwitchThumbColor}
+                value={
+                  optionText === 'Notificaciones'
+                    ? notificationValue
+                    : biometricValue
+                }
+                onValueChange={
+                  optionText === 'Notificaciones'
+                    ? toggleNotification
+                    : toggleBiometric
+                }
+              />
             ) : (
               <ArrowRightIcon height={19} fill={colors.PrimaryColor} />
             )}
@@ -95,6 +185,8 @@ export const SettingsScreen = ({navigation}: any) => {
       </Pressable>
     );
   };
+
+  if (isLoading) return <LoaderScreen />;
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -107,6 +199,10 @@ export const SettingsScreen = ({navigation}: any) => {
             optionText={option.optionText}
             navigationPath={option.navigationPath}
             hasSwitch={option.hasSwitch}
+            notificationValue={userData.notifications}
+            biometricValue={enableBiometric}
+            toggleNotification={toggleNotificationSwitch}
+            toggleBiometric={toggleBiometricSwitch}
           />
         ))}
       </View>
