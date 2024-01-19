@@ -39,6 +39,7 @@ import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 
 import {
+  clearObjectUserData,
   dateFormatPattern,
   emailFormatPattern,
   phoneFormatPattern,
@@ -129,7 +130,7 @@ export const EditProfileScreen = () => {
     const response = await updateUserService(token, userData);
     console.log(response.originalError, token);
     if (response.ok) {
-      const {user} = clearObjectData(response.data);
+      const {user} = clearObjectUserData(response.data);
       dispatch(setUser({...user}));
       navigation.goBack();
     } else {
@@ -144,11 +145,6 @@ export const EditProfileScreen = () => {
         [{text: Messages.okButton}],
       );
     }
-  };
-
-  const clearObjectData = (user: any): any => {
-    const {message, ...userProp} = user;
-    return userProp;
   };
 
   const handleOnError = (errors: any) => {
