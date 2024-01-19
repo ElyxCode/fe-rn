@@ -152,7 +152,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   useEffect(() => {
     calculateQuote();
-  }, [isFocused]);
+  }, [isFocused, discountCode.code]);
 
   const calculateQuote = async () => {
     if (!isFocused) return;
