@@ -12,7 +12,12 @@ import {useNavigation} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
-import {clearUserData, setUser} from '../services/user/userSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+  clearUserData,
+  setUser,
+} from '../services/user/userSlice';
 import {clearToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import {UserInfo} from '../components/UserInfo';
@@ -31,6 +36,9 @@ import SignoutIcon from '../assets/logout.svg';
 
 import {colors} from '../styles/colors';
 import {googleSingInConf} from '../constants/googleSignInConf';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard, clearCardConfirmAdded} from '../services/card/cardSlice';
+import {clearAddress} from '../services/address/addressSlice';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -99,6 +107,13 @@ export const UserOptionsMenuScreen = () => {
 
     dispatch(clearUserData());
     dispatch(clearToken());
+    dispatch(clearProduct());
+    dispatch(clearCard());
+    dispatch(clearAddress());
+    dispatch(clearOrderUserBillingTemp());
+    dispatch(clearOrderUserPhoneTemp());
+    dispatch(clearCardConfirmAdded());
+
     navigation.navigate('WelcomeScreen' as never);
     setIsLoading(true);
   };
