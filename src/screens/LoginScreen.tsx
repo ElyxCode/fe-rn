@@ -14,7 +14,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 
-import {useAppDispatch} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {setToken, thirdPartySocial} from '../services/auth/authSlice';
 
@@ -45,6 +45,7 @@ import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const fcmToken = useAppSelector(state => state.authToken.fcmToken);
   const dispatch = useAppDispatch();
 
   const {
@@ -70,15 +71,14 @@ export const LoginScreen = ({navigation}: any) => {
     if (response.ok) {
       console.log({user: response.data?.user});
       dispatch(setToken({token: response.data?.token ?? ''})); // guardo el token
-      //TODO: push notifications
       await updateDeviceIdService(
         response.data?.token ?? '',
         response.data?.user.name ?? '',
         response.data?.user.email ?? '',
-        '',
+        fcmToken ?? '',
         getPlatformDevice(),
       );
-      navigation.navigate('HomeBranchScreen');
+      navigation.navigate('HomeNavigation');
     } else {
       console.log({error: response.data?.error});
       Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -125,7 +125,14 @@ export const LoginScreen = ({navigation}: any) => {
               social: thirdPartySocial.google,
             }),
           ); // guardo el token
-          navigation.navigate('HomeBranchScreen');
+          await updateDeviceIdService(
+            response.data?.token ?? '',
+            response.data?.user.name ?? '',
+            response.data?.user.email ?? '',
+            fcmToken ?? '',
+            getPlatformDevice(),
+          );
+          navigation.navigate('HomeNavigation');
         } else {
           console.log({errorRespon: response.data?.error});
           Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -165,12 +172,17 @@ export const LoginScreen = ({navigation}: any) => {
     const credentialState = await appleAuth.getCredentialStateForUser(
       appleAuthRequestResponse.user,
     );
-    
+
     // use credentialState response to ensure the user is authenticated
-    if (credentialState === appleAuth.State.AUTHORIZED && appleAuthRequestResponse.identityToken !== null) {
-      
+    if (
+      credentialState === appleAuth.State.AUTHORIZED &&
+      appleAuthRequestResponse.identityToken !== null
+    ) {
       // user is authenticated
-      const response = await ThirdPartyLoginService('apple', appleAuthRequestResponse.identityToken);
+      const response = await ThirdPartyLoginService(
+        'apple',
+        appleAuthRequestResponse.identityToken,
+      );
       if (response.ok) {
         dispatch(
           setToken({
@@ -178,7 +190,14 @@ export const LoginScreen = ({navigation}: any) => {
             social: thirdPartySocial.apple,
           }),
         ); // guardo el token
-        navigation.navigate('HomeBranchScreen');
+        await updateDeviceIdService(
+          response.data?.token ?? '',
+          response.data?.user.name ?? '',
+          response.data?.user.email ?? '',
+          fcmToken ?? '',
+          getPlatformDevice(),
+        );
+        navigation.navigate('HomeNavigation');
       } else {
         console.log({errorRespon: response.data?.error});
         Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
