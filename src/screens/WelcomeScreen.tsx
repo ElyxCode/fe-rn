@@ -1,6 +1,15 @@
+import {useEffect} from 'react';
 import {View, StyleSheet, Text, SafeAreaView} from 'react-native';
 
+import messaging from '@react-native-firebase/messaging';
+
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+
+import {setToken} from '../services/auth/authSlice';
+
 import {SubmitButton} from '../components/SubmitButton';
+
+import {MapFlow} from './MapConfirmationScreen';
 
 import LogoTitle from '../assets/logo_title_home.svg';
 import WelcomeBoxCheck from '../assets/welcome_box_check.svg';
@@ -8,11 +17,25 @@ import WelcomeSecureWallet from '../assets/welcome_secure_wallet.svg';
 import WelcomeBaggageSpanner from '../assets/welcome_baggage_spanner.svg';
 
 import {colors} from '../styles/colors';
-import { MapconfirmationProps, MapFlow } from './MapConfirmationScreen';
 
 const svgImageHeight = 75;
 
 export const WelcomeScreen = ({route, navigation}: any) => {
+  const authToken = useAppSelector(state => state.authToken);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        console.log({fcmToken});
+        dispatch(setToken({...authToken, fcmToken}));
+      }
+    };
+
+    checkToken();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.LogoContainer}>
@@ -61,10 +84,11 @@ export const WelcomeScreen = ({route, navigation}: any) => {
       <View style={{margin: 30}}>
         <SubmitButton
           textButton="Comenzar"
-          onPress={() => { 
-            
-            navigation.navigate('MapConfirmationScreen',{mapFlow: MapFlow.WelcomeFlow})
-        }}
+          onPress={() => {
+            navigation.navigate('MapConfirmationScreen', {
+              mapFlow: MapFlow.WelcomeFlow,
+            });
+          }}
         />
       </View>
     </SafeAreaView>
