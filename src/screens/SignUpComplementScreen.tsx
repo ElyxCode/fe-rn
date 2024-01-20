@@ -12,6 +12,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Controller, useForm} from 'react-hook-form';
 import {Dropdown} from 'react-native-element-dropdown';
 
+import {useAppSelector} from '../hooks/useRedux';
+
 import {CustomNavBar} from '../components/CustomNavBar';
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
@@ -19,6 +21,7 @@ import {SubmitButton} from '../components/SubmitButton';
 import {LoaderScreen} from './LoaderScreen';
 
 import {occupationsService} from '../services/occupation';
+import {updateDeviceIdService, updateUserService} from '../services/user/user';
 
 import {Occupation, UserProfile} from '../model/User';
 
@@ -30,20 +33,20 @@ import Profile2UserIcon from '../assets/profile-2user.svg';
 import {
   dateFormatPattern,
   documentNumberPatternValidation,
+  getPlatformDevice,
   transformBirthDateToSend,
   transformBirthDateUTCTtoDDMMYYYY,
 } from '../utils/utilities';
 import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
-import {updateUserService} from '../services/user/user';
-import {useAppSelector} from '../hooks/useRedux';
 
 export const SignUpComplementScreen = ({route, navigation}: any) => {
   const {userData} = route.params;
   const [occupations, setOccupations] = useState<Occupation[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
+  const fcmToken = useAppSelector(state => state.authToken.fcmToken);
 
   const {
     control,
@@ -83,6 +86,13 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
     };
     const response = await updateUserService(token, data);
     if (response.ok) {
+      await updateDeviceIdService(
+        token,
+        response.data?.name ?? '',
+        response.data?.email ?? '',
+        fcmToken ?? '',
+        getPlatformDevice(),
+      );
       navigation.navigate('SignUpWelcomeScreen', {
         token,
         name: data.name,
