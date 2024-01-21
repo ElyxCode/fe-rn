@@ -1,7 +1,8 @@
 import {useEffect} from 'react';
-import {View, StyleSheet, Text, SafeAreaView} from 'react-native';
+import {View, StyleSheet, Text, SafeAreaView, Platform} from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
+import {PermissionsAndroid} from 'react-native';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
@@ -17,6 +18,8 @@ import WelcomeSecureWallet from '../assets/welcome_secure_wallet.svg';
 import WelcomeBaggageSpanner from '../assets/welcome_baggage_spanner.svg';
 
 import {colors} from '../styles/colors';
+import {isAndroid} from '../constants/Platform';
+import Messages from '../constants/Messages';
 
 const svgImageHeight = 75;
 
@@ -25,16 +28,55 @@ export const WelcomeScreen = ({route, navigation}: any) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const checkToken = async () => {
-      const fcmToken = await messaging().getToken();
-      if (fcmToken) {
-        console.log({fcmToken});
-        dispatch(setToken({...authToken, fcmToken}));
-      }
-    };
-
-    checkToken();
+    handleRequestPermissionNotifications();
   }, []);
+
+  const handleRequestPermissionNotifications = async () => {
+    if (isAndroid) {
+      if (Platform.Version >= '33') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            {
+              title: 'Ferreplace App Notifications Permission',
+              message: 'Ferreplace App needs to send notifications',
+              buttonNegative: Messages.cancelButton,
+              buttonPositive: Messages.okButton,
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            checkToken();
+          } else {
+            dispatch(setToken({...authToken, fcmToken: ''}));
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        checkToken();
+      }
+    } else {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+        checkToken();
+      } else {
+        dispatch(setToken({...authToken, fcmToken: ''}));
+      }
+    }
+  };
+
+  const checkToken = async () => {
+    const fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      console.log({fcmToken});
+      dispatch(setToken({...authToken, fcmToken}));
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
