@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
+  Linking,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -34,6 +35,7 @@ import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 
 import {clearObjectUserData} from '../utils/utilities';
 import Messages from '../constants/Messages';
+import {policyUri, termsUri} from '../constants/Resources';
 import {colors} from '../styles/colors';
 
 type OptionsMenu = {
@@ -143,6 +145,20 @@ export const SettingsScreen = ({navigation}: any) => {
           }
           if (navigationPath !== undefined) {
             navigation.navigate(navigationPath);
+          }
+
+          if (optionText === 'Términos y condiciones') {
+            Linking.openURL(termsUri).catch(err => {
+              console.log(err);
+            });
+            return;
+          }
+
+          if (optionText === 'Políticas de privacidad') {
+            Linking.openURL(policyUri).catch(err => {
+              console.log(err);
+            });
+            return;
           }
         }}>
         <View style={styles.optionContainer}>
