@@ -47,6 +47,7 @@
 		3B4392A12AC88292D35C810B /* Pods-ferreplace.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ferreplace.debug.xcconfig"; path = "Target Support Files/Pods-ferreplace/Pods-ferreplace.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-ferreplace.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ferreplace.release.xcconfig"; path = "Target Support Files/Pods-ferreplace/Pods-ferreplace.release.xcconfig"; sourceTree = "<group>"; };
 		578D2E8E2AF540300060E3EC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		57B5AE4C2B5D651E001252B2 /* ferreplace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ferreplace.entitlements; path = ferreplace/ferreplace.entitlements; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-ferreplace-ferreplaceTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ferreplace-ferreplaceTests.debug.xcconfig"; path = "Target Support Files/Pods-ferreplace-ferreplaceTests/Pods-ferreplace-ferreplaceTests.debug.xcconfig"; sourceTree = "<group>"; };
 		63B643EA499043D1B3869906 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		68C4DC901B0A40F19A2BCC0D /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../src/assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
@@ -97,6 +98,7 @@
 		13B07FAE1A68108700A75B9A /* ferreplace */ = {
 			isa = PBXGroup;
 			children = (
+				57B5AE4C2B5D651E001252B2 /* ferreplace.entitlements */,
 				01D391252B46141800FFE509 /* ferreplaceDebug.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -561,6 +563,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ferreplace/ferreplace.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2T436FN43H;
@@ -662,8 +665,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					" ",
-					"-Wl -ld_classic ",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -744,8 +747,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					" ",
-					"-Wl -ld_classic ",
+					"-Wl",
+					"-ld_classic",
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
