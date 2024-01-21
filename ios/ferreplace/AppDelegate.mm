@@ -3,6 +3,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h" 
 #import <Firebase.h>
+#import <AppCenterReactNative.h>
+#import <AppCenterReactNativeAnalytics.h>
+#import <AppCenterReactNativeCrashes.h>
 
 @implementation AppDelegate
 
@@ -18,6 +21,9 @@
   self.initialProps = @{};
   bool didFinish = [super application:application didFinishLaunchingWithOptions:launchOptions];
   [RNSplashScreen show];
+  [AppCenterReactNative register];
+  [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
+  [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
   return didFinish;
 }
 
