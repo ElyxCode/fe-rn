@@ -6,20 +6,30 @@ import {
   View,
   FlatList,
   Pressable,
+  Linking,
 } from 'react-native';
 import {SvgProps} from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
-import {clearUserData, setUser} from '../services/user/userSlice';
-import {clearToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import {UserInfo} from '../components/UserInfo';
 import {CustomNavBar} from '../components/CustomNavBar';
+
 import {LoaderScreen} from './LoaderScreen';
 
 import {getUserService} from '../services/user/user';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard, clearCardConfirmAdded} from '../services/card/cardSlice';
+import {clearAddress} from '../services/address/addressSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+  clearUserData,
+  setUser,
+} from '../services/user/userSlice';
+import {clearToken, thirdPartySocial} from '../services/auth/authSlice';
 
 import ArrowRightIcon from '../assets/arrow_right.svg';
 import BoxIcon from '../assets/box.svg';
@@ -29,8 +39,9 @@ import MessageQuestionIcon from '../assets/message_question.svg';
 import SettingIcon from '../assets/settings.svg';
 import SignoutIcon from '../assets/logout.svg';
 
-import {colors} from '../styles/colors';
 import {googleSingInConf} from '../constants/googleSignInConf';
+import {WhatsAppUri} from '../constants/Resources';
+import {colors} from '../styles/colors';
 
 type MenuOptionItemProps = {
   OptionButtonIcon: React.FC<SvgProps>;
@@ -99,6 +110,13 @@ export const UserOptionsMenuScreen = () => {
 
     dispatch(clearUserData());
     dispatch(clearToken());
+    dispatch(clearProduct());
+    dispatch(clearCard());
+    dispatch(clearAddress());
+    dispatch(clearOrderUserBillingTemp());
+    dispatch(clearOrderUserPhoneTemp());
+    dispatch(clearCardConfirmAdded());
+
     navigation.navigate('WelcomeScreen' as never);
     setIsLoading(true);
   };
@@ -117,7 +135,16 @@ export const UserOptionsMenuScreen = () => {
     screenPath,
   }: MenuOptionItemProps) => {
     return (
-      <Pressable onPress={() => navigation.navigate(screenPath as never)}>
+      <Pressable
+        onPress={() => {
+          if (optionName === 'Ayuda') {
+            Linking.openURL(WhatsAppUri).catch(err => {
+              console.log(err);
+            });
+            return;
+          }
+          navigation.navigate(screenPath as never);
+        }}>
         <View style={styles.menuOptionsItemContainer}>
           <OptionButtonIcon height={21} fill={colors.SecondaryColor} />
           <View style={{flex: 1}}>
