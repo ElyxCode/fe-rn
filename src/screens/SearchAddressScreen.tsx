@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {
-    FlatList,
+  FlatList,
   Platform,
   StyleSheet,
   Text,
@@ -12,31 +12,31 @@ import LocationIcon from '../assets/location.svg';
 import CloseCircle from '../assets/close_circle.svg';
 import GoogleIcon from '../assets/poweredbygoogle.svg';
 import {colors} from '../styles/colors';
-import { getPlaceDetails, getPlaces } from '../services/google/maps';
-import { GooglePlaceAutoCompletePrediction, GooglePlaceAutoCompleteResult } from '../model/GooglePlaceAutoCompleteResult';
-import { PlaceCell } from '../components/PlaceCell';
-import { useNavigation } from '@react-navigation/native';
-import { Location } from '../model/Location';
+import {getPlaceDetails, getPlaces} from '../services/google/maps';
+import {
+  GooglePlaceAutoCompletePrediction,
+  GooglePlaceAutoCompleteResult,
+} from '../model/GooglePlaceAutoCompleteResult';
+import {PlaceCell} from '../components/PlaceCell';
+import {useNavigation} from '@react-navigation/native';
+import {Location} from '../model/Location';
 
+export const SearchAddressScreen = ({route}: any) => {
+  const {setLocation} = route.params;
 
-
-
-export const SearchAddressScreen = ({route}:any) => {
-    const { setLocation } = route.params;
-
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const [isButtonVisible, setButtonVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [predictions, setPredictions]= useState<GooglePlaceAutoCompleteResult>();
+  const [predictions, setPredictions] =
+    useState<GooglePlaceAutoCompleteResult>();
 
   const textChanged = async (e: string) => {
     setInputValue(e);
     if (e.length >= 3) {
-        const result = await getPlaces(e);
-        setPredictions(result.data)
-        setButtonVisible(true);
-
+      const result = await getPlaces(e);
+      setPredictions(result.data);
+      setButtonVisible(true);
     } else setButtonVisible(false);
   };
 
@@ -46,18 +46,15 @@ export const SearchAddressScreen = ({route}:any) => {
   };
 
   const selectedPlace = async (item: GooglePlaceAutoCompletePrediction) => {
-   
-    const googlePlace = await getPlaceDetails(item.place_id); 
-  
-    const location : Location = {
-      latitude:  googlePlace.data?.result.geometry.location.lat!,
-      longitude: googlePlace.data?.result.geometry.location.lng!
-    }
-   await setLocation(location ,item.structured_formatting.main_text);
-   navigation.goBack()
-   
+    const googlePlace = await getPlaceDetails(item.place_id);
 
-  }
+    const location: Location = {
+      lat: googlePlace.data?.result.geometry.location.lat!,
+      lng: googlePlace.data?.result.geometry.location.lng!,
+    };
+    await setLocation(location, item.structured_formatting.main_text);
+    navigation.goBack();
+  };
 
   return (
     <>
@@ -75,44 +72,37 @@ export const SearchAddressScreen = ({route}:any) => {
           </View>
           {isButtonVisible ? (
             <TouchableOpacity onPress={clearText}>
-              <CloseCircle  height={16} width={16} />
+              <CloseCircle height={16} width={16} />
             </TouchableOpacity>
           ) : (
             ''
           )}
         </View>
         <View style={styles.googleContainer}>
-        
-      
-        <GoogleIcon   height={15} width={110} />
-   
+          <GoogleIcon height={15} width={110} />
         </View>
 
-        <FlatList 
-        data={predictions?.predictions}
-         renderItem={({item,index }) =>(
-        <PlaceCell item={item}
-        onPress={() => {selectedPlace(item)} }
-        />
-       )}
-         >
-
-        </FlatList>
-         
+        <FlatList
+          data={predictions?.predictions}
+          renderItem={({item, index}) => (
+            <PlaceCell
+              item={item}
+              onPress={() => {
+                selectedPlace(item);
+              }}
+            />
+          )}></FlatList>
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-    
-    googleContainer:{
-     flexDirection:'row',
-     alignItems:'flex-start',
-     marginBottom:8
-     
-    
-    },
+  googleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
   container: {
     marginHorizontal: 40,
   },
@@ -135,10 +125,10 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    marginVertical:21,
+    marginVertical: 21,
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: Platform.OS === 'ios' ? 10: 5,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 5,
     borderColor: colors.PrimaryColor,
     borderWidth: 1,
     borderRadius: 10,
