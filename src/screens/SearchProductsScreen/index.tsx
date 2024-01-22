@@ -1,29 +1,39 @@
-import React, { useState } from "react"
-import { ActivityIndicator, FlatList, SafeAreaView,Text,View} from "react-native"
-import { CustomNavBar } from "../../components/CustomNavBar"
-import { ProductItemRender } from "../../components/ProductItemRender"
-import { SearchInput } from "../../components/SearchInput"
-import { colors } from "../../styles/colors"
-import { styles } from "./style"
+import React, {useState} from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  Text,
+  View,
+} from 'react-native';
+import {CustomNavBar} from '../../components/CustomNavBar';
+import {ProductItemRender} from '../../components/ProductItemRender';
+import {SearchInput} from '../../components/SearchInput';
+import { ProductResponse } from '../../model/product';
+import {searchProductByProductName} from '../../services/product/product';
+import {colors} from '../../styles/colors';
+import {styles} from './style';
 
+export const SearchProductsScreen = ({route, navigation}: any) => {
+  const {branchData, productResponse} = route.params;
 
-export const SearchProductsScreen = ({route,navigation}:any) => {
+  const [inputValue, setInputValue] = useState('');
+  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [nextPageProduct, setNextPageProduct] = useState<
+    string | null | undefined
+  >('');
+  const [searchProductResponse, setSearchProductResponse] = useState<ProductResponse>(productResponse);
 
-    const { branchData, productResponse} = route.params;
-   
-    const [inputValue, setInputValue] = useState('');
-    const [loadMore, setLoadMore] = useState<boolean>(false);
-    const [nextPageProduct, setNextPageProduct] = useState<string | null | undefined>('');
+  const textChanged = async (text: string) => {
+    setInputValue(text)
+  };
 
-    const textChanged= async (text:string)=> {
+  const clearText = () => {
+    console.log('borrando')
+    setInputValue('');
+  };
 
-    }
-
-    const clearText = () =>{
-      setInputValue('')
-    }
-
-    // carga mas productos
+  // carga mas productos
   const loadMoreProducts = async () => {
     setLoadMore(true);
     // console.log('loadmore');
@@ -43,18 +53,31 @@ export const SearchProductsScreen = ({route,navigation}:any) => {
     setLoadMore(false);
   };
 
-    return(
-        <SafeAreaView>
-            <CustomNavBar></CustomNavBar>
-            <View style={styles.container}>
-                
-                <SearchInput textChanged={(e) =>  textChanged(e) }
-                 onPressCloseIcon={clearText} inputValue={inputValue}
-                 title='Buscar Producto'
-                 ></SearchInput>
-           <FlatList
-          
-          data={productResponse?.data}
+  const searchProducts = async () => {
+    setLoadMore(true);
+    const response = await searchProductByProductName(
+      branchData.id,
+      inputValue,
+    );
+
+    if(response.ok){
+        setSearchProductResponse(response?.data)
+    }
+    setLoadMore(false);
+  };
+
+  return (
+    <SafeAreaView>
+      <CustomNavBar></CustomNavBar>
+      <View style={styles.container}>
+        <SearchInput
+          textChanged={e => textChanged(e)}
+          onPressCloseIcon={clearText}
+          inputValue={inputValue}
+          title="Buscar Producto"
+          onSubmit={searchProducts}></SearchInput>
+        <FlatList
+          data={searchProductResponse?.data}
           contentContainerStyle={{
             paddingBottom: 20,
           }}
@@ -93,8 +116,7 @@ export const SearchProductsScreen = ({route,navigation}:any) => {
             ) : null
           }
         />
-
-            </View>
-        </SafeAreaView>
-    )
-} 
+      </View>
+    </SafeAreaView>
+  );
+};

@@ -17,10 +17,11 @@ interface SearchInputProps {
  inputValue:string;
  onPressCloseIcon:() => void;
  title:string;
+ onSubmit: () => Promise<void>;
 
 }
 
-export const SearchInput = ({textChanged,inputValue, onPressCloseIcon,title}:SearchInputProps) => {
+export const SearchInput = ({textChanged,inputValue, onPressCloseIcon,title, onSubmit}:SearchInputProps) => {
     const [isButtonVisible, setButtonVisible] = useState(false);
 
     
@@ -32,10 +33,15 @@ export const SearchInput = ({textChanged,inputValue, onPressCloseIcon,title}:Sea
           <TextInput
             value={inputValue}
             onChangeText={e => {
+             
               textChanged(e)
+             
+
             }}
             numberOfLines={1}
-            style={styles.text}></TextInput>
+            style={styles.text}
+            onSubmitEditing={onSubmit}
+            ></TextInput>
         </View>
         {isButtonVisible ? (
           <TouchableOpacity onPress={onPressCloseIcon}>
