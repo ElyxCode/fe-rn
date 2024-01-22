@@ -1,24 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useIsFocused} from '@react-navigation/native';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBarHome} from '../components/CustomNavBarHome';
 import {LocationBar} from '../components/LocationBar';
 import {PromoList} from '../components/PromoList';
 import {CategoryHomeList} from '../components/CategoryHomeList';
 import {BranchHomeList} from '../components/BranchHomeList';
+import {CartButton} from '../components/CartButton';
+
 import {LoaderScreen} from './LoaderScreen';
 
 import {branchService, filterBranchesByCategory} from '../services/branch';
 import {categoryServices} from '../services/category/category';
 import {promotionServices} from '../services/promotion';
+import {getCardsService} from '../services/card/card';
+import {ReadAll} from '../services/address/Address';
+import {setAddress} from '../services/address/addressSlice';
+import {setCard} from '../services/card/cardSlice';
 
 import {Branch} from '../model/Branch';
 import {Category} from '../model/Category';
 import {Promotion} from '../model/Promotion';
-import {CartButton} from '../components/CartButton';
+import {Address} from '../model/Address';
+import {Card} from '../model/Card';
 
 export const HomeBranchScreen = ({navigation}: any) => {
   const [branchs, setBranchs] = useState<Branch[]>([]);
@@ -31,7 +39,12 @@ export const HomeBranchScreen = ({navigation}: any) => {
     state => state.currentLocation.currentLocation,
   );
   const productsCart = useAppSelector(state => state.productsCart);
+  const currentAddress = useAppSelector(state => state.currentAddress);
+  const currentCard = useAppSelector(state => state.currentCard);
   const token = useAppSelector(state => state.authToken.token);
+  const dispatch = useAppDispatch();
+
+  const isFocused = useIsFocused();
 
   const getBranchs = async () => {
     setIsLoading(true);
@@ -44,8 +57,14 @@ export const HomeBranchScreen = ({navigation}: any) => {
       } else {
         const response = await filterBranchesByCategory(
           {
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude,
+            lat:
+              Object.keys(currentAddress.address).length !== 0
+                ? currentAddress.address.location.lat
+                : currentLocation.lat,
+            lng:
+              Object.keys(currentAddress.address).length !== 0
+                ? currentAddress.address.location.lng
+                : currentLocation.lng,
           },
           categoryId,
         );
@@ -58,6 +77,34 @@ export const HomeBranchScreen = ({navigation}: any) => {
       setIsLoading(false);
     }
   };
+
+  const getAddress = async () => {
+    const resp = await ReadAll(token);
+    dispatch(
+      setAddress(resp.data?.find(address => address.active) ?? ({} as Address)),
+    );
+  };
+
+  const getCards = async () => {
+    const resp = await getCardsService(token);
+    dispatch(setCard((resp.data?.find(i => i.active) as Card) ?? ({} as Card)));
+  };
+
+  useEffect(() => {
+    if (
+      token &&
+      Object.keys(currentAddress.address).length === 0 &&
+      isFocused
+    ) {
+      getAddress();
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
+    if (token && Object.keys(currentCard.card).length === 0 && isFocused) {
+      getCards();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     getBranchs();
@@ -101,7 +148,13 @@ export const HomeBranchScreen = ({navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBarHome navigation={navigation} />
-      <LocationBar name={currentLocation.title!} />
+      <LocationBar
+        name={
+          Object.keys(currentAddress.address).length !== 0
+            ? currentAddress.address.address
+            : currentLocation.title!
+        }
+      />
       <ScrollView style={styles.scrollContainer}>
         <PromoList
           promotions={promotions}

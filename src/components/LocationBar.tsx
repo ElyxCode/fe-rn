@@ -6,14 +6,16 @@ import GpsIcon from '../assets/location.svg';
 import {colors} from '../styles/colors';
 import {useNavigation} from '@react-navigation/native';
 import {isAndroid} from '../constants/Platform';
-import { MapFlow } from '../screens/MapConfirmationScreen';
+import {MapFlow} from '../screens/MapConfirmationScreen';
+import {useAppSelector} from '../hooks/useRedux';
 
 type locationProps = {
   name: string;
 };
 
 export const LocationBar = ({name}: locationProps) => {
-  const navigation = useNavigation();
+  const token = useAppSelector(state => state.authToken.token);
+  const navigation = useNavigation<any>();
 
   return (
     <View style={[styles.container, {borderRadius: isAndroid ? 30 : 20}]}>
@@ -26,7 +28,13 @@ export const LocationBar = ({name}: locationProps) => {
       <TouchableOpacity
         style={styles.changeAddressContainer}
         onPress={() => {
-          navigation.navigate('MapConfirmationScreen', {mapFlow: MapFlow.HomeFlow});
+          if (!token) {
+            navigation.navigate('MapConfirmationScreen', {
+              mapFlow: MapFlow.HomeFlow,
+            });
+          } else {
+            navigation.navigate('AddressNavigation' as never);
+          }
         }}>
         <Text style={styles.changeAddressText}>Cambiar</Text>
       </TouchableOpacity>

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -20,11 +21,12 @@ import {useForm, Controller} from 'react-hook-form';
 
 import {useAppSelector} from '../hooks/useRedux';
 import {Address} from '../model/Address';
-import {Navigation} from '../navigator/Navigation';
+
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {MapFlow} from './MapConfirmationScreen';
 import {Location} from '../model/Location';
 import {CreateAddress} from '../services/address/Address';
+import Messages from '../constants/Messages';
 
 type RoadData = {
   id: string;
@@ -148,6 +150,25 @@ export const AddressFormScreen = ({route, navigation}: any) => {
         return;
       }
       console.log(response.data);
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.addAddressSuccess,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
+
       await navigation.navigate('AddressListScreen', {
         addressWassAdded: true,
         newAddress: response.data?.address,
@@ -258,6 +279,7 @@ export const AddressFormScreen = ({route, navigation}: any) => {
               data={roads}
               renderItem={renderItem}
               keyExtractor={item => item.id}
+              scrollEnabled={false}
             />
 
             <View style={styles.inputBoxContainer}>
@@ -280,6 +302,7 @@ export const AddressFormScreen = ({route, navigation}: any) => {
             <SubmitButton
               textButton="Guardar"
               onPress={handleSubmit(handleOnSubmit, handleOnError)}
+              customStyles={{marginBottom: 10}}
             />
           </View>
         </ScrollView>
