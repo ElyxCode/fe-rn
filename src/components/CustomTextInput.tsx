@@ -32,7 +32,7 @@ export const CustomTextInput = ({
   value,
   onChangeText,
   onBlur,
-  editable = true
+  editable = true,
 }: Props) => {
   return (
     <View style={styles.container}>
@@ -46,6 +46,9 @@ export const CustomTextInput = ({
         onChangeText={onChangeText}
         onBlur={onBlur}
         editable={editable}
+        numberOfLines={1}
+        textBreakStrategy="simple"
+        selection={{start: 0}}
       />
     </View>
   );
@@ -68,5 +71,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 13,
     width: '100%',
     fontSize: 14,
+    flex: 1,
   },
 });
