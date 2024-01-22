@@ -48,7 +48,6 @@ export const CustomTextInput = ({
         editable={editable}
         numberOfLines={1}
         textBreakStrategy="simple"
-        selection={{start: 0}}
       />
     </View>
   );
