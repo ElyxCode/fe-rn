@@ -32,6 +32,8 @@ import {
   setOrderUserBillingTemp,
   setOrderUserPhoneTemp,
 } from '../services/user/userSlice';
+import {ReadAll} from '../services/address/Address';
+import {setAddress} from '../services/address/addressSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 import {alterPaymentMethod} from './CardsScreen';
@@ -54,6 +56,7 @@ import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
+import {Address} from '../model/Address';
 
 export type TempCardExpDate = {
   month: string;
@@ -113,6 +116,12 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
+    if (Object.keys(currentAddress.address).length === 0 && isFocused) {
+      getAddress();
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
     if (orderUserBillingTemp === undefined) {
       const bill: BillInfo = {
         bill_type: currentUser.bill_type ?? '',
@@ -156,9 +165,8 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
 
   const calculateQuote = async () => {
     if (!isFocused) return;
-
+    if (Object.keys(currentAddress.address).length === 0) return;
     setIsLoading(true);
-
     const quote: Quote = {
       branchId:
         productsCart.products[
@@ -189,6 +197,13 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       }
     }
     setIsLoading(false);
+  };
+
+  const getAddress = async () => {
+    const resp = await ReadAll(token);
+    dispatch(
+      setAddress(resp.data?.find(address => address.active) ?? ({} as Address)),
+    );
   };
 
   const freeShipping = async (quoteResponse: QuoteResponse) => {
@@ -605,7 +620,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
           <CurrentTotalOrder
             subtotal={quoteData.subtotal ?? 0}
             subtotalWithDiscount={quoteData.subtotal_with_discount ?? 0}
-            totalAmount={quoteData.total ?? 0}
+            totalAmount={quoteData.total ?? productsCart.totalValue}
             specialDiscount={quoteData.special_discount ?? 0}
             discount={quoteData.discount ?? 0}
             deliveryTotal={quoteData.transport ?? 0}
