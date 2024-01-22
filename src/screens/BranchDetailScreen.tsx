@@ -10,14 +10,18 @@ import {
   ActivityIndicator,
   Platform,
   Dimensions,
+  Alert,
 } from 'react-native';
 
 import {useIsFocused} from '@react-navigation/native';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
+import {CartButton} from '../components/CartButton';
 import {CustomNavBar} from '../components/CustomNavBar';
 import {PromoList} from '../components/PromoList';
+import {ProductItemRender} from '../components/ProductItemRender';
+
 import {LoaderScreen} from './LoaderScreen';
 
 import {branchByIdService} from '../services/branch';
@@ -40,16 +44,16 @@ import TruckIcon from '../assets/truck.svg';
 import ArrowDownIcon from '../assets/arrow_down.svg';
 import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
+import {getDistanceUserToBranch} from '../utils/utilities';
+import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
-import {ProductItemRender} from '../components/ProductItemRender';
-import {Item} from '../components/NestedListExtended/NestedListItem';
-import {CartButton} from '../components/CartButton';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isLoadingPromo, setIsLoadingPromo] = useState<boolean>(false);
   const [loadMore, setLoadMore] = useState<boolean>(false);
   const [nextPageProduct, setNextPageProduct] = useState<
@@ -57,7 +61,10 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   >('');
   const category = useAppSelector(state => state.categorySelected);
   const productsCart = useAppSelector(state => state.productsCart);
-  const totalValue = useAppSelector(state => state.productsCart.totalValue);
+  const currentAddress = useAppSelector(state => state.currentAddress.address);
+  const currentLocation = useAppSelector(
+    state => state.currentLocation.currentLocation,
+  );
   const token = useAppSelector(state => state.authToken.token);
   const dispatch = useAppDispatch();
   // hook que devueleve bool si estas o no en esta pantalla
@@ -88,8 +95,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         setIsLoading(false);
       }
     };
-    console.log({productsCart: productsCart.products});
-    console.log({totalValue});
+
     getProductByCategory();
   }, [category]);
 
@@ -100,6 +106,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       const response = await branchByIdService(branchId);
       if (response.ok) {
         setBranchData(prev => ({...prev, ...response.data}));
+        // shippingFree(response.data as Branch);
       } else {
         console.log({error: response.originalError});
       }
@@ -172,11 +179,75 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     if (
       !isFocused &&
       category.categoryId !== '' &&
-      category.categoryName !== ''
+      category.categoryName !== '' &&
+      !isOpenModal
     ) {
       dispatch(clearCategorySelected());
     }
+    setIsOpenModal(false);
   }, [isFocused]);
+
+  useEffect(() => {
+    if (!isLoading && Object.keys(branchData).length !== 0 && isFocused) {
+      shippingFree(branchData);
+    }
+  }, [isLoading]);
+
+  const shippingFree = async (branchData: Branch) => {
+    let currentDistante: number = getDistanceUserToBranch(
+      branchData.location.lat,
+      branchData.location.lng,
+      currentAddress.location.lat ?? currentLocation.lat,
+      currentAddress.location.lng ?? currentLocation.lng,
+    );
+
+    if (
+      Number(branchData.distance_for_free) !== 0 &&
+      currentDistante <= Number(branchData.distance_for_free)
+    ) {
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.freeShippingForDistanceMessage,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
+    }
+
+    if (branchData.amount_for_free !== null) {
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            'Obtén Envío gratis al acumular $' +
+              branchData.amount_for_free +
+              ' o más en el SUB TOTAL de compra en nuestra Ferretería',
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
+    }
+  };
 
   const HeaderBranchDetail = () => {
     return (
@@ -193,11 +264,12 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
           <View style={styles.TitleInfoContainer}>
             <Text style={styles.titleText}>{branchData.name}</Text>
             <Pressable
-              onPress={() =>
+              onPress={() => {
+                setIsOpenModal(true);
                 navigation.navigate('BranchInfoModal', {
                   ...branchData,
-                } as Branch)
-              }>
+                } as Branch);
+              }}>
               <InfoCircleIcon height={30} />
             </Pressable>
           </View>
@@ -225,9 +297,12 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         <View style={styles.productsCategoryContainer}>
           <Text style={styles.productsText}>Productos</Text>
           <Pressable
-            onPress={() =>
-              navigation.navigate('CategoryListModal', {branchId})
-            }>
+            onPress={() => {
+              setIsOpenModal(true);
+              navigation.navigate('CategoryListModal', {
+                branchId,
+              });
+            }}>
             <View style={styles.categoryButtonContainer}>
               <Text
                 style={styles.categoryTextButton}
@@ -274,7 +349,11 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
             paddingBottom: 20,
           }}
           renderItem={({item}) => (
-            <ProductItemRender product={item} navigation={navigation} />
+            <ProductItemRender
+              product={item}
+              navigation={navigation}
+              setOpenModal={setIsOpenModal}
+            />
           )}
           scrollEnabled={!loadMore}
           ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
