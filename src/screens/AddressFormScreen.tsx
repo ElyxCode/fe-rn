@@ -258,6 +258,7 @@ export const AddressFormScreen = ({route, navigation}: any) => {
               data={roads}
               renderItem={renderItem}
               keyExtractor={item => item.id}
+              scrollEnabled={false}
             />
 
             <View style={styles.inputBoxContainer}>
@@ -280,6 +281,7 @@ export const AddressFormScreen = ({route, navigation}: any) => {
             <SubmitButton
               textButton="Guardar"
               onPress={handleSubmit(handleOnSubmit, handleOnError)}
+              customStyles={{marginBottom: 10}}
             />
           </View>
         </ScrollView>
