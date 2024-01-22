@@ -33,5 +33,6 @@ export default {
     orderCreatedSuccessTransferMessage: 'Estamos verificando la transacción con el banco emisor, te notificaremos cuando tu pedido este siendo procesado.',
     orderPhoneRequired: 'Para completar la orden y poder contactarte, es necesario que ingreses tu número de teléfono.',
     orderPhoneMinimunLength: 'El número de contacto debe tener al menos 8 dígitos.',
+    addAddressSuccess: 'Tu dirección se agregó correctamente',
     
 }
