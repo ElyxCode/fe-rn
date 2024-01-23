@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {View, StyleSheet, Text, SafeAreaView, Platform} from 'react-native';
 
 import messaging from '@react-native-firebase/messaging';
@@ -20,12 +20,22 @@ import WelcomeBaggageSpanner from '../assets/welcome_baggage_spanner.svg';
 import {colors} from '../styles/colors';
 import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
+import {LoaderScreen} from './LoaderScreen';
 
 const svgImageHeight = 75;
 
 export const WelcomeScreen = ({route, navigation}: any) => {
+  const [isLoading, setIsLoading] = useState(false);
   const authToken = useAppSelector(state => state.authToken);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (authToken.token) {
+      navigation.navigate('HomeNavigation');
+    }
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     handleRequestPermissionNotifications();
@@ -77,6 +87,8 @@ export const WelcomeScreen = ({route, navigation}: any) => {
       dispatch(setToken({...authToken, fcmToken}));
     }
   };
+
+  if (isLoading) return <LoaderScreen />;
 
   return (
     <SafeAreaView style={styles.container}>
