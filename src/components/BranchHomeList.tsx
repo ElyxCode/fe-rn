@@ -30,7 +30,6 @@ type BranchItemProps = {
 };
 
 export const BranchHomeList = ({branchs, navigation}: BranchHomeListProps) => {
-  
   const BranchItemRender = ({
     id,
     img,
@@ -42,7 +41,11 @@ export const BranchHomeList = ({branchs, navigation}: BranchHomeListProps) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('BranchDetailScreen', {branchId: id});
+          // navigation.navigate('BranchDetailScreen', {branchId: id});
+          navigation.navigate('BranchNavigation', {
+            screen: 'BranchDetailScreen',
+            params: {branchId: id},
+          });
         }}>
         <View style={styles.BranchItemContainer}>
           <View style={styles.branchItemImageContainer}>
