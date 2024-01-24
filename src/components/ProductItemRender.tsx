@@ -5,6 +5,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ProductProps} from '../model/ProductProps';
 
 import {colors} from '../styles/colors';
+import {formatter} from '../utils/utilities';
 
 export const ProductItemRender = ({
   product,
@@ -15,37 +16,39 @@ export const ProductItemRender = ({
     <TouchableOpacity
       style={styles.productContainer}
       onPress={() => {
-        setOpenModal(true);
+        if (setOpenModal) {
+          setOpenModal(true);
+        }
         navigation.navigate('ProductDetailScreen', {
           ProductProps: {product, navigation},
         });
       }}>
       <View style={styles.imageProductContainer}>
-        <Image source={{uri: product.image}} style={{height: 80, width: 80}} />
+        <Image source={{uri: product?.image}} style={{height: 80, width: 80}} />
       </View>
       <View style={styles.productInfoContainer}>
         <Text
           style={styles.productNameText}
           numberOfLines={1}
           lineBreakMode="tail">
-          {product.name}
+          {product?.name ?? ''}
         </Text>
         <View style={styles.priceProductContainer}>
           <Text
             style={[
               styles.priceText,
               {
-                textDecorationLine: product.price_with_discount
+                textDecorationLine: product?.price_with_discount
                   ? 'line-through'
                   : 'none',
-                color: product.price_with_discount
+                color: product?.price_with_discount
                   ? colors.DarkGrayColor
                   : colors.PrimaryTextColor,
               },
             ]}>
-            ${product.price}
+            {formatter.format(Number(product?.price)) ?? ''}
           </Text>
-          {product.price_with_discount ? (
+          {product?.price_with_discount ? (
             <Text
               style={[
                 styles.priceText,
@@ -58,11 +61,11 @@ export const ProductItemRender = ({
                     : colors.DarkGrayColor,
                 },
               ]}>
-              ${product.price_with_discount}
+              {formatter.format(Number(product?.price_with_discount)) ?? ''}
             </Text>
           ) : null}
         </View>
-        <Text style={styles.brandText}>{product.brand.name}</Text>
+        <Text style={styles.brandText}>{product?.brand.name ?? ''}</Text>
       </View>
     </TouchableOpacity>
   );
