@@ -1,6 +1,7 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {AddressNavigation} from './AddressNavigation';
+import {BranchNavigation} from './BranchNavigation';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 
@@ -11,6 +12,7 @@ import {PromotionDetailScreen} from '../screens/PromotionDetailScreen';
 import {PromotionProductsScreen} from '../screens/PromotionProductsScreen';
 
 export type HomeStackParams = {
+  BranchNavigation: undefined;
   HomeBranchScreen: undefined;
   MapConfirmationScreen: undefined;
   AddressNavigation: undefined;
@@ -51,6 +53,12 @@ export const HomeNavigation = () => {
         component={PromotionProductsScreen}
         options={{headerShown: true, header: () => <CustomNavBar />}}
       />
+      <HomeStack.Group screenOptions={{presentation: 'modal'}}>
+        <HomeStack.Screen
+          name="BranchNavigation"
+          component={BranchNavigation}
+        />
+      </HomeStack.Group>
     </HomeStack.Navigator>
   );
 };
