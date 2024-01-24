@@ -1,19 +1,22 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
+import {useAppSelector} from '../hooks/useRedux';
+
 import {ConfirmOrderNavigation} from './ConfirmOrderNavigation';
 
+import {HomeNavigation} from './HomeNavigation';
+
 import {CategoryListModal} from '../components/CategoryListModal';
+import {CustomNavBar} from '../components/CustomNavBar';
+import {BranchInfoModal} from '../components/BranchInfoModal';
 
 import {BranchDetailScreen} from '../screens/BranchDetailScreen';
 import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {PromotionDetailScreen} from '../screens/PromotionDetailScreen';
 import {PromotionProductsScreen} from '../screens/PromotionProductsScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
-import {HomeNavigation} from './HomeNavigation';
-import {BranchInfoModal} from '../components/BranchInfoModal';
-import {useAppSelector} from '../hooks/useRedux';
 
-export type CardNavigatorParams = {
+export type BranchConfirmationNavigatorParams = {
   HomeNavigation: any;
   ConfirmOrderNavigation: any;
   BranchDetailScreen: any;
@@ -25,52 +28,59 @@ export type CardNavigatorParams = {
   BranchInfoModal: any;
 };
 
-const BranchStack = createStackNavigator<CardNavigatorParams>();
+const BranchConfirmationStack =
+  createStackNavigator<BranchConfirmationNavigatorParams>();
 
 export const BranchConfirmOrderNavigation = () => {
   const products = useAppSelector(state => state.productsCart.products);
   return (
-    <BranchStack.Navigator screenOptions={{headerShown: false}}>
+    <BranchConfirmationStack.Navigator screenOptions={{headerShown: false}}>
       {products.length !== 0 ? (
         <>
-          <BranchStack.Group screenOptions={{presentation: 'modal'}}>
-            <BranchStack.Screen
+          <BranchConfirmationStack.Group
+            screenOptions={{presentation: 'modal'}}>
+            <BranchConfirmationStack.Screen
               name="BranchDetailScreen"
               component={BranchDetailScreen}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="ProductDetailScreen"
               component={ProductDetailScreen}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="ShoppingCartScreen"
               component={ShoppingCartScreen}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="ConfirmOrderNavigation"
               component={ConfirmOrderNavigation}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="PromotionDetailScreen"
               component={PromotionDetailScreen}
+              options={{headerShown: true, header: () => <CustomNavBar />}}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="PromotionProductsScreen"
               component={PromotionProductsScreen}
+              options={{headerShown: true, header: () => <CustomNavBar />}}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="CategoryListModal"
               component={CategoryListModal}
             />
-            <BranchStack.Screen
+            <BranchConfirmationStack.Screen
               name="BranchInfoModal"
               component={BranchInfoModal}
             />
-          </BranchStack.Group>
+          </BranchConfirmationStack.Group>
         </>
       ) : (
-        <BranchStack.Screen name="HomeNavigation" component={HomeNavigation} />
+        <BranchConfirmationStack.Screen
+          name="HomeNavigation"
+          component={HomeNavigation}
+        />
       )}
-    </BranchStack.Navigator>
+    </BranchConfirmationStack.Navigator>
   );
 };
