@@ -198,9 +198,10 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
 
           {isLoading ? (
             <AddressBox
-              onPress={() =>
-                navigation.navigate('SearchAddressScreen', {setLocation})
-              }
+              onPress={() => {
+                if (isLoading) return;
+                navigation.navigate('SearchAddressScreen', {setLocation});
+              }}
               customStyles={styles.addressBox}
               textButton={'Buscando...'}></AddressBox>
           ) : (
@@ -219,6 +220,7 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
           <SubmitButton
             textButton="Confirmar dirección"
             onPress={() => {
+              if (isLoading) return;
               confirm();
             }}
             customStyles={{marginBottom: 28}}
