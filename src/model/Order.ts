@@ -328,6 +328,7 @@ export interface OrderCreateErrorResponse {
 
 export interface Errors {
     address_id: string[];
+    discount_id: string[];
     total:      string[];
 }
 

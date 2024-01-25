@@ -14,12 +14,13 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import ImagePicker from 'react-native-image-crop-picker';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {SubmitButton} from '../components/SubmitButton';
 
 import {LoaderScreen} from './LoaderScreen';
+import {DiscountCode} from './ConfirmOrderScreen';
 
 import {QuoteResponse} from '../model/Quote';
 import {Bank} from '../model/bank';
@@ -35,6 +36,12 @@ import {FileResponse, FileResponseError} from '../model/File';
 import {uploadFileService} from '../services/file';
 import {getBanksService} from '../services/bank';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard} from '../services/card/cardSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+} from '../services/user/userSlice';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 
@@ -71,7 +78,7 @@ export const TransferScreen = ({navigation, route}: any) => {
   const [quote] = useState<QuoteResponse>(quoteData);
   const [currentBilling] = useState<BillInfo>(billing);
   const [banks, setBanks] = useState<Bank[]>([]);
-  const [discountCodes] = useState<string>(discountCode);
+  const [discountCodes] = useState<DiscountCode>(discountCode);
   const [currentPhoneNumber] = useState<string>(phoneNumber);
   const [selectBank, setSelectBank] = useState<Bank>({} as Bank);
   const [fileData, setFileData] = useState<FileData>({
@@ -79,6 +86,8 @@ export const TransferScreen = ({navigation, route}: any) => {
     fileName: '',
   });
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const getBanks = async () => {
@@ -132,7 +141,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         branchId: productsCart.products[0].branch.id,
         products: productsCart.products,
         fileId: fileIdRecent,
-        couponCode: discountCodes,
+        couponCode: discountCodes.code,
         method: 'transfer',
         billInfo: billFormatOrderRequest(currentBilling),
         phone: currentPhoneNumber,
@@ -146,6 +155,33 @@ export const TransferScreen = ({navigation, route}: any) => {
           setIsLoading(false);
           return;
         }
+
+        if (
+          (response.data as OrderCreateResponse).order.state === 'rechazado'
+        ) {
+          const AsyncAlert = async () =>
+            new Promise(resolve => {
+              Alert.alert(
+                Messages.titleMessage,
+                (response.data as OrderCreateResponse).order
+                  .cancellation_reason ?? '',
+                [
+                  {
+                    text: Messages.okButton,
+                    onPress: () => {
+                      resolve('YES');
+                    },
+                  },
+                ],
+                {cancelable: false},
+              );
+            });
+
+          await AsyncAlert();
+          setIsLoading(false);
+          return;
+        }
+
         const AsyncAlert = async () =>
           new Promise(resolve => {
             Alert.alert(
@@ -153,7 +189,7 @@ export const TransferScreen = ({navigation, route}: any) => {
               Messages.orderCreatedSuccessTransferMessage,
               [
                 {
-                  text: 'ok',
+                  text: Messages.okButton,
                   onPress: () => {
                     resolve('YES');
                   },
@@ -164,11 +200,12 @@ export const TransferScreen = ({navigation, route}: any) => {
           });
 
         await AsyncAlert();
+
         const resp = await getOrderByIdService(
           token,
           (response.data as OrderCreateResponse).order.id.toString(),
         );
-
+        clearData();
         navigation.navigate('OrderDetailScreen', {
           order: resp.data as Order,
           navigationPath: 'HomeNavigation',
@@ -176,12 +213,18 @@ export const TransferScreen = ({navigation, route}: any) => {
           isOrderCreated: true,
         });
       } else {
+        if ((response.data as OrderCreateErrorResponse).errors) {
+          showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+          setIsLoading(false);
+          return;
+        }
+
         Alert.alert(
           Messages.titleMessage,
           Messages.UnAvailableServerMessage,
           [
             {
-              text: 'ok',
+              text: Messages.okButton,
             },
           ],
           {cancelable: false},
@@ -193,7 +236,7 @@ export const TransferScreen = ({navigation, route}: any) => {
         (responseFile.data as FileResponseError).error,
         [
           {
-            text: 'ok',
+            text: Messages.okButton,
           },
         ],
         {cancelable: false},
@@ -204,14 +247,20 @@ export const TransferScreen = ({navigation, route}: any) => {
         Messages.UnAvailableServerMessage,
         [
           {
-            text: 'ok',
+            text: Messages.okButton,
           },
         ],
         {cancelable: false},
       );
     }
-
     setIsLoading(false);
+  };
+
+  const clearData = () => {
+    dispatch(clearProduct());
+    dispatch(clearCard());
+    dispatch(clearOrderUserBillingTemp());
+    dispatch(clearOrderUserPhoneTemp());
   };
 
   const BankItemRender = ({bank}: BankItemRenderProps) => {
@@ -253,50 +302,55 @@ export const TransferScreen = ({navigation, route}: any) => {
           {label: 'Total', value: quote.total},
         ].map(item => (
           <View style={styles.subTotalItem} key={item.label}>
-            {item.label === 'Costo de envío' ? (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  columnGap: 5,
-                }}>
-                <Text style={styles.subTotalItemLabel}>Costo de envío</Text>
-                <Pressable
-                  onPress={() =>
-                    navigation.navigate('DeliveryInfoModal' as never)
-                  }>
-                  <InfoCircleIcon width={17} height={17} />
-                </Pressable>
-              </View>
-            ) : (
-              <Text
-                style={[
-                  styles.subTotalItemLabel,
-                  {
-                    color:
-                      item.label === 'Total'
-                        ? colors.PrimaryTextColor
-                        : colors.DarkGrayColor,
-                  },
-                ]}>
-                {item.label}
-              </Text>
-            )}
+            {item.label === 'Descuento Cupón' &&
+            discountCodes.code.length === 0 ? null : (
+              <>
+                {item.label === 'Costo de envío' ? (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      columnGap: 5,
+                    }}>
+                    <Text style={styles.subTotalItemLabel}>{item.label}</Text>
+                    <Pressable
+                      onPress={() =>
+                        navigation.navigate('DeliveryInfoModal' as never)
+                      }>
+                      <InfoCircleIcon width={17} height={17} />
+                    </Pressable>
+                  </View>
+                ) : (
+                  <Text
+                    style={[
+                      styles.subTotalItemLabel,
+                      {
+                        color:
+                          item.label === 'Total'
+                            ? colors.PrimaryTextColor
+                            : colors.DarkGrayColor,
+                      },
+                    ]}>
+                    {item.label}
+                  </Text>
+                )}
 
-            <Text
-              style={[
-                styles.subTotalItemValue,
-                {
-                  color:
-                    item.label === 'Total'
-                      ? colors.SecondaryTextColor
-                      : colors.LightGrayColor,
-                },
-              ]}>
-              {item.label === 'Descuento Cupón'
-                ? '-' + formatter.format(Number(item.value))
-                : formatter.format(Number(item.value))}
-            </Text>
+                <Text
+                  style={[
+                    styles.subTotalItemValue,
+                    {
+                      color:
+                        item.label === 'Total'
+                          ? colors.SecondaryTextColor
+                          : colors.LightGrayColor,
+                    },
+                  ]}>
+                  {item.label === 'Descuento Cupón'
+                    ? '-' + formatter.format(Number(item.value))
+                    : formatter.format(Number(item.value))}
+                </Text>
+              </>
+            )}
           </View>
         ))}
       </View>
@@ -471,5 +525,6 @@ const styles = StyleSheet.create({
     borderColor: colors.PrimaryColor,
     flex: 1,
     textAlign: 'center',
+    height: 40,
   },
 });

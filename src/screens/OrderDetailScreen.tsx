@@ -19,8 +19,9 @@ import {RatingViewComponent} from '../components/RatingViewComponent';
 
 import {paymentMethodFormat} from '../utils/utilities';
 import {colors} from '../styles/colors';
+import {isAndroid} from '../constants/Platform';
 
-export const OrderDetailScreen = ({route}: any) => {
+export const OrderDetailScreen = ({navigation, route}: any) => {
   const {order, navigationPath, resetRootNavigation, isOrderCreated} =
     route.params;
 
@@ -28,17 +29,29 @@ export const OrderDetailScreen = ({route}: any) => {
   const [showReview, setShowReview] = useState<boolean>(
     Boolean(currentOrder.review),
   );
+
+  console.log(currentOrder.coupon_discount);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = useAppSelector(state => state.authToken.token);
 
-  // previene backbutton del dispositivo solo cuando la orden se a creado.
+  // previene backbutton del dispositivo android solo cuando la orden se a creado.
   useEffect(() => {
     if (!isOrderCreated) return;
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      () => true,
-    );
-    return () => backHandler.remove();
+    if (isAndroid) {
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => true,
+      );
+      return () => backHandler.remove();
+    }
+  }, []);
+
+  // previene back swipe del dispositivo ios solo cuando la orden se a creado.
+  useEffect(() => {
+    if (!isOrderCreated) return;
+    if (!isAndroid) {
+      navigation.setOptions({gestureEnabled: false});
+    }
   }, []);
 
   if (isLoading) return <LoaderScreen />;
@@ -114,6 +127,8 @@ export const OrderDetailScreen = ({route}: any) => {
                   totalAmount={currentOrder.total}
                   specialDiscount={currentOrder.special_discount}
                   subtotalWithDiscount={currentOrder.subtotal_with_discount}
+                  discountAmount={currentOrder.coupon_discount}
+                  hasDiscount={Number(currentOrder.coupon_discount) > 0}
                 />
               </View>
             </View>

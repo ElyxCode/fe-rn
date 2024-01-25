@@ -60,8 +60,8 @@ export const BranchInfoModal = ({route}: any) => {
                 {getDistanceUserToBranch(
                   location.lat,
                   location.lng,
-                  currentLocation.latitude,
-                  currentLocation.longitude,
+                  currentLocation.lat,
+                  currentLocation.lng,
                 )
                   .toFixed(2)
                   .toString()}{' '}

@@ -11,14 +11,22 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
-import {useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {LoaderScreen} from '../screens/LoaderScreen';
 
 import {deleteUserService} from '../services/user/user';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+  clearUserData,
+} from '../services/user/userSlice';
+import {clearToken} from '../services/auth/authSlice';
+import {clearProduct} from '../services/product/productSlice';
+import {clearCard, clearCardConfirmAdded} from '../services/card/cardSlice';
+import {clearAddress} from '../services/address/addressSlice';
 
 import Messages from '../constants/Messages';
-
 import {colors} from '../styles/colors';
 
 type ButtonProps = {
@@ -31,12 +39,14 @@ export const DeleteAccountModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const token = useAppSelector(state => state.authToken.token);
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
 
   const deleteAccount = async () => {
     setIsLoading(true);
     const response = await deleteUserService(token);
     if (response.ok) {
-      //TODO: delete local info and navigate welcome screen
+      deleteTempData();
+      navigation.navigate('WelcomeScreen' as never);
       setIsLoading(false);
     } else {
       const AsyncAlert = async () =>
@@ -46,19 +56,29 @@ export const DeleteAccountModal = () => {
             Messages.UnAvailableServerMessage,
             [
               {
-                text: 'ok',
+                text: Messages.okButton,
                 onPress: () => {
                   resolve('YES');
-                  navigation.goBack();
                 },
               },
             ],
             {cancelable: false},
           );
         });
-
+      setIsLoading(false);
       return await AsyncAlert();
     }
+  };
+
+  const deleteTempData = () => {
+    dispatch(clearUserData());
+    dispatch(clearToken());
+    dispatch(clearProduct());
+    dispatch(clearCard());
+    dispatch(clearAddress());
+    dispatch(clearOrderUserBillingTemp());
+    dispatch(clearOrderUserPhoneTemp());
+    dispatch(clearCardConfirmAdded());
   };
 
   const OptionButton = ({text, customStylesButton, onPress}: ButtonProps) => {

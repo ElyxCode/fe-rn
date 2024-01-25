@@ -30,6 +30,9 @@ export default {
     orderCreatedSuccessTitle: 'Pago exitoso',
     orderCreatedSuccessMessage: '¡Gracias por tu compra!',
     orderCreatedSuccessCashMessage: 'Deberás realizar el pago contra entrega del producto al encargado de transporte.',
-    orderCreatedSuccessTransferMessage: 'Estamos verificando la transacción con el banco emisor, te notificaremos cuando tu pedido este siendo procesado.'
+    orderCreatedSuccessTransferMessage: 'Estamos verificando la transacción con el banco emisor, te notificaremos cuando tu pedido este siendo procesado.',
+    orderPhoneRequired: 'Para completar la orden y poder contactarte, es necesario que ingreses tu número de teléfono.',
+    orderPhoneMinimunLength: 'El número de contacto debe tener al menos 8 dígitos.',
+    addAddressSuccess: 'Tu dirección se agregó correctamente',
     
 }

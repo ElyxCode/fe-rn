@@ -8,7 +8,7 @@ export const branchService = async (lat: string = '13.8263447', lng: String = '-
 };
 
 export const filterBranchesByCategory = async (location : Location, categoryId: string) => {
-    return api.get<Branch[]>('/branchs', { lat: location.latitude, lng: location.longitude, category_id:categoryId })
+    return api.get<Branch[]>('/branchs', { lat: location.lat, lng: location.lng, category_id:categoryId })
 }
 
 export const branchByIdService = async (branchId: string): Promise<ApiResponse<Branch>> => {

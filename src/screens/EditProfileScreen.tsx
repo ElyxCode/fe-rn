@@ -20,8 +20,8 @@ import {CustomTextInput} from '../components/CustomTextInput';
 import {LoaderScreen} from './LoaderScreen';
 import {
   BillingInfo,
-  SwitchControlButton,
-} from '../components/SwitchControlButton';
+  SwitchBillControlButton,
+} from '../components/SwitchBillControlButton';
 import {SubmitButton} from '../components/SubmitButton';
 
 import {updateUserService} from '../services/user/user';
@@ -39,6 +39,7 @@ import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 
 import {
+  clearObjectUserData,
   dateFormatPattern,
   emailFormatPattern,
   phoneFormatPattern,
@@ -127,9 +128,9 @@ export const EditProfileScreen = () => {
 
   const userModifyRequest = async (userData: UserProfile) => {
     const response = await updateUserService(token, userData);
-    console.log(response.originalError,token)
+    console.log(response.originalError, token);
     if (response.ok) {
-      const {user} = clearObjectData(response.data);
+      const {user} = clearObjectUserData(response.data);
       dispatch(setUser({...user}));
       navigation.goBack();
     } else {
@@ -144,11 +145,6 @@ export const EditProfileScreen = () => {
         [{text: Messages.okButton}],
       );
     }
-  };
-
-  const clearObjectData = (user: any): any => {
-    const {message, ...userProp} = user;
-    return userProp;
   };
 
   const handleOnError = (errors: any) => {
@@ -190,14 +186,14 @@ export const EditProfileScreen = () => {
   };
 
   const dataBillingValidation = (): boolean => {
-    if (billing === BillingInfo.billing.finalConsumer && dui === '') {
+    if (billing === BillingInfo.bill.finalConsumer && dui === '') {
       Alert.alert(Messages.titleMessage, Messages.requireDuiProfile, [
         {text: Messages.okButton},
       ]);
       return false;
     }
 
-    if (billing === BillingInfo.billing.fiscalCredit && fiscal === '') {
+    if (billing === BillingInfo.bill.fiscalCredit && fiscal === '') {
       Alert.alert(Messages.titleMessage, Messages.requireFiscalNumber, [
         {text: Messages.okButton},
       ]);
@@ -205,7 +201,7 @@ export const EditProfileScreen = () => {
     }
 
     if (
-      billing === BillingInfo.billing.fiscalCredit &&
+      billing === BillingInfo.bill.fiscalCredit &&
       typePerson === BillingInfo.Person.natural &&
       dui === ''
     ) {
@@ -353,15 +349,15 @@ export const EditProfileScreen = () => {
             <Text style={styles.billingSubtitleText}>
               ¿Que tipo de facturación deseas?
             </Text>
-            <SwitchControlButton
-              personTypeSelected={value => setTypePerson(value)}
-              billingSelected={value => setBilling(value)}
-              setDuiNumber={setDui}
-              setFiscalNumber={setFiscal}
+            <SwitchBillControlButton
+              personSelected={value => setTypePerson(value)}
+              billSelected={value => setBilling(value)}
+              setDui={setDui}
+              setIva={setFiscal}
               dui={dui}
-              fiscal={fiscal}
-              billing={userData.bill_type ?? ''}
-              typePerson={userData.bill_entity ?? ''}
+              iva={fiscal}
+              bill={userData.bill_type ?? ''}
+              person={userData.bill_entity ?? ''}
             />
           </View>
           <SubmitButton

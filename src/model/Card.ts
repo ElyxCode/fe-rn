@@ -44,3 +44,10 @@ export interface ErrorsFields {
     number?: string[];
 }
 
+export interface ValidationCardResponse {
+    valid: string
+}
+export interface ValidationCardError {
+    error: string
+}
+

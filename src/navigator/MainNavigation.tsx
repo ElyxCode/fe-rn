@@ -8,6 +8,7 @@ import {HomeNavigation} from './HomeNavigation';
 import {ConfirmOrderNavigation} from '../navigator/ConfirmOrderNavigation';
 import {ProfileNavigation} from './ProfileNavigation';
 import {SignInNavigation} from './SignInNavigation';
+import {BranchConfirmOrderNavigation} from './BranchConfirmOrderNavigation';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 import {BranchInfoModal} from '../components/BranchInfoModal';
@@ -27,6 +28,7 @@ export type RootStackParams = {
   BranchDetailScreen: any;
   ProfileNavigation: undefined;
   SignInNavigation: undefined;
+  BranchConfirmOrderNavigation: undefined;
   MapConfirmationScreen: undefined;
   SearchAddressScreen: undefined;
   SearchAddressScreenn: undefined;
@@ -65,6 +67,10 @@ export const MainNavigation = () => {
         component={AddressListScreen}
       />
       <MainStack.Group screenOptions={{presentation: 'modal'}}>
+        <MainStack.Screen
+          name="BranchConfirmOrderNavigation"
+          component={BranchConfirmOrderNavigation}
+        />
         <MainStack.Screen
           name="BranchDetailScreen"
           component={BranchDetailScreen}

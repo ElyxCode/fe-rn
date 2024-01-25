@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useIsFocused} from '@react-navigation/native';
 
 import useAwaitableComponent from 'use-awaitable-component';
 
-import {useAppSelector} from '../hooks/useRedux';
-import {useIsFocused} from '@react-navigation/native';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {
   Order,
@@ -13,12 +13,27 @@ import {
   OrderCreateResponse,
   OrderRequestDTO,
 } from '../model/Order';
-import {Quote, QuoteResponse} from '../model/Quote';
+import {Quote, QuoteResponse, QuoteResponseError} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
+import {Card, ValidationCardError, ValidationCardResponse} from '../model/Card';
 
 import {quoteService} from '../services/quote';
-import {validationCardService} from '../services/card/card';
+import {getCardsService, validationCardService} from '../services/card/card';
 import {createOrderService, getOrderByIdService} from '../services/order/order';
+import {
+  clearCard,
+  clearCardConfirmAdded,
+  setCard,
+} from '../services/card/cardSlice';
+import {clearProduct} from '../services/product/productSlice';
+import {
+  clearOrderUserBillingTemp,
+  clearOrderUserPhoneTemp,
+  setOrderUserBillingTemp,
+  setOrderUserPhoneTemp,
+} from '../services/user/userSlice';
+import {ReadAll} from '../services/address/Address';
+import {setAddress} from '../services/address/addressSlice';
 
 import {LoaderScreen} from './LoaderScreen';
 import {alterPaymentMethod} from './CardsScreen';
@@ -35,52 +50,64 @@ import {PromotionCodeButton} from '../components/PromotionCodeButton';
 import {CurrentTotalOrder} from '../components/CurrentTotalOrder';
 import {CreditCardValidationModal} from '../components/CreditCardValidationModal';
 import {CreditCardValidationErrorModal} from '../components/CreditCardValidationErrorModal';
+import {PhoneRequiredModal} from '../components/PhoneRequiredModal';
 
 import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
 import {colors} from '../styles/colors';
+import {Address} from '../model/Address';
 
-export type tempCardExpDate = {
+export type TempCardExpDate = {
   month: string;
   year: string;
+};
+
+export type DiscountCode = {
+  code: string;
+  valid: boolean;
 };
 
 export const ConfirmOrderScreen = ({navigation}: any) => {
   const productsCart = useAppSelector(state => state.productsCart);
   const currentAddress = useAppSelector(state => state.currentAddress);
-  const currentCard = useAppSelector(state => state.currentCard);
+  const currentCard = useAppSelector(state => state.currentCard.card);
+  const recentCardAdded = useAppSelector(
+    state => state.currentCard.cardConfirmAdded,
+  );
   const currentUser = useAppSelector(state => state.user.userData);
+  const orderUserPhoneTemp = useAppSelector(
+    state => state.user.orderUserPhoneTemp?.phoneNumber,
+  );
+  const orderUserBillingTemp = useAppSelector(
+    state => state.user.orderUserBillingTemp?.billingInfo,
+  );
   const token = useAppSelector(state => state.authToken.token);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isVisibleCardExpValErrorModal, setIsVisibleCardExpValErrorModal] =
+  const [quoteError, setQuoteError] = useState<string>('');
+  const [visibleCardExpValErrorModal, setVisibleCardExpValErrorModal] =
     useState<boolean>(false);
+  const [phoneRequiredModal, setPhoneRequiredModal] = useState<boolean>(false);
+  const [showDistanceDiscount, setShowDistanceDiscount] =
+    useState<boolean>(true);
+  const [callAddressButton, setCallAddressButton] = useState<boolean>(true);
+
   const [branchName, setBranchName] = useState<string>('');
-  const [tempMonthYearCard, setTempMonthYearCard] = useState<tempCardExpDate>(
-    {} as tempCardExpDate,
-  );
-  const [currentOrder, setCurrentOrder] = useState<Order>({} as Order);
-  const [discountCode, setDiscountCode] = useState<string>('');
+
+  const [discountCode, setDiscountCode] = useState<DiscountCode>({
+    code: '',
+    valid: false,
+  });
   const [quoteData, setQuoteData] = useState<QuoteResponse>(
     {} as QuoteResponse,
   );
-  const [currentBilling, setCurrentBilling] = useState<BillInfo>({
-    bill_type: currentUser.bill_type ?? '',
-    bill_entity: currentUser.bill_entity ?? '',
-    dui: currentUser.dui ?? '',
-    iva: currentUser.iva ?? '',
-  });
-  const [currentPayment, setCurrentPayment] = useState<string>(
-    currentCard.active ? currentCard.last_numbers : '',
-  );
-  const [currentPhoneNumber, setCurrentPhoneNumber] = useState<string>(
-    currentUser.phone ?? '',
-  );
+
+  const dispatch = useAppDispatch();
+
+  const isFocused = useIsFocused();
 
   const [status, execute, resolve, reject, reset] = useAwaitableComponent();
   const showModal = status === 'awaiting';
-
-  const isFocused = useIsFocused();
 
   useEffect(() => {
     setBranchName(
@@ -89,28 +116,132 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
+    if (Object.keys(currentAddress.address).length === 0 && isFocused) {
+      getAddress();
+    }
+  }, [isFocused]);
 
+  useEffect(() => {
+    if (orderUserBillingTemp === undefined) {
+      const bill: BillInfo = {
+        bill_type: currentUser.bill_type ?? '',
+        bill_entity: currentUser.bill_entity ?? '',
+        dui: currentUser.dui ?? '',
+        iva: currentUser.iva ?? '',
+      };
+      dispatch(setOrderUserBillingTemp({billingInfo: bill}));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (orderUserPhoneTemp === undefined ?? orderUserPhoneTemp?.length === 0) {
+      dispatch(setOrderUserPhoneTemp({phoneNumber: currentUser.phone ?? ''}));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      currentCard.last_numbers === alterPaymentMethod.transferencia ||
+      currentCard.last_numbers === alterPaymentMethod.efectivo
+    )
+      return;
+    if (currentCard.id === -1) {
+      setIsLoading(true);
+      const getCards = async () => {
+        const resp = await getCardsService(token);
+
+        dispatch(
+          setCard((resp.data?.find(i => i.active) as Card) ?? ({} as Card)),
+        );
+      };
+      getCards();
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
     calculateQuote();
-    console.log('called quote');
-
-    setIsLoading(false);
-  }, [currentAddress.address]);
+  }, [isFocused, discountCode.code]);
 
   const calculateQuote = async () => {
+    if (!isFocused) return;
+    if (Object.keys(currentAddress.address).length === 0) return;
+    setIsLoading(true);
     const quote: Quote = {
       branchId:
         productsCart.products[
           productsCart.products.length - 1
         ].branch.id.toString(),
       addressId: currentAddress.address.id.toString(),
-      discountCode: discountCode,
+      discountCode: discountCode.code,
       products: productsCart.products,
     };
 
     const response = await quoteService(quote);
     if (response.ok) {
+      if ((response.data as QuoteResponseError).errors) {
+        setQuoteError((response.data as QuoteResponseError).errors.address_id);
+        setQuoteData({} as QuoteResponse);
+        setIsLoading(false);
+        return;
+      }
+      setDiscountCode({
+        ...discountCode,
+        valid: (response.data as QuoteResponse).coupon_valid,
+      });
       setQuoteData(response.data as QuoteResponse);
+      setQuoteError('');
+
+      if (callAddressButton && isFocused) {
+        await freeShipping(response.data as QuoteResponse);
+      }
+    }
+    setIsLoading(false);
+  };
+
+  const getAddress = async () => {
+    const resp = await ReadAll(token);
+    dispatch(
+      setAddress(resp.data?.find(address => address.active) ?? ({} as Address)),
+    );
+  };
+
+  const freeShipping = async (quoteResponse: QuoteResponse) => {
+    // if (!quoteResponse.special_discount) return;
+
+    if (
+      Number(
+        productsCart.products[productsCart.products.length - 1].branch
+          .distance_for_free,
+      ) !== 0
+    ) {
+      if (quoteResponse.special_discount) {
+        await handleFreeShippingAlert(Messages.freeShippingForDistanceMessage);
+        return;
+      }
+
+      if (
+        quoteResponse.coupon_valid &&
+        Number(quoteResponse.distance) <=
+          Number(
+            productsCart.products[productsCart.products.length - 1].branch
+              .distance_for_free,
+          ) &&
+        showDistanceDiscount
+      ) {
+        await handleFreeShippingAlert(
+          Messages.freeShippingWithTwoPromotionsMessage,
+        );
+        setShowDistanceDiscount(false);
+        return;
+      }
+
+      if (quoteResponse.coupon_valid) {
+        setShowDistanceDiscount(false);
+        return;
+      }
+
+      await handleFreeShippingAlert(Messages.notFreeShippingForDistanceMessage);
     }
   };
 
@@ -136,50 +267,130 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       cardYear,
     );
     if (response.ok) {
-      return Boolean(response?.data['valid']);
+      return Boolean((response?.data as ValidationCardResponse).valid);
+    } else {
+      return response?.data as ValidationCardError;
     }
-    return false;
   };
 
   const confirmOrder = async () => {
+    if (orderUserPhoneTemp === undefined || orderUserPhoneTemp.length === 0) {
+      setPhoneRequiredModal(true);
+      return;
+    }
+
     if (currentCard.last_numbers === alterPaymentMethod.transferencia) {
-      navigation.navigate('TransferScreen', {
-        quoteData: quoteData,
-        billing: currentBilling,
-        discountCode,
-        phoneNumber: currentPhoneNumber,
-      });
+      transferFlow();
       return;
     }
 
-    const result = await handleCardExpDateValidationModal();
-    if (String(result).length === 0) return;
-    const validationCard = await cardValidation(
-      currentCard.id.toString(),
-      String(result).split('/')[0],
-      String(result).split('/')[1],
-    );
-    if (!validationCard) {
-      setIsVisibleCardExpValErrorModal(true);
+    if (currentCard.last_numbers === alterPaymentMethod.efectivo) {
+      cashFlow();
       return;
     }
 
+    if (
+      currentCard !== undefined &&
+      recentCardAdded !== undefined &&
+      currentCard.id === recentCardAdded.id &&
+      currentCard.last_numbers === recentCardAdded.last_numbers
+    ) {
+      await cardFlow(recentCardAdded.month ?? '', recentCardAdded.year ?? '');
+    } else {
+      const result = await handleCardExpDateValidationModal();
+
+      if (String(result).length === 0) return;
+
+      const validationCard = await cardValidation(
+        currentCard.id.toString(),
+        String(result).split('/')[0],
+        String(result).split('/')[1],
+      );
+
+      if ((validationCard as ValidationCardError).error) {
+        const AsyncAlert = async () =>
+          new Promise(resolve => {
+            Alert.alert(
+              Messages.titleMessage,
+              (validationCard as ValidationCardError).error,
+              [
+                {
+                  text: Messages.okButton,
+                  onPress: () => {
+                    resolve('YES');
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          });
+
+        await AsyncAlert();
+        return;
+      }
+
+      if (!validationCard) {
+        setVisibleCardExpValErrorModal(true);
+        return;
+      }
+      await cardFlow(
+        String(result).split('/')[0] ?? '',
+        String(result).split('/')[1] ?? '',
+      );
+    }
+  };
+
+  const transferFlow = () => {
+    navigation.navigate('TransferScreen', {
+      quoteData: quoteData,
+      billing: orderUserBillingTemp,
+      discountCode,
+      phoneNumber: orderUserPhoneTemp ?? currentUser.phone ?? '',
+    });
+  };
+
+  const cashFlow = async () => {
     setIsLoading(true);
     const orderRequest: OrderRequestDTO = {
       addressId: currentAddress.address.id,
       branchId: productsCart.products[0].branch.id,
       products: productsCart.products,
-      couponCode: discountCode,
+      couponCode: discountCode.code,
+      method: 'cash',
+      billInfo: billFormatOrderRequest(
+        orderUserBillingTemp ?? ({} as BillInfo),
+      ),
+      phone: orderUserPhoneTemp ?? currentUser.phone ?? '',
+    };
+
+    await createOrder(orderRequest);
+    setIsLoading(false);
+  };
+
+  const cardFlow = async (month: string, year: string) => {
+    setIsLoading(true);
+    const orderRequest: OrderRequestDTO = {
+      addressId: currentAddress.address.id,
+      branchId: productsCart.products[0].branch.id,
+      products: productsCart.products,
+      couponCode: discountCode.code,
       method: 'card',
       cardId: currentCard.id.toString(),
       card: currentCard,
-      billInfo: billFormatOrderRequest(currentBilling),
-      phone: currentPhoneNumber,
-      cardMonth: String(result).split('/')[0] ?? '',
-      cardYear: String(result).split('/')[1] ?? '',
+      billInfo: billFormatOrderRequest(
+        orderUserBillingTemp ?? ({} as BillInfo),
+      ),
+      phone: orderUserPhoneTemp ?? '',
+      cardMonth: month,
+      cardYear: year,
     };
+    await createOrder(orderRequest);
+    setIsLoading(false);
+  };
 
+  const createOrder = async (orderRequest: OrderRequestDTO) => {
     const response = await createOrderService(token, orderRequest);
+
     if (response.ok) {
       if ((response.data as OrderCreateErrorResponse).errors) {
         showServiceErrors((response.data as OrderCreateErrorResponse).errors);
@@ -187,14 +398,42 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         return;
       }
 
+      if ((response.data as OrderCreateResponse).order.state === 'rechazado') {
+        const AsyncAlert = async () =>
+          new Promise(resolve => {
+            Alert.alert(
+              Messages.titleMessage,
+              (response.data as OrderCreateResponse).order
+                .cancellation_reason ?? '',
+              [
+                {
+                  text: Messages.okButton,
+                  onPress: () => {
+                    resolve('YES');
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          });
+
+        await AsyncAlert();
+        setIsLoading(false);
+        return;
+      }
+
       const AsyncAlert = async () =>
         new Promise(resolve => {
           Alert.alert(
-            Messages.orderCreatedSuccessTitle,
-            Messages.orderCreatedSuccessMessage,
+            orderRequest.method === 'cash'
+              ? Messages.orderCreatedSuccessMessage
+              : Messages.orderCreatedSuccessTitle,
+            orderRequest.method === 'cash'
+              ? Messages.orderCreatedSuccessCashMessage
+              : Messages.orderCreatedSuccessMessage,
             [
               {
-                text: 'ok',
+                text: Messages.okButton,
                 onPress: () => {
                   resolve('YES');
                 },
@@ -205,10 +444,13 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         });
 
       await AsyncAlert();
+
       const resp = await getOrderByIdService(
         token,
         (response.data as OrderCreateResponse).order.id.toString(),
       );
+
+      clearData(orderRequest.method);
 
       navigation.navigate('OrderDetailScreen', {
         order: resp.data as Order,
@@ -216,9 +458,70 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         resetRootNavigation: true,
         isOrderCreated: true,
       });
-    }
+    } else {
+      if ((response.data as OrderCreateErrorResponse).errors) {
+        showServiceErrors((response.data as OrderCreateErrorResponse).errors);
+        return;
+      }
 
-    setIsLoading(false);
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.UnAvailableServerMessage,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
+    }
+  };
+
+  const handlePromotionCode = (text: string) => {
+    setDiscountCode({...discountCode, code: text});
+  };
+
+  const handleFreeShippingAlert = async (description: string) => {
+    const AsyncAlert = async () =>
+      new Promise(resolve => {
+        Alert.alert(
+          Messages.titleMessage,
+          description,
+          [
+            {
+              text: Messages.okButton,
+              onPress: () => {
+                resolve('YES');
+              },
+            },
+          ],
+          {cancelable: false},
+        );
+      });
+
+    await AsyncAlert();
+  };
+
+  const clearData = (method: string) => {
+    if (method === 'card') {
+      dispatch(clearProduct());
+      dispatch(clearOrderUserBillingTemp());
+      dispatch(clearOrderUserPhoneTemp());
+      dispatch(clearCardConfirmAdded());
+    } else {
+      dispatch(clearProduct());
+      dispatch(clearCard());
+      dispatch(clearOrderUserBillingTemp());
+      dispatch(clearOrderUserPhoneTemp());
+    }
   };
 
   if (isLoading) return <LoaderScreen />;
@@ -230,19 +533,34 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         <View style={styles.infoUserContainer}>
           <CurrentAddressButton
             address={currentAddress.address}
-            onPress={() => navigation.navigate('AddressNavigation')}
+            onPress={() => {
+              setCallAddressButton(true);
+              navigation.navigate('AddressNavigation');
+            }}
           />
           <CurrentPaymentButton
             paymentName={currentCard.last_numbers}
-            onPress={() =>
+            onPress={() => {
+              setCallAddressButton(false);
               navigation.navigate('CardNavigation', {
                 screen: 'CardsScreen',
                 params: {confirmOrder: true},
-              })
-            }
+              });
+            }}
           />
-          <CurrentBillingButton billInfo={currentBilling} />
-          <CurrentPhoneButton phoneNumber={currentPhoneNumber} />
+          <CurrentBillingButton
+            billInfo={orderUserBillingTemp ?? ({} as BillInfo)}
+            onPress={() => {
+              setCallAddressButton(false);
+              navigation.navigate('BillingInfoModal', {
+                billingData: orderUserBillingTemp ?? ({} as BillInfo),
+              });
+            }}
+          />
+          <CurrentPhoneButton
+            phoneNumber={orderUserPhoneTemp ?? currentUser.phone ?? ''}
+            onPress={() => navigation.navigate('PhoneNumberModal')}
+          />
         </View>
         <View style={styles.productsContainer}>
           <Text style={styles.titleSection}>Productos</Text>
@@ -254,7 +572,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
                 quantity={item.quantity.toString()}
                 productName={item.name}
                 brand={item.brand.name}
-                price={item.price}
+                price={item.sale_price}
               />
             ))
           ) : (
@@ -262,19 +580,53 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
               <Text>No tienes productos</Text>
             </View>
           )}
-          <AddProductButton text="Agregar producto" />
+          <AddProductButton
+            text="Agregar producto"
+            onPress={() => {
+              navigation.navigate('BranchConfirmOrderNavigation', {
+                screen: 'BranchDetailScreen',
+                params: {
+                  branchId:
+                    productsCart.products[productsCart.products.length - 1]
+                      .branch.id,
+                },
+              });
+            }}
+          />
         </View>
+        {quoteError.length !== 0 && (
+          <View style={styles.quoteErrorContainer}>
+            <Text style={styles.quoteErrorText}>{quoteError}</Text>
+          </View>
+        )}
         <View style={styles.promotionCodeContainer}>
-          <PromotionCodeButton promotionCode={discountCode} />
+          <PromotionCodeButton
+            promotionCode={discountCode.code}
+            onPress={() => {
+              setCallAddressButton(true);
+              navigation.navigate('PromoCodeModal', {
+                setPromotionCode: (text: string) => handlePromotionCode(text),
+              });
+            }}
+            onPressDelete={() => {
+              setDiscountCode({code: '', valid: false});
+              setCallAddressButton(true);
+              setShowDistanceDiscount(true);
+            }}
+            validPromotionCode={discountCode.valid}
+          />
         </View>
         <View style={styles.totalInfoContainer}>
           <CurrentTotalOrder
-            subtotal={quoteData.subtotal}
-            subtotalWithDiscount={quoteData.subtotal_with_discount}
-            totalAmount={quoteData.total}
-            specialDiscount={quoteData.special_discount}
-            discount={quoteData.discount}
-            deliveryTotal={quoteData.transport}
+            subtotal={quoteData.subtotal ?? 0}
+            subtotalWithDiscount={quoteData.subtotal_with_discount ?? 0}
+            totalAmount={quoteData.total ?? productsCart.totalValue}
+            specialDiscount={quoteData.special_discount ?? 0}
+            discount={quoteData.discount ?? 0}
+            deliveryTotal={quoteData.transport ?? 0}
+            discountCode={discountCode.code}
+            hasDiscount={discountCode.valid}
+            discountAmount={quoteData.promo}
           />
         </View>
       </ScrollView>
@@ -283,16 +635,40 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         onCancel={reject}
         visible={showModal}
         lastNumber={currentCard.last_numbers}
-        setTempMonthYearCard={setTempMonthYearCard}
       />
       <CreditCardValidationErrorModal
-        visible={isVisibleCardExpValErrorModal}
-        setIsVisible={setIsVisibleCardExpValErrorModal}
+        visible={visibleCardExpValErrorModal}
+        setIsVisible={setVisibleCardExpValErrorModal}
+      />
+      <PhoneRequiredModal
+        visible={phoneRequiredModal}
+        setIsVisible={setPhoneRequiredModal}
       />
       <SubmitButton
         textButton="Confirmar pedido"
-        customStyles={{marginHorizontal: 35, marginBottom: 10}}
+        activeOpacity={
+          currentAddress.address === undefined ||
+          currentCard.last_numbers === undefined
+            ? 1
+            : 0.9
+        }
+        customStyles={{
+          marginHorizontal: 35,
+          marginBottom: 10,
+          backgroundColor:
+            currentAddress.address === undefined ||
+            currentCard.last_numbers === undefined ||
+            quoteError.length !== 0
+              ? colors.disbledButtonColor
+              : colors.PrimaryColor,
+        }}
         onPress={() => {
+          if (
+            currentAddress.address === undefined ||
+            currentCard.last_numbers === undefined ||
+            quoteError.length !== 0
+          )
+            return;
           confirmOrder();
         }}
       />
@@ -330,5 +706,14 @@ const styles = StyleSheet.create({
   totalInfoContainer: {
     paddingHorizontal: 25,
     marginBottom: 10,
+  },
+  quoteErrorText: {
+    color: colors.RedColor,
+    fontSize: 16,
+  },
+  quoteErrorContainer: {
+    paddingVertical: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

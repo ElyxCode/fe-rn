@@ -60,7 +60,7 @@ export const RatingViewComponent = ({
             Messages.errorReviewServicesResponseMessage,
             [
               {
-                text: 'ok',
+                text: Messages.okButton,
                 onPress: () => {
                   resolve('YES');
                 },

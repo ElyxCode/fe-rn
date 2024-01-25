@@ -13,8 +13,9 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import {appleAuth} from '@invertase/react-native-apple-authentication';
 
-import {useAppDispatch} from '../hooks/useRedux';
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomTextInput} from '../components/CustomTextInput';
 import {SubmitButton} from '../components/SubmitButton';
@@ -26,8 +27,7 @@ import {LoaderScreen} from './LoaderScreen';
 import {signUpServices} from '../services/auth/auth';
 import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
 import {setToken, thirdPartySocial} from '../services/auth/authSlice';
-
-import {SignupErrors} from '../model/User';
+import {updateDeviceIdService} from '../services/user/user';
 
 import UserTagIcon from '../assets/user_tag.svg';
 import UserEditIcon from '../assets/user_edit_darkblue.svg';
@@ -43,15 +43,16 @@ import {isAndroid} from '../constants/Platform';
 import {googleSingInConf} from '../constants/googleSignInConf';
 import {
   emailFormatPattern,
+  getPlatformDevice,
   passwordValidation,
   phoneFormatPattern,
 } from '../utils/utilities';
 
 import {colors} from '../styles/colors';
-import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 export const SignUpScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const fcmToken = useAppSelector(state => state.authToken.fcmToken);
   const dispatch = useAppDispatch();
 
   const {
@@ -141,9 +142,15 @@ export const SignUpScreen = ({navigation}: any) => {
               social: thirdPartySocial.google,
             }),
           ); // guardo el token
-          navigation.navigate('SignUpComplementScreen', {
-            userData: response.data?.user,
-          });
+          await updateDeviceIdService(
+            response.data?.token ?? '',
+            response.data?.user.name ?? '',
+            response.data?.user.email ?? '',
+            fcmToken ?? '',
+            getPlatformDevice(),
+          );
+
+          navigation.navigate('HomeNavigation');
         } else {
           console.log({errorRespon: response.data?.error});
           Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -209,12 +216,17 @@ export const SignUpScreen = ({navigation}: any) => {
     const credentialState = await appleAuth.getCredentialStateForUser(
       appleAuthRequestResponse.user,
     );
-    
+
     // use credentialState response to ensure the user is authenticated
-    if (credentialState === appleAuth.State.AUTHORIZED && appleAuthRequestResponse.identityToken !== null) {
-      
+    if (
+      credentialState === appleAuth.State.AUTHORIZED &&
+      appleAuthRequestResponse.identityToken !== null
+    ) {
       // user is authenticated
-      const response = await ThirdPartyLoginService('apple', appleAuthRequestResponse.identityToken);
+      const response = await ThirdPartyLoginService(
+        'apple',
+        appleAuthRequestResponse.identityToken,
+      );
       if (response.ok) {
         dispatch(
           setToken({
@@ -222,7 +234,14 @@ export const SignUpScreen = ({navigation}: any) => {
             social: thirdPartySocial.apple,
           }),
         ); // guardo el token
-        navigation.navigate('HomeBranchScreen');
+        await updateDeviceIdService(
+          response.data?.token ?? '',
+          response.data?.user.name ?? '',
+          response.data?.user.email ?? '',
+          fcmToken ?? '',
+          getPlatformDevice(),
+        );
+        navigation.navigate('HomeNavigation');
       } else {
         console.log({errorRespon: response.data?.error});
         Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);

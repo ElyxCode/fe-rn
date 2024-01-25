@@ -1,6 +1,6 @@
 import { ApiResponse } from "apisauce";
 import { api } from "../../api/api-config"
-import { Card, CardRequest, CreateCardResponse, CardStatus, CreateCardResponseError } from "../../model/Card";
+import { Card, CardRequest, CreateCardResponse, CardStatus, CreateCardResponseError, ValidationCardError, ValidationCardResponse } from "../../model/Card";
 
 export const getCardsService = async (token: string) : Promise<ApiResponse<Card[]>> => {
     api.setHeader(
@@ -30,7 +30,7 @@ export const deleteCardService = async (token: string, cardId: string) : Promise
   return api.delete(`/cards/${cardId}`);
 };
 
-export const validationCardService = async (token: string, cardId: string,cardMonth: string, cardYear: string) : Promise<ApiResponse<string|any>> => {
+export const validationCardService = async (token: string, cardId: string,cardMonth: string, cardYear: string) : Promise<ApiResponse<ValidationCardResponse|ValidationCardError>> => {
   api.setHeader(
       'Authorization', "Bearer "+token
     )

@@ -10,6 +10,11 @@ export const cardsPattern = /(?<!\d)\d{16}(?!\d)|(?<!\d[ _-])(?<!\d)\d{4}(?=([_ 
 export const passwordPatternValidation = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
 export const documentNumberPatternValidation = /\d{9}/;
 
+export const clearObjectUserData = (user: any): any => {
+    const {message, ...userProp} = user;
+    return userProp;
+};
+
 export const normalizeCardNumber = (value: string): string => {
     return (
       value

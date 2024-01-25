@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {AddressBox} from '../components/AddressBox';
 import {SubmitButton} from '../components/SubmitButton';
@@ -21,18 +21,17 @@ import {GooglePlaceAutoCompleteResult} from '../model/GooglePlaceAutoCompleteRes
 
 import {first} from 'lodash';
 
-export enum MapFlow{
+export enum MapFlow {
   HomeFlow,
   AddressFlow,
   WelcomeFlow,
-
 }
 
-export interface MapconfirmationProps{
-  mapFlow:MapFlow;
+export interface MapconfirmationProps {
+  mapFlow: MapFlow;
 }
 
-export const MapConfirmationScreen = ({navigation, route}: any  ) => {
+export const MapConfirmationScreen = ({navigation, route}: any) => {
   const [isLoading, setLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState<Location>();
   const dispatch = useAppDispatch();
@@ -98,10 +97,7 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
     console.log(location.lat, location.lng);
 
     if (addressString === undefined || addressString === '') {
-      const response = await getReverseGeocoding(
-        location.lat,
-        location.lng,
-      );
+      const response = await getReverseGeocoding(location.lat, location.lng);
       if (response.ok) {
         var addressText = first(
           response.data?.results ?? [],
@@ -124,32 +120,32 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
   };
 
   const confirm = async () => {
-
-    switch(mapFlow){
-       case MapFlow.WelcomeFlow:
+    switch (mapFlow) {
+      case MapFlow.WelcomeFlow:
         dispatch(setCurrentLocationGlobal({...currentLocation!}));
         await navigation.navigate('HomeNavigation');
         break;
 
-        case MapFlow.AddressFlow:
-          await navigation.navigate('AddressFormScreen',{selectedLocation:currentLocation });
+      case MapFlow.AddressFlow:
+        await navigation.navigate('AddressFormScreen', {
+          selectedLocation: currentLocation,
+        });
         break;
 
-        case MapFlow.HomeFlow:
-          await navigation.goBack()
-          break;
+      case MapFlow.HomeFlow:
+        await navigation.goBack();
+        break;
       default:
-      console.log('Unknown flow');
-      break;
+        console.log('Unknown flow');
+        break;
     }
-    
   };
 
   useEffect(() => {
     (async () => {
       console.log('location');
       const location = await getCurrentLocation();
-      setLocation({lat: location.latitude , lng: location.longitude});
+      setLocation({lat: location.latitude, lng: location.longitude});
     })();
   }, []);
 
@@ -159,11 +155,19 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
         <View style={styles.headerContainer}>
           <MapView
             onPoiClick={e =>
-              
-              setLocation( {lat: e.nativeEvent.coordinate.latitude,lng:e.nativeEvent.coordinate.longitude}, e.nativeEvent.name)
+              setLocation(
+                {
+                  lat: e.nativeEvent.coordinate.latitude,
+                  lng: e.nativeEvent.coordinate.longitude,
+                },
+                e.nativeEvent.name,
+              )
             }
             onPress={e => {
-              setLocation({lat: e.nativeEvent.coordinate.latitude,lng:e.nativeEvent.coordinate.longitude});
+              setLocation({
+                lat: e.nativeEvent.coordinate.latitude,
+                lng: e.nativeEvent.coordinate.longitude,
+              });
             }}
             style={styles.map}
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
@@ -184,7 +188,9 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
           </MapView>
         </View>
 
-        <View style={styles.bottomContainer}>
+        <ScrollView
+          style={styles.bottomContainer}
+          showsVerticalScrollIndicator={false}>
           <Text style={styles.title}>Confirma tu dirección de entrega</Text>
           <Text style={styles.description}>
             Queremos mostrate los productos disponibles para tu zona
@@ -192,9 +198,10 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
 
           {isLoading ? (
             <AddressBox
-              onPress={() =>
-                navigation.navigate('SearchAddressScreen', {setLocation})
-              }
+              onPress={() => {
+                if (isLoading) return;
+                navigation.navigate('SearchAddressScreen', {setLocation});
+              }}
               customStyles={styles.addressBox}
               textButton={'Buscando...'}></AddressBox>
           ) : (
@@ -213,10 +220,12 @@ export const MapConfirmationScreen = ({navigation, route}: any  ) => {
           <SubmitButton
             textButton="Confirmar dirección"
             onPress={() => {
+              if (isLoading) return;
               confirm();
             }}
+            customStyles={{marginBottom: 28}}
           />
-        </View>
+        </ScrollView>
       </View>
     </>
   );
