@@ -3,6 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import BackArrowIcon from '../assets/arrow_left.svg';
 import BackArrowWhiteIcon from '../assets/arrow_left_white.svg';
+import SearchIcon from '../assets/search_home.svg';
 
 import {colors} from '../styles/colors';
 
@@ -11,6 +12,8 @@ type Props = {
   primaryColorDefault?: boolean;
   navigationPath?: string;
   resetRootNavigation?: boolean;
+  showSearchIcon?: boolean;
+  onSearchIconPress?: () => void;
 };
 
 export const CustomNavBar = ({
@@ -18,6 +21,8 @@ export const CustomNavBar = ({
   primaryColorDefault = true,
   navigationPath,
   resetRootNavigation = false,
+  showSearchIcon = false,
+  onSearchIconPress
 }: Props) => {
   const navigation = useNavigation();
 
@@ -44,13 +49,20 @@ export const CustomNavBar = ({
           <BackArrowWhiteIcon height={25} width={25} />
         )}
       </Pressable>
-      <Text
+      <Text numberOfLines={1}
         style={[
           styles.titleText,
           {color: primaryColorDefault ? colors.PrimaryTextColor : colors.White},
         ]}>
         {titleText}
       </Text>
+      {
+       showSearchIcon && ( <View style={{flex:1, alignItems:'flex-end', paddingLeft:10}}>
+       <SearchIcon onPress={onSearchIconPress} height={24} ></SearchIcon>
+       </View>)
+      }
+      
+      
     </View>
   );
 };
@@ -64,7 +76,9 @@ const styles = StyleSheet.create({
     columnGap: 15,
   },
   titleText: {
+    flex:3,
     fontSize: 16,
     fontFamily: 'Poppins-Regular',
+    
   },
 });
