@@ -15,6 +15,7 @@ import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {PromotionDetailScreen} from '../screens/PromotionDetailScreen';
 import {PromotionProductsScreen} from '../screens/PromotionProductsScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
+import {SearchProductsScreen} from '../screens/SearchProductsScreen';
 
 export type BranchConfirmationNavigatorParams = {
   HomeNavigation: any;
@@ -26,6 +27,7 @@ export type BranchConfirmationNavigatorParams = {
   ShoppingCartScreen: any;
   CategoryListModal: any;
   BranchInfoModal: any;
+  SearchProductsScreen: any;
 };
 
 const BranchConfirmationStack =
@@ -72,6 +74,10 @@ export const BranchConfirmOrderNavigation = () => {
             <BranchConfirmationStack.Screen
               name="BranchInfoModal"
               component={BranchInfoModal}
+            />
+            <BranchConfirmationStack.Screen
+              name="SearchProductsScreen"
+              component={SearchProductsScreen}
             />
           </BranchConfirmationStack.Group>
         </>

@@ -3,16 +3,23 @@ import {
   ActivityIndicator,
   FlatList,
   SafeAreaView,
+  StyleSheet,
   Text,
   View,
 } from 'react-native';
-import {CustomNavBar} from '../../components/CustomNavBar';
-import {ProductItemRender} from '../../components/ProductItemRender';
-import {SearchInput} from '../../components/SearchInput';
-import { ProductResponse } from '../../model/product';
-import {searchProductByProductName} from '../../services/product/product';
-import {colors} from '../../styles/colors';
-import {styles} from './style';
+
+import {CustomNavBar} from '../components/CustomNavBar';
+import {ProductItemRender} from '../components/ProductItemRender';
+import {SearchInput} from '../components/SearchInput';
+
+import {
+  nextPageProductsService,
+  searchProductByProductName,
+} from '../services/product/product';
+
+import {ProductResponse} from '../model/product';
+
+import {colors} from '../styles/colors';
 
 export const SearchProductsScreen = ({route, navigation}: any) => {
   const {branchData, productResponse} = route.params;
@@ -22,33 +29,34 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
   const [nextPageProduct, setNextPageProduct] = useState<
     string | null | undefined
   >('');
-  const [searchProductResponse, setSearchProductResponse] = useState<ProductResponse>(productResponse);
+  const [searchProductResponse, setSearchProductResponse] =
+    useState<ProductResponse>(productResponse);
 
   const textChanged = async (text: string) => {
-    setInputValue(text)
+    setInputValue(text);
   };
 
   const clearText = () => {
-    console.log('borrando')
+    console.log('borrando');
     setInputValue('');
   };
 
   // carga mas productos
   const loadMoreProducts = async () => {
     setLoadMore(true);
-    // console.log('loadmore');
-    // const response = await nextPageProductsService(
-    //   branchId,
-    //   nextPageProduct ?? '',
-    //   category.categoryId,
-    // );
+    console.log('loadmore');
+    const response = await nextPageProductsService(
+      branchData.id,
+      nextPageProduct ?? '',
+      '',
+    );
 
-    // if (response.ok ) {
-    //   setNextPageProduct(response.data?.links.next);
-    //   setProductResponse(response.data);
-    // } else {
-    //   console.log({error: response.originalError});
-    // }
+    if (response.ok) {
+      setNextPageProduct(response.data?.links.next);
+      setSearchProductResponse(response.data as ProductResponse);
+    } else {
+      console.log({error: response.originalError});
+    }
 
     setLoadMore(false);
   };
@@ -60,22 +68,23 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
       inputValue,
     );
 
-    if(response.ok){
-        setSearchProductResponse(response?.data)
+    if (response.ok) {
+      setSearchProductResponse(response?.data as ProductResponse);
     }
     setLoadMore(false);
   };
 
   return (
-    <SafeAreaView>
-      <CustomNavBar></CustomNavBar>
+    <SafeAreaView style={{flex: 1}}>
+      <CustomNavBar />
       <View style={styles.container}>
         <SearchInput
           textChanged={e => textChanged(e)}
           onPressCloseIcon={clearText}
           inputValue={inputValue}
           title="Buscar Producto"
-          onSubmit={searchProducts}></SearchInput>
+          onSubmit={searchProducts}
+        />
         <FlatList
           data={searchProductResponse?.data}
           contentContainerStyle={{
@@ -84,6 +93,7 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
           renderItem={({item}) => (
             <ProductItemRender product={item} navigation={navigation} />
           )}
+          showsVerticalScrollIndicator={false}
           scrollEnabled={!loadMore}
           ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
           keyExtractor={item => item.id.toString() + Math.random() * 3}
@@ -120,3 +130,9 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15,
+  },
+});

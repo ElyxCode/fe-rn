@@ -1,18 +1,18 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ConfirmOrderNavigation} from './ConfirmOrderNavigation';
+import {HomeNavigation} from './HomeNavigation';
 
 import {CategoryListModal} from '../components/CategoryListModal';
+import {CustomNavBar} from '../components/CustomNavBar';
+import {BranchInfoModal} from '../components/BranchInfoModal';
 
 import {BranchDetailScreen} from '../screens/BranchDetailScreen';
 import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {PromotionDetailScreen} from '../screens/PromotionDetailScreen';
 import {PromotionProductsScreen} from '../screens/PromotionProductsScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
-import {HomeNavigation} from './HomeNavigation';
-import {BranchInfoModal} from '../components/BranchInfoModal';
-import {useAppSelector} from '../hooks/useRedux';
-import {CustomNavBar} from '../components/CustomNavBar';
+import {SearchProductsScreen} from '../screens/SearchProductsScreen';
 
 export type BranchNavigatorParams = {
   HomeNavigation: any;
@@ -24,6 +24,7 @@ export type BranchNavigatorParams = {
   ShoppingCartScreen: any;
   CategoryListModal: any;
   BranchInfoModal: any;
+  SearchProductsScreen: any;
 };
 
 const BranchStack = createStackNavigator<BranchNavigatorParams>();
@@ -65,6 +66,10 @@ export const BranchNavigation = () => {
         <BranchStack.Screen
           name="BranchInfoModal"
           component={BranchInfoModal}
+        />
+        <BranchStack.Screen
+          name="SearchProductsScreen"
+          component={SearchProductsScreen}
         />
       </BranchStack.Group>
 
