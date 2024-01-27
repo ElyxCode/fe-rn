@@ -147,7 +147,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <CustomNavBarHome navigation={navigation} />
+      <CustomNavBarHome navigation={navigation} branchs={branchs} />
       <LocationBar
         name={
           Object.keys(currentAddress.address).length !== 0
