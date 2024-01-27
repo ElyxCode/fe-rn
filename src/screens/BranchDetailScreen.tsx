@@ -88,7 +88,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         );
 
         if (response.ok) {
-          setProductResponse(response.data  );
+          setProductResponse(response.data);
         } else {
           console.log({error: response.originalError});
         }
@@ -155,10 +155,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   }, [category]);
 
   const NavigateToSearchScreen = async () => {
-
     navigation.navigate('SearchProductsScreen', {productResponse, branchData});
-
-  }
+  };
 
   // carga mas productos
   const loadMoreProducts = async () => {
@@ -170,7 +168,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       category.categoryId,
     );
 
-    if (response.ok ) {
+    if (response.ok) {
       setNextPageProduct(response.data?.links.next);
       setProductResponse(response.data);
     } else {
@@ -203,8 +201,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     let currentDistante: number = getDistanceUserToBranch(
       branchData.location.lat,
       branchData.location.lng,
-      currentAddress.location.lat ?? currentLocation.lat,
-      currentAddress.location.lng ?? currentLocation.lng,
+      currentAddress?.location?.lat ?? currentLocation.lat,
+      currentAddress?.location?.lng ?? currentLocation.lng,
     );
 
     if (
@@ -346,7 +344,10 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomNavBar showSearchIcon={true} onSearchIconPress={() => NavigateToSearchScreen()}/>
+      <CustomNavBar
+        showSearchIcon={true}
+        onSearchIconPress={() => NavigateToSearchScreen()}
+      />
       <View style={styles.productListContainer}>
         <FlatList
           ListHeaderComponent={<HeaderBranchDetail />}
