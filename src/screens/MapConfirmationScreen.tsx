@@ -133,6 +133,7 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
         break;
 
       case MapFlow.HomeFlow:
+        dispatch(setCurrentLocationGlobal({...currentLocation!}));
         await navigation.goBack();
         break;
       default:
