@@ -28,8 +28,6 @@ export const SearchInput = ({
   title,
   onSubmit,
 }: SearchInputProps) => {
-  const [isButtonVisible, setButtonVisible] = useState(false);
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -44,13 +42,11 @@ export const SearchInput = ({
             style={styles.text}
             onSubmitEditing={onSubmit}></TextInput>
         </View>
-        {isButtonVisible ? (
+        {inputValue.length !== 0 ? (
           <TouchableOpacity onPress={onPressCloseIcon}>
             <CloseCircle height={16} width={16} />
           </TouchableOpacity>
-        ) : (
-          ''
-        )}
+        ) : null}
       </View>
     </View>
   );
