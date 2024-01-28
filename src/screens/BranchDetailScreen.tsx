@@ -8,8 +8,6 @@ import {
   View,
   FlatList,
   ActivityIndicator,
-  Platform,
-  Dimensions,
   Alert,
 } from 'react-native';
 
@@ -49,8 +47,11 @@ import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
+  const {branchId} = route.params;
+
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [productResponse, setProductResponse] = useState<ProductResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
@@ -70,8 +71,6 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   // hook que devueleve bool si estas o no en esta pantalla
   const isFocused = useIsFocused();
 
-  const {branchId} = route.params;
-
   // es llamado cuando se selecciona una categoria
   useEffect(() => {
     const getProductByCategory = async () => {
@@ -88,6 +87,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         );
 
         if (response.ok) {
+          setProducts(response.data?.data as Product[]);
           setProductResponse(response.data);
         } else {
           console.log({error: response.originalError});
@@ -143,6 +143,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         const response = await productsService(branchId);
         if (response.ok) {
           setNextPageProduct(response.data?.links.next);
+          setProducts(response.data?.data as Product[]);
           setProductResponse(response.data);
         } else {
           console.log({error: response.originalError});
@@ -171,6 +172,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     if (response.ok) {
       setNextPageProduct(response.data?.links.next);
       setProductResponse(response.data);
+      setProducts([...products, ...(response.data?.data ?? [])]);
     } else {
       console.log({error: response.originalError});
     }
@@ -351,7 +353,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       <View style={styles.productListContainer}>
         <FlatList
           ListHeaderComponent={<HeaderBranchDetail />}
-          data={productResponse?.data}
+          data={products}
           contentContainerStyle={{
             paddingBottom: 20,
           }}
