@@ -10,6 +10,7 @@ import {HomeBranchScreen} from '../screens/HomeBranchScreen';
 import {SearchAddressScreen} from '../screens/SearchAddressScreen';
 import {PromotionDetailScreen} from '../screens/PromotionDetailScreen';
 import {PromotionProductsScreen} from '../screens/PromotionProductsScreen';
+import {SearchBranchsScreen} from '../screens/SearchBranchsScreen';
 
 export type HomeStackParams = {
   BranchNavigation: undefined;
@@ -19,6 +20,7 @@ export type HomeStackParams = {
   SearchAddressScreen: undefined;
   PromotionDetailScreen: any;
   PromotionProductsScreen: any;
+  SearchBranchsScreen: any;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -51,6 +53,11 @@ export const HomeNavigation = () => {
       <HomeStack.Screen
         name="PromotionProductsScreen"
         component={PromotionProductsScreen}
+        options={{headerShown: true, header: () => <CustomNavBar />}}
+      />
+      <HomeStack.Screen
+        name="SearchBranchsScreen"
+        component={SearchBranchsScreen}
         options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Group screenOptions={{presentation: 'modal'}}>

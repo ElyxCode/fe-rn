@@ -1,7 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {useAppSelector} from '../hooks/useRedux';
-
 import {ProductProps} from '../model/ProductProps';
 
 import {HomeNavigation} from './HomeNavigation';
@@ -21,7 +19,6 @@ import {SearchAddressScreen} from '../screens/SearchAddressScreen';
 import {ProductDetailScreen} from '../screens/ProductDetailScreen';
 import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
 import {AddressListScreen} from '../screens/AddressListScreen';
-import { SearchProductsScreen } from '../screens/SearchProductsScreen';
 
 export type RootStackParams = {
   WelcomeScreen: undefined;
@@ -40,14 +37,11 @@ export type RootStackParams = {
   ConfirmOrderScreen: any;
   AddressListScreen: any;
   ConfirmOrderNavigation: any;
-  SearchProductsScreen: any;
 };
 
 const MainStack = createStackNavigator<RootStackParams>();
 
 export const MainNavigation = () => {
-  const token = useAppSelector(state => state.authToken.token);
-
   return (
     <MainStack.Navigator screenOptions={{headerShown: false}}>
       <MainStack.Screen name="WelcomeScreen" component={WelcomeScreen} />
@@ -76,7 +70,7 @@ export const MainNavigation = () => {
           component={BranchDetailScreen}
         />
         <MainStack.Screen name="BranchInfoModal" component={BranchInfoModal} />
-        <MainStack.Screen name='SearchProductsScreen' component={SearchProductsScreen}/>
+
         <MainStack.Screen
           name="ProductDetailScreen"
           component={ProductDetailScreen}

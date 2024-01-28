@@ -7,13 +7,18 @@ import MenuHomeIcon from '../assets/menu_home_button.svg';
 
 const heightIcon = 25;
 
-export const CustomNavBarHome = ({navigation}: any) => {
+export const CustomNavBarHome = ({navigation, branchs}: any) => {
   return (
     <View style={styles.container}>
       <HomeTitleIcon />
       <View style={styles.searchMenuContainer}>
         <Pressable>
-          <SearchHomeIcon height={heightIcon} />
+          <SearchHomeIcon
+            height={heightIcon}
+            onPress={() =>
+              navigation.navigate('SearchBranchsScreen', {branchs})
+            }
+          />
         </Pressable>
         <Pressable
           onPress={() => {

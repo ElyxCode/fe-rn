@@ -8,8 +8,6 @@ import {
   View,
   FlatList,
   ActivityIndicator,
-  Platform,
-  Dimensions,
   Alert,
 } from 'react-native';
 
@@ -36,7 +34,7 @@ import {clearCategorySelected} from '../services/category/categorySlice';
 
 import {Branch} from '../model/Branch';
 import {Promotion} from '../model/Promotion';
-import {Product, ProductResponse} from '../model/product';
+import {Product} from '../model/product';
 
 import InfoCircleIcon from '../assets/info_circle.svg';
 import RatingStarIcon from '../assets/Rating_Star.svg';
@@ -49,9 +47,11 @@ import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
+  const {branchId} = route.params;
+
   const [branchData, setBranchData] = useState<Branch>({} as Branch);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
-  const [productResponse, setProductResponse] = useState<ProductResponse>();
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [isLoadingPromo, setIsLoadingPromo] = useState<boolean>(false);
@@ -70,8 +70,6 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   // hook que devueleve bool si estas o no en esta pantalla
   const isFocused = useIsFocused();
 
-  const {branchId} = route.params;
-
   // es llamado cuando se selecciona una categoria
   useEffect(() => {
     const getProductByCategory = async () => {
@@ -88,7 +86,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         );
 
         if (response.ok) {
-          setProductResponse(response.data  );
+          setProducts(response.data?.data as Product[]);
         } else {
           console.log({error: response.originalError});
         }
@@ -143,7 +141,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         const response = await productsService(branchId);
         if (response.ok) {
           setNextPageProduct(response.data?.links.next);
-          setProductResponse(response.data);
+          setProducts(response.data?.data as Product[]);
         } else {
           console.log({error: response.originalError});
         }
@@ -155,10 +153,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   }, [category]);
 
   const NavigateToSearchScreen = async () => {
-
-    navigation.navigate('SearchProductsScreen', {productResponse, branchData});
-
-  }
+    navigation.navigate('SearchProductsScreen', {branchData});
+  };
 
   // carga mas productos
   const loadMoreProducts = async () => {
@@ -170,9 +166,9 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       category.categoryId,
     );
 
-    if (response.ok ) {
+    if (response.ok) {
       setNextPageProduct(response.data?.links.next);
-      setProductResponse(response.data);
+      setProducts([...products, ...(response.data?.data ?? [])]);
     } else {
       console.log({error: response.originalError});
     }
@@ -203,8 +199,8 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     let currentDistante: number = getDistanceUserToBranch(
       branchData.location.lat,
       branchData.location.lng,
-      currentAddress.location.lat ?? currentLocation.lat,
-      currentAddress.location.lng ?? currentLocation.lng,
+      currentAddress?.location?.lat ?? currentLocation.lat,
+      currentAddress?.location?.lng ?? currentLocation.lng,
     );
 
     if (
@@ -346,11 +342,14 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomNavBar showSearchIcon={true} onSearchIconPress={() => NavigateToSearchScreen()}/>
+      <CustomNavBar
+        showSearchIcon={true}
+        onSearchIconPress={() => NavigateToSearchScreen()}
+      />
       <View style={styles.productListContainer}>
         <FlatList
           ListHeaderComponent={<HeaderBranchDetail />}
-          data={productResponse?.data}
+          data={products}
           contentContainerStyle={{
             paddingBottom: 20,
           }}
