@@ -78,14 +78,16 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar />
       <View style={styles.container}>
-        <SearchInput
-          textChanged={e => textChanged(e)}
-          onPressCloseIcon={clearText}
-          inputValue={inputValue}
-          title="Buscar Producto"
-          onSubmit={searchProducts}
-        />
         <FlatList
+          ListHeaderComponent={
+            <SearchInput
+              textChanged={e => textChanged(e)}
+              onPressCloseIcon={clearText}
+              inputValue={inputValue}
+              title="Buscar Producto"
+              onSubmit={searchProducts}
+            />
+          }
           data={searchProductResponse?.data}
           contentContainerStyle={{
             paddingBottom: 20,
@@ -133,6 +135,7 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     paddingHorizontal: 15,
   },
 });
