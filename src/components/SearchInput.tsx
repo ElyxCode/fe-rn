@@ -19,6 +19,7 @@ interface SearchInputProps {
   onPressCloseIcon: () => void;
   title: string;
   onSubmit: () => Promise<void>;
+  editable?: boolean;
 }
 
 export const SearchInput = ({
@@ -27,6 +28,7 @@ export const SearchInput = ({
   onPressCloseIcon,
   title,
   onSubmit,
+  editable,
 }: SearchInputProps) => {
   return (
     <View style={styles.container}>
@@ -40,6 +42,7 @@ export const SearchInput = ({
             }}
             numberOfLines={1}
             style={styles.text}
+            editable={editable}
             onSubmitEditing={onSubmit}></TextInput>
         </View>
         {inputValue.length !== 0 ? (
