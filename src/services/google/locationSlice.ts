@@ -6,7 +6,7 @@ type locationProp={
 }
 
 const initialState: locationProp = {
-    currentLocation: {latitude:0, longitude:0}
+    currentLocation: {lat: 0, lng: 0}
 };
 
 export const locationSlice = createSlice({
