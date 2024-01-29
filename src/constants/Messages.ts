@@ -34,5 +34,10 @@ export default {
     orderPhoneRequired: 'Para completar la orden y poder contactarte, es necesario que ingreses tu número de teléfono.',
     orderPhoneMinimunLength: 'El número de contacto debe tener al menos 8 dígitos.',
     addAddressSuccess: 'Tu dirección se agregó correctamente',
+    biometricEmailNoEqualMessage: 'El correo electrónico no coincide',
+    biometricFeatureUnavailable: 'Característica no disponible o no activa en el dispositivo',
+    biometricFailed: 'No fue posible autenticar',
+    inputBiometricMessage: 'Ingreso con huella o reconocimiento facial',
+    inputTitleBiometricMessage: 'Accede a tu cuenta',
     
 }
