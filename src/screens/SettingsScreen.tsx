@@ -94,12 +94,15 @@ export const SettingsScreen = ({navigation}: any) => {
     const {available, biometryType} = await biometrics.isSensorAvailable();
     if (isAndroid) {
       if (biometryType === BiometryTypes.Biometrics && !available) {
+        dispatch(setToken({...authToken, biometric: false}));
         return await AlertBiometricFeatureUnavailable();
       }
     } else {
       if (biometryType === BiometryTypes.TouchID && !available) {
+        dispatch(setToken({...authToken, biometric: false}));
         return await AlertBiometricFeatureUnavailable();
       } else if (biometryType === BiometryTypes.FaceID && !available) {
+        dispatch(setToken({...authToken, biometric: false}));
         return await AlertBiometricFeatureUnavailable();
       }
     }
