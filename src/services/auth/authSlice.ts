@@ -11,12 +11,16 @@ type AuthToken = {
     token: string;
     fcmToken?: string;
     social?: string;
+    biometric?: boolean;
+    isLoggedIn?: boolean;
 }
 
 const initialState: AuthToken = {
     token: '',
     fcmToken: '',
-    social: ''
+    social: '',
+    biometric: false,
+    isLoggedIn: false,
 };
 
 export const authSlice = createSlice({
@@ -24,14 +28,16 @@ export const authSlice = createSlice({
     initialState: initialState,
     reducers: {
         setToken: (state, action: PayloadAction<AuthToken>) => {
-            state.token = action.payload.token,         
-            state.fcmToken = action.payload.fcmToken,         
-            state.social = action.payload.social ?? initialState.social
+            state.token = action.payload.token;         
+            state.fcmToken = action.payload.fcmToken;         
+            state.social = action.payload.social ?? initialState.social;
+            state.biometric = action.payload.biometric;
+            state.isLoggedIn = action.payload.isLoggedIn;
         },
         clearToken: (state) => {
-           state.token = initialState.token;
            state.fcmToken = initialState.fcmToken, 
            state.social = initialState.social;
+           state.isLoggedIn = initialState.isLoggedIn;
         }
     },
   });
