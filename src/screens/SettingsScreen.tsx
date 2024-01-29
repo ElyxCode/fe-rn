@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Linking,
@@ -11,16 +11,15 @@ import {
 } from 'react-native';
 
 import {SvgProps} from 'react-native-svg';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {UserProfile} from '../model/User';
 
-import {
-  updateNotificationService,
-  updateUserService,
-} from '../services/user/user';
+import {updateNotificationService} from '../services/user/user';
 import {setUser} from '../services/user/userSlice';
+import {setToken} from '../services/auth/authSlice';
 
 import {CustomNavBar} from '../components/CustomNavBar';
 
@@ -36,6 +35,7 @@ import ArrowRightIcon from '../assets/arrow_right_blue.svg';
 import {clearObjectUserData} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {policyUri, termsUri} from '../constants/Resources';
+import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
 
 type OptionsMenu = {
@@ -77,7 +77,7 @@ const options: OptionsMenu[] = [
 export const SettingsScreen = ({navigation}: any) => {
   const userData = useAppSelector(state => state.user.userData);
   const token = useAppSelector(state => state.authToken.token);
-  const [enableBiometric, setEnableBiometric] = useState<boolean>(false);
+  const authToken = useAppSelector(state => state.authToken);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
@@ -85,8 +85,27 @@ export const SettingsScreen = ({navigation}: any) => {
     updateNotificatationsOption();
   };
 
-  const toggleBiometricSwitch = () =>
-    setEnableBiometric(previousState => !previousState);
+  const toggleBiometricSwitch = () => {
+    updateBiometricOption();
+  };
+
+  const updateBiometricOption = async () => {
+    const biometrics = new ReactNativeBiometrics();
+    const {available, biometryType} = await biometrics.isSensorAvailable();
+    if (isAndroid) {
+      if (biometryType === BiometryTypes.Biometrics && !available) {
+        return await AlertBiometricFeatureUnavailable();
+      }
+    } else {
+      if (biometryType === BiometryTypes.TouchID && !available) {
+        return await AlertBiometricFeatureUnavailable();
+      } else if (biometryType === BiometryTypes.FaceID && !available) {
+        return await AlertBiometricFeatureUnavailable();
+      }
+    }
+
+    dispatch(setToken({...authToken, biometric: !authToken.biometric}));
+  };
 
   const updateNotificatationsOption = async () => {
     setIsLoading(true);
@@ -123,6 +142,23 @@ export const SettingsScreen = ({navigation}: any) => {
     }
     setIsLoading(false);
   };
+
+  const AlertBiometricFeatureUnavailable = async () =>
+    new Promise(resolve => {
+      Alert.alert(
+        Messages.titleMessage,
+        Messages.biometricFeatureUnavailable,
+        [
+          {
+            text: Messages.okButton,
+            onPress: () => {
+              resolve('YES');
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    });
 
   const OptionMenu = ({
     OptionIcon,
@@ -216,7 +252,7 @@ export const SettingsScreen = ({navigation}: any) => {
             navigationPath={option.navigationPath}
             hasSwitch={option.hasSwitch}
             notificationValue={userData.notifications}
-            biometricValue={enableBiometric}
+            biometricValue={authToken.biometric}
             toggleNotification={toggleNotificationSwitch}
             toggleBiometric={toggleBiometricSwitch}
           />
