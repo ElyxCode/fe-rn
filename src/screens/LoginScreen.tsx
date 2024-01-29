@@ -13,6 +13,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
@@ -34,6 +35,7 @@ import LockIcon from '../assets/ic_lock.svg';
 import SMSTrackingIcon from '../assets/sms_tracking.svg';
 import GoogleLogoIcon from '../assets/google_logo.svg';
 import AppleLogoIcon from '../assets/apple_logo.svg';
+import BiometricIcon from '../assets/finger_scan_settings.svg';
 
 import {getPlatformDevice} from '../utils/utilities';
 import Messages from '../constants/Messages';
@@ -45,16 +47,13 @@ import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const fcmToken = useAppSelector(state => state.authToken.fcmToken);
+  const authToken = useAppSelector(state => state.authToken);
+  const userData = useAppSelector(state => state.user.userData);
   const dispatch = useAppDispatch();
 
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-  } = useForm({
+  const {control, handleSubmit, getValues} = useForm({
     defaultValues: {
-      email: '',
+      email: userData.email ?? '',
       password: '',
     },
   });
@@ -70,12 +69,12 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
-      dispatch(setToken({token: response.data?.token ?? ''})); // guardo el token
+      dispatch(setToken({token: response.data?.token ?? '', isLoggedIn: true})); // guardo el token
       await updateDeviceIdService(
         response.data?.token ?? '',
         response.data?.user.name ?? '',
         response.data?.user.email ?? '',
-        fcmToken ?? '',
+        authToken.fcmToken ?? '',
         getPlatformDevice(),
       );
       navigation.navigate('HomeNavigation');
@@ -123,13 +122,15 @@ export const LoginScreen = ({navigation}: any) => {
             setToken({
               token: response.data?.token ?? '',
               social: thirdPartySocial.google,
+              isLoggedIn: true,
             }),
           ); // guardo el token
+
           await updateDeviceIdService(
             response.data?.token ?? '',
             response.data?.user.name ?? '',
             response.data?.user.email ?? '',
-            fcmToken ?? '',
+            authToken.fcmToken ?? '',
             getPlatformDevice(),
           );
           navigation.navigate('HomeNavigation');
@@ -188,13 +189,14 @@ export const LoginScreen = ({navigation}: any) => {
           setToken({
             token: response.data?.token ?? '',
             social: thirdPartySocial.apple,
+            isLoggedIn: true,
           }),
         ); // guardo el token
         await updateDeviceIdService(
           response.data?.token ?? '',
           response.data?.user.name ?? '',
           response.data?.user.email ?? '',
-          fcmToken ?? '',
+          authToken.fcmToken ?? '',
           getPlatformDevice(),
         );
         navigation.navigate('HomeNavigation');
@@ -206,6 +208,127 @@ export const LoginScreen = ({navigation}: any) => {
 
     setIsLoading(false);
   };
+
+  const biometricFlow = async () => {
+    if (userData.email !== getValues('email')) {
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.biometricEmailNoEqualMessage,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
+      return;
+    }
+
+    const rnBiometrics = new ReactNativeBiometrics();
+
+    const {biometryType, available} = await rnBiometrics.isSensorAvailable();
+
+    if (isAndroid) {
+      if (biometryType === BiometryTypes.Biometrics && available) {
+        const {success} = await rnBiometrics.simplePrompt({
+          promptMessage: Messages.inputTitleBiometricMessage,
+        });
+
+        if (success) {
+          dispatch(setToken({...authToken, isLoggedIn: true, biometric: true}));
+          navigation.navigate('HomeNavigation');
+        } else {
+          await AlertBiometricFailed();
+        }
+
+        return;
+      }
+      await AlertBiometricFeatureUnavailable();
+    } else {
+      if (biometryType === BiometryTypes.TouchID && available) {
+        const {success} = await rnBiometrics.simplePrompt({
+          promptMessage: Messages.inputTitleBiometricMessage,
+        });
+
+        if (success) {
+          dispatch(setToken({...authToken, isLoggedIn: true, biometric: true}));
+          navigation.navigate('HomeNavigation');
+        } else {
+          await AlertBiometricFailed();
+        }
+
+        return;
+      }
+
+      if (biometryType === BiometryTypes.FaceID && available) {
+        const {success} = await rnBiometrics.simplePrompt({
+          promptMessage: Messages.inputTitleBiometricMessage,
+        });
+
+        if (success) {
+          dispatch(setToken({...authToken, isLoggedIn: true, biometric: true}));
+          navigation.navigate('HomeNavigation');
+        } else {
+          await AlertBiometricFailed();
+        }
+
+        return;
+      }
+
+      await AlertBiometricFeatureUnavailable();
+    }
+  };
+
+  const AlertBiometricFailed = async () =>
+    new Promise(resolve => {
+      Alert.alert(
+        Messages.titleMessage,
+        Messages.biometricFailed,
+        [
+          {
+            text: Messages.okButton,
+            onPress: () => {
+              resolve('YES');
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    });
+
+  const AlertBiometricFeatureUnavailable = async () =>
+    new Promise(resolve => {
+      Alert.alert(
+        Messages.titleMessage,
+        Messages.biometricFeatureUnavailable,
+        [
+          {
+            text: Messages.okButton,
+            onPress: () => {
+              resolve('YES');
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    });
+
+  const BiometricButton = () => (
+    <Pressable onPress={() => biometricFlow()}>
+      <View style={styles.biometricBtnContainer}>
+        <BiometricIcon height={25} width={25} />
+        <Text style={styles.biometricText}>Ingresar con biometrico</Text>
+      </View>
+    </Pressable>
+  );
 
   if (isLoading) return <LoaderScreen />;
 
@@ -256,6 +379,7 @@ export const LoginScreen = ({navigation}: any) => {
         </View>
         <Text style={styles.recoverPassword}>Recuperar Contraseña</Text>
         <View style={styles.buttonsContainer}>
+          {authToken.biometric ? <BiometricButton /> : null}
           <SubmitButton
             textButton="Iniciar Sesión"
             onPress={handleSubmit(handleOnSubmit, handleOnError)}
@@ -337,5 +461,20 @@ const styles = StyleSheet.create({
   registerMessage: {
     marginLeft: 5,
     color: colors.SecondaryColor,
+  },
+  biometricBtnContainer: {
+    flexDirection: 'row',
+    padding: 18,
+    alignItems: 'center',
+    backgroundColor: colors.White,
+    borderColor: colors.PrimaryColor,
+    borderWidth: 1,
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  biometricText: {
+    color: colors.LightGrayColor,
+    paddingLeft: 13,
+    fontSize: 15,
   },
 });
