@@ -38,16 +38,14 @@ export const userSlice = createSlice({
             state.orderUserPhoneTemp = { ...action.payload};
         },
         clearUserData: (state) => {
-            state.userData = initialState.userData;
-            persistConfig.storage.removeItem('persist:root')
+            state.userData = initialState.userData;         
         },
         clearOrderUserBillingTemp: (state) => {
-            state.orderUserBillingTemp = initialState.orderUserBillingTemp;
-            persistConfig.storage.removeItem('persist:root')
+             state.orderUserBillingTemp = initialState.orderUserBillingTemp;
+         
         },
         clearOrderUserPhoneTemp: (state) => {
-            state.orderUserPhoneTemp = initialState.orderUserPhoneTemp;
-            persistConfig.storage.removeItem('persist:root')
+            state.orderUserPhoneTemp = initialState.orderUserPhoneTemp;      
         },
     },
   });
