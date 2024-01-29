@@ -13,7 +13,9 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import {appleAuth} from '@invertase/react-native-apple-authentication';
 import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
+import {WebView} from 'react-native-webview';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
@@ -40,13 +42,13 @@ import BiometricIcon from '../assets/finger_scan_settings.svg';
 import {getPlatformDevice} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
+import {forgotPasswordUrl} from '../constants/Resources';
 import {isAndroid} from '../constants/Platform';
-
 import {colors} from '../styles/colors';
-import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showWebView, setShowWebView] = useState<boolean>(false);
   const authToken = useAppSelector(state => state.authToken);
   const userData = useAppSelector(state => state.user.userData);
   const dispatch = useAppDispatch();
@@ -338,6 +340,25 @@ export const LoginScreen = ({navigation}: any) => {
     </Pressable>
   );
 
+  if (showWebView)
+    return (
+      <SafeAreaView style={{flex: 1}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingHorizontal: 15,
+            paddingVertical: 10,
+            justifyContent: 'flex-end',
+            backgroundColor: colors.SecondaryColor,
+          }}>
+          <Pressable onPress={() => setShowWebView(false)}>
+            <Text style={{fontSize: 16, color: colors.White}}>Cerrar</Text>
+          </Pressable>
+        </View>
+        <WebView source={{uri: forgotPasswordUrl}} style={{flex: 1}} />
+      </SafeAreaView>
+    );
+
   if (isLoading) return <LoaderScreen />;
 
   return (
@@ -385,7 +406,9 @@ export const LoginScreen = ({navigation}: any) => {
             name="password"
           />
         </View>
-        <Text style={styles.recoverPassword}>Recuperar Contraseña</Text>
+        <Pressable onPress={() => setShowWebView(true)}>
+          <Text style={styles.recoverPassword}>Recuperar Contraseña</Text>
+        </Pressable>
         <View style={styles.buttonsContainer}>
           {authToken.biometric ? <BiometricButton /> : null}
           <SubmitButton
