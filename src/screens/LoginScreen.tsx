@@ -69,7 +69,13 @@ export const LoginScreen = ({navigation}: any) => {
     const response = await loginServices(email, password);
     if (response.ok) {
       console.log({user: response.data?.user});
-      dispatch(setToken({token: response.data?.token ?? '', isLoggedIn: true})); // guardo el token
+      dispatch(
+        setToken({
+          ...authToken,
+          token: response.data?.token ?? '',
+          isLoggedIn: true,
+        }),
+      ); // guardo el token
       await updateDeviceIdService(
         response.data?.token ?? '',
         response.data?.user.name ?? '',
@@ -120,6 +126,7 @@ export const LoginScreen = ({navigation}: any) => {
         if (response.ok) {
           dispatch(
             setToken({
+              ...authToken,
               token: response.data?.token ?? '',
               social: thirdPartySocial.google,
               isLoggedIn: true,
@@ -187,6 +194,7 @@ export const LoginScreen = ({navigation}: any) => {
       if (response.ok) {
         dispatch(
           setToken({
+            ...authToken,
             token: response.data?.token ?? '',
             social: thirdPartySocial.apple,
             isLoggedIn: true,
