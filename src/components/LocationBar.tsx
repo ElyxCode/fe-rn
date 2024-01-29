@@ -36,7 +36,9 @@ export const LocationBar = ({name}: locationProps) => {
             navigation.navigate('AddressNavigation' as never);
           }
         }}>
-        <Text style={styles.changeAddressText}>Cambiar</Text>
+        <View>
+          <Text style={styles.changeAddressText}>Cambiar</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -46,7 +48,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.White,
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 10,
     marginHorizontal: 10,
@@ -55,17 +56,17 @@ const styles = StyleSheet.create({
   addressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    columnGap: 10,
+    flex: 1,
   },
   changeAddressContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingLeft: 5,
   },
   addressText: {
     fontFamily: 'Poppins-Medium',
     fontSize: 14,
     color: colors.Black,
-    width: 250,
+    paddingLeft: 10,
+    flex: 1,
   },
   changeAddressText: {
     fontFamily: 'Poppins-Medium',
