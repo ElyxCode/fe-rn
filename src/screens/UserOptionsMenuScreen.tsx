@@ -26,7 +26,6 @@ import {clearAddress} from '../services/address/addressSlice';
 import {
   clearOrderUserBillingTemp,
   clearOrderUserPhoneTemp,
-  clearUserData,
   setUser,
 } from '../services/user/userSlice';
 import {clearToken, thirdPartySocial} from '../services/auth/authSlice';
@@ -108,7 +107,6 @@ export const UserOptionsMenuScreen = () => {
       googleSignOut();
     }
 
-    dispatch(clearUserData());
     dispatch(clearToken());
     dispatch(clearProduct());
     dispatch(clearCard());

@@ -65,7 +65,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
   const currentLocation = useAppSelector(
     state => state.currentLocation.currentLocation,
   );
-  const token = useAppSelector(state => state.authToken.token);
+  const isLoggedIn = useAppSelector(state => state.authToken.isLoggedIn);
   const dispatch = useAppDispatch();
   // hook que devueleve bool si estas o no en esta pantalla
   const isFocused = useIsFocused();
@@ -393,7 +393,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
           }
         />
       </View>
-      {token && productsCart.products.length !== 0 && (
+      {isLoggedIn && productsCart.products.length !== 0 && (
         <CartButton
           itemAmount={productsCart.products.reduce(
             (acc, cv) => acc + cv.quantity,

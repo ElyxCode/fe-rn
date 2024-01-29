@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingLeft: 20,
     paddingVertical: 5,
-    width: 250,
+    flex: 1,
   },
   productNameText: {
     fontSize: 12,

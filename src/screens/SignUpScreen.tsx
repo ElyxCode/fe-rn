@@ -140,6 +140,7 @@ export const SignUpScreen = ({navigation}: any) => {
             setToken({
               token: response.data?.token ?? '',
               social: thirdPartySocial.google,
+              isLoggedIn: true,
             }),
           ); // guardo el token
           await updateDeviceIdService(
@@ -232,6 +233,7 @@ export const SignUpScreen = ({navigation}: any) => {
           setToken({
             token: response.data?.token ?? '',
             social: thirdPartySocial.apple,
+            isLoggedIn: true,
           }),
         ); // guardo el token
         await updateDeviceIdService(

@@ -41,7 +41,8 @@ export const HomeBranchScreen = ({navigation}: any) => {
   const productsCart = useAppSelector(state => state.productsCart);
   const currentAddress = useAppSelector(state => state.currentAddress);
   const currentCard = useAppSelector(state => state.currentCard);
-  const token = useAppSelector(state => state.authToken.token);
+  const authToken = useAppSelector(state => state.authToken);
+  const isLoggedIn = useAppSelector(state => state.authToken.isLoggedIn);
   const dispatch = useAppDispatch();
 
   const isFocused = useIsFocused();
@@ -79,20 +80,20 @@ export const HomeBranchScreen = ({navigation}: any) => {
   };
 
   const getAddress = async () => {
-    const resp = await ReadAll(token);
+    const resp = await ReadAll(authToken.token);
     dispatch(
       setAddress(resp.data?.find(address => address.active) ?? ({} as Address)),
     );
   };
 
   const getCards = async () => {
-    const resp = await getCardsService(token);
+    const resp = await getCardsService(authToken.token);
     dispatch(setCard((resp.data?.find(i => i.active) as Card) ?? ({} as Card)));
   };
 
   useEffect(() => {
     if (
-      token &&
+      authToken.isLoggedIn &&
       Object.keys(currentAddress.address).length === 0 &&
       isFocused
     ) {
@@ -101,7 +102,11 @@ export const HomeBranchScreen = ({navigation}: any) => {
   }, [isFocused]);
 
   useEffect(() => {
-    if (token && Object.keys(currentCard.card).length === 0 && isFocused) {
+    if (
+      authToken.isLoggedIn &&
+      Object.keys(currentCard.card).length === 0 &&
+      isFocused
+    ) {
       getCards();
     }
   }, [isFocused]);
@@ -168,7 +173,7 @@ export const HomeBranchScreen = ({navigation}: any) => {
         />
         <BranchHomeList branchs={branchs} navigation={navigation} />
       </ScrollView>
-      {token && productsCart.products.length !== 0 && (
+      {isLoggedIn && productsCart.products.length !== 0 && (
         <CartButton
           itemAmount={productsCart.products.reduce(
             (acc, cv) => acc + cv.quantity,

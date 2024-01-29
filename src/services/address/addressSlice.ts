@@ -19,8 +19,7 @@ export const addressSlice = createSlice({
             state.address = { ...action.payload};
         },
         clearAddress: (state) => {
-            state.address = initialState.address;
-            persistConfig.storage.removeItem('persist:root')
+            state.address = initialState.address;         
         },
     },
   });

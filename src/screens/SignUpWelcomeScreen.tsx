@@ -1,17 +1,41 @@
 import React from 'react';
 import {StyleSheet, View, Image, Text} from 'react-native';
-
 import {SafeAreaView} from 'react-native-safe-area-context';
+
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
+
+import {useAppSelector} from '../hooks/useRedux';
 
 import {updateDeviceIdService} from '../services/user/user';
 
 import {SubmitButton} from '../components/SubmitButton';
 
 import {getPlatformDevice} from '../utils/utilities';
+import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
 
 export const SignUpWelcomeScreen = ({route, navigation}: any) => {
   const {token, name, email} = route.params;
+  const fcmToken = useAppSelector(state => state.authToken.fcmToken);
+
+  const biometricOptionFlow = async (): Promise<boolean> => {
+    const biometrics = new ReactNativeBiometrics();
+    const {available, biometryType} = await biometrics.isSensorAvailable();
+    if (isAndroid) {
+      if (biometryType === BiometryTypes.Biometrics && !available) {
+        return false;
+      }
+    } else {
+      if (biometryType === BiometryTypes.TouchID && !available) {
+        return false;
+      } else if (biometryType === BiometryTypes.FaceID && !available) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.PrimaryColor}}>
       <View style={styles.container}>
@@ -32,16 +56,19 @@ export const SignUpWelcomeScreen = ({route, navigation}: any) => {
       </View>
       <SubmitButton
         onPress={async () => {
-          // navigation.navigate('BiometricDetailScreen');
-          //TODO:push notification
           await updateDeviceIdService(
             token,
             name,
             email,
-            '',
+            fcmToken ?? '',
             getPlatformDevice(),
           );
-          navigation.navigate('HomeBranchScreen');
+
+          if (await biometricOptionFlow()) {
+            navigation.navigate('BiometricDetailScreen');
+          } else {
+            navigation.navigate('HomeBranchScreen');
+          }
         }}
         textButton="Comenzar a navegar"
         customStyles={{

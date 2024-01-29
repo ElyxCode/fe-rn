@@ -76,7 +76,6 @@ export const productSlice = createSlice({
         clearProduct: (state) => {
             state.products = initialState.products;
             state.totalValue = initialState.totalValue;
-            persistConfig.storage.removeItem('persist:root')
         },
     },
   });
