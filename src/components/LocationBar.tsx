@@ -14,7 +14,7 @@ type locationProps = {
 };
 
 export const LocationBar = ({name}: locationProps) => {
-  const token = useAppSelector(state => state.authToken.token);
+  const isLoggedIn = useAppSelector(state => state.authToken.isLoggedIn);
   const navigation = useNavigation<any>();
 
   return (
@@ -28,7 +28,7 @@ export const LocationBar = ({name}: locationProps) => {
       <TouchableOpacity
         style={styles.changeAddressContainer}
         onPress={() => {
-          if (!token) {
+          if (!isLoggedIn) {
             navigation.navigate('MapConfirmationScreen', {
               mapFlow: MapFlow.HomeFlow,
             });

@@ -42,11 +42,11 @@ export type ProfileStackParams = {
 const ProfileStack = createStackNavigator<ProfileStackParams>();
 
 export const ProfileNavigation = () => {
-  const token = useAppSelector(state => state.authToken.token);
+  const isLoggedIn = useAppSelector(state => state.authToken.isLoggedIn);
 
   return (
     <ProfileStack.Navigator screenOptions={{headerShown: false}}>
-      {token ? (
+      {isLoggedIn ? (
         <>
           <ProfileStack.Screen
             name="UserOptionsMenuScreen"

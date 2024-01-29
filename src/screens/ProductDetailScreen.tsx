@@ -19,7 +19,6 @@ import {SubmitButton} from '../components/SubmitButton';
 import {addProduct, clearProduct} from '../services/product/productSlice';
 
 import {Product} from '../model/product';
-import {ProductProps} from '../model/ProductProps';
 
 import {processDescription} from '../helpers/processDescription';
 
@@ -30,14 +29,14 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
   const {product}: {product: Product} = route.params.ProductProps;
   const descriptionItems = processDescription(product.description);
   const [itemCount, setItemCount] = useState(1);
-  const token = useAppSelector(state => state.authToken.token);
+  const isLoggedIn = useAppSelector(state => state.authToken.isLoggedIn);
   const productsCart = useAppSelector(state => state.productsCart);
   const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
 
   console.log({product});
   useEffect(() => {
-    if (!token && isFocused) {
+    if (!isLoggedIn && isFocused) {
       dispatch(clearProduct());
     }
   }, [isFocused]);
@@ -114,7 +113,7 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
             <SubmitButton
               textButton="Agregar al carrito"
               onPress={async () => {
-                if (!token) {
+                if (!isLoggedIn) {
                   navigation.navigate('SignInNavigation');
                   dispatch(
                     addProduct({
