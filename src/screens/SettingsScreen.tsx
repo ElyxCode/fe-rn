@@ -150,7 +150,9 @@ export const SettingsScreen = ({navigation}: any) => {
     new Promise(resolve => {
       Alert.alert(
         Messages.titleMessage,
-        Messages.biometricFeatureUnavailable,
+        isAndroid
+          ? Messages.biometricFeatureUnavailable
+          : Messages.biometricFeatureIosUnavailable,
         [
           {
             text: Messages.okButton,
