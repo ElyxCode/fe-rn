@@ -93,15 +93,24 @@ export const SettingsScreen = ({navigation}: any) => {
     const biometrics = new ReactNativeBiometrics();
     const {available, biometryType} = await biometrics.isSensorAvailable();
     if (isAndroid) {
-      if (biometryType === BiometryTypes.Biometrics && !available) {
+      if (
+        biometryType === undefined ||
+        (biometryType === BiometryTypes.Biometrics && !available)
+      ) {
         dispatch(setToken({...authToken, biometric: false}));
         return await AlertBiometricFeatureUnavailable();
       }
     } else {
-      if (biometryType === BiometryTypes.TouchID && !available) {
+      if (
+        biometryType === undefined ||
+        (biometryType === BiometryTypes.TouchID && !available)
+      ) {
         dispatch(setToken({...authToken, biometric: false}));
         return await AlertBiometricFeatureUnavailable();
-      } else if (biometryType === BiometryTypes.FaceID && !available) {
+      } else if (
+        biometryType === undefined ||
+        (biometryType === BiometryTypes.FaceID && !available)
+      ) {
         dispatch(setToken({...authToken, biometric: false}));
         return await AlertBiometricFeatureUnavailable();
       }

@@ -22,13 +22,22 @@ export const SignUpWelcomeScreen = ({route, navigation}: any) => {
     const biometrics = new ReactNativeBiometrics();
     const {available, biometryType} = await biometrics.isSensorAvailable();
     if (isAndroid) {
-      if (biometryType === BiometryTypes.Biometrics && !available) {
+      if (
+        biometryType === undefined ||
+        (biometryType === BiometryTypes.Biometrics && !available)
+      ) {
         return false;
       }
     } else {
-      if (biometryType === BiometryTypes.TouchID && !available) {
+      if (
+        biometryType === undefined ||
+        (biometryType === BiometryTypes.TouchID && !available)
+      ) {
         return false;
-      } else if (biometryType === BiometryTypes.FaceID && !available) {
+      } else if (
+        biometryType === undefined ||
+        (biometryType === BiometryTypes.FaceID && !available)
+      ) {
         return false;
       }
     }
