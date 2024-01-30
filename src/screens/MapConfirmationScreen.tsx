@@ -1,25 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {View, Text, StyleSheet, ScrollView, Alert, Linking} from 'react-native';
+
+import {first} from 'lodash';
+import GetLocation from 'react-native-get-location';
+
+import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+
 import {AddressBox} from '../components/AddressBox';
 import {SubmitButton} from '../components/SubmitButton';
-import {colors} from '../styles/colors';
 import MapView, {
   PROVIDER_GOOGLE,
   Marker,
   Region,
   Details,
 } from 'react-native-maps';
-import GetLocation from 'react-native-get-location';
 
-import {getPlaceDetails, getReverseGeocoding} from '../services/google/maps';
-import {Location} from '../model/Location';
-import {useDispatch} from 'react-redux';
-import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+import {getReverseGeocoding} from '../services/google/maps';
 import {setCurrentLocationGlobal} from '../services/google/locationSlice';
-import {GooglePlaceAutoCompleteResult} from '../model/GooglePlaceAutoCompleteResult';
 
-import {first} from 'lodash';
+import {Location} from '../model/Location';
+
+import Messages from '../constants/Messages';
+import {isAndroid} from '../constants/Platform';
+import {colors} from '../styles/colors';
 
 export enum MapFlow {
   HomeFlow,
@@ -27,6 +30,12 @@ export enum MapFlow {
   WelcomeFlow,
 }
 
+const defaultAddress = {
+  latitude: 13.701404423436982,
+  longitude: -89.2244389412076,
+  title: 'Salvador del mundo',
+  description: '',
+};
 export interface MapconfirmationProps {
   mapFlow: MapFlow;
 }
@@ -61,18 +70,6 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
     if (!details.isGesture) {
       return;
     }
-  };
-
-  const getCurrentLocation = async () => {
-    let location = await GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 6000,
-    });
-    if (location !== null) {
-      return location;
-    }
-
-    return {latitude: 13.701404423436982, longitude: -89.2244389412076};
   };
 
   const setLocation = async (location: Location, addressString?: string) => {
@@ -144,11 +141,62 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
 
   useEffect(() => {
     (async () => {
-      console.log('location');
-      const location = await getCurrentLocation();
-      setLocation({lat: location.latitude, lng: location.longitude});
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 60000,
+      })
+        .then(location => {
+          setLocation({lat: location.latitude, lng: location.longitude});
+        })
+        .catch(error => {
+          const {code, message} = error;
+          showAlertsPermissions(code);
+          setLocation(
+            {lat: defaultAddress.latitude, lng: defaultAddress.longitude},
+            defaultAddress.title,
+          );
+        });
     })();
   }, []);
+
+  const showAlertsPermissions = async (code: string) => {
+    if (code === 'UNAUTHORIZED') {
+      await CustomAlert(Messages.requestLocationPermission);
+      if (isAndroid) {
+        Linking.openSettings();
+      } else {
+        Linking.sendIntent('android.settings.SETTINGS');
+      }
+      return;
+    }
+
+    if (code === 'UNAVAILABLE') {
+      await CustomAlert(Messages.activeGpsMessages);
+      if (isAndroid) {
+        Linking.sendIntent('android.settings.LOCATION_SOURCE_SETTINGS');
+      } else {
+        Linking.openURL('App-Prefs:Privacy&path=LOCATION');
+      }
+      return;
+    }
+  };
+
+  const CustomAlert = async (message: string) =>
+    new Promise(resolve => {
+      Alert.alert(
+        Messages.titleMessage,
+        message,
+        [
+          {
+            text: Messages.okButton,
+            onPress: () => {
+              resolve('YES');
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    });
 
   return (
     <>
