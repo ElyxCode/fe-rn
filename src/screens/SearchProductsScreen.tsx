@@ -98,7 +98,7 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar />
-      <View style={{paddingHorizontal: 20}}>
+      <View style={{paddingHorizontal: 10}}>
         <SearchInput
           textChanged={e => textChanged(e)}
           onPressCloseIcon={clearText}
@@ -162,6 +162,6 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
 });

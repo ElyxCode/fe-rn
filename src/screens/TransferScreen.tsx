@@ -3,6 +3,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -119,9 +120,17 @@ export const TransferScreen = ({navigation, route}: any) => {
           filePath: image.path,
         });
       })
-      .catch(() => {
-        if (fileData.filePath && fileData.filePath) return;
-        setFileData({filePath: '', fileName: ''});
+      .catch(err => {
+        if (err.code === 'E_NO_LIBRARY_PERMISSION') {
+          handlePermission();
+          return;
+        }
+
+        if (err.code === 'E_PICKER_CANCELLED') {
+          if (fileData.filePath && fileData.filePath) return;
+          setFileData({filePath: '', fileName: ''});
+          return;
+        }
       });
   };
 
@@ -255,6 +264,32 @@ export const TransferScreen = ({navigation, route}: any) => {
     }
     setIsLoading(false);
   };
+
+  const handlePermission = async () => {
+    await PermissionAlert();
+    if (isAndroid) {
+      Linking.openSettings();
+    } else {
+      Linking.sendIntent('android.settings.SETTINGS');
+    }
+  };
+
+  const PermissionAlert = async () =>
+    new Promise(resolve => {
+      Alert.alert(
+        Messages.titleMessage,
+        Messages.requestMediaFilePermission,
+        [
+          {
+            text: Messages.okButton,
+            onPress: () => {
+              resolve('YES');
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    });
 
   const clearData = () => {
     dispatch(clearProduct());

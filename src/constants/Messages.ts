@@ -35,9 +35,14 @@ export default {
     orderPhoneMinimunLength: 'El número de contacto debe tener al menos 8 dígitos.',
     addAddressSuccess: 'Tu dirección se agregó correctamente',
     biometricEmailNoEqualMessage: 'El correo electrónico no coincide',
-    biometricFeatureUnavailable: 'Característica no disponible o no activa en el dispositivo',
+    biometricFeatureUnavailable: 'Función no disponible en el dispositivo',
+    biometricFeatureIosUnavailable: 'Función no disponible en el dispositivo o debes habilitar permiso FaceID o TouchID',
     biometricFailed: 'No fue posible autenticar',
     inputBiometricMessage: 'Ingreso con huella o reconocimiento facial',
     inputTitleBiometricMessage: 'Accede a tu cuenta',
+    requestLocationPermission: 'Por favor, habilita el permiso de localización',
+    activeGpsMessages: 'Por favor activa GPS',
+    requestMediaFilePermission: 'Por favor, habilitar el permiso de lectura de almacenamiento',
+    deleteAddressError: 'Ocurrió un problema al eliminar la dirección, intente más tarde'
     
 }

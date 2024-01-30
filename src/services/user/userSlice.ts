@@ -5,7 +5,7 @@ import { persistConfig } from '../../utils/store';
 import { BillInfo } from '../../model/BillInfo';
 
 type OrderUserBillingTemp = {
-    billingInfo?: BillInfo,
+    billingInfo: BillInfo,
 }
 
 type OrderUserPhoneTemp = {
@@ -14,14 +14,14 @@ type OrderUserPhoneTemp = {
 
 type UserProfileProp = {
     userData: UserProfile,
-    orderUserBillingTemp? : OrderUserBillingTemp
+    orderUserBillingTemp : OrderUserBillingTemp
     orderUserPhoneTemp? : OrderUserPhoneTemp
 }
 
 const initialState: UserProfileProp = {
     userData: {},
-    orderUserBillingTemp: {},
-    orderUserPhoneTemp: {}
+    orderUserBillingTemp: { billingInfo : { bill_type: '', bill_entity: null, dui: null, iva: null} as BillInfo},
+    orderUserPhoneTemp: {} as OrderUserPhoneTemp,
 };
 
 export const userSlice = createSlice({
