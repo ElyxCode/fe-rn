@@ -654,7 +654,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         }
         customStyles={{
           marginHorizontal: 35,
-          marginBottom: 10,
+          marginVertical: 3,
           backgroundColor:
             currentAddress.address === undefined ||
             currentCard.last_numbers === undefined ||
