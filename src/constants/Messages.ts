@@ -36,6 +36,7 @@ export default {
     addAddressSuccess: 'Tu dirección se agregó correctamente',
     biometricEmailNoEqualMessage: 'El correo electrónico no coincide',
     biometricFeatureUnavailable: 'Función no disponible en el dispositivo',
+    biometricFeatureIosUnavailable: 'Función no disponible en el dispositivo o debes habilitar permiso FaceID o TouchID',
     biometricFailed: 'No fue posible autenticar',
     inputBiometricMessage: 'Ingreso con huella o reconocimiento facial',
     inputTitleBiometricMessage: 'Accede a tu cuenta',
