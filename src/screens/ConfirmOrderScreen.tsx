@@ -122,7 +122,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   }, [isFocused]);
 
   useEffect(() => {
-    if (orderUserBillingTemp === undefined) {
+    if (Object.keys({...orderUserBillingTemp}).length === 0) {
       const bill: BillInfo = {
         bill_type: currentUser.bill_type ?? '',
         bill_entity: currentUser.bill_entity ?? '',

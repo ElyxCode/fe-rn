@@ -20,8 +20,8 @@ type UserProfileProp = {
 
 const initialState: UserProfileProp = {
     userData: {},
-    orderUserBillingTemp: {},
-    orderUserPhoneTemp: {}
+    orderUserBillingTemp: { billingInfo : {} as BillInfo},
+    orderUserPhoneTemp: {} as OrderUserPhoneTemp,
 };
 
 export const userSlice = createSlice({
