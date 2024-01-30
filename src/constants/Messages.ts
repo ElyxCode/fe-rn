@@ -39,5 +39,7 @@ export default {
     biometricFailed: 'No fue posible autenticar',
     inputBiometricMessage: 'Ingreso con huella o reconocimiento facial',
     inputTitleBiometricMessage: 'Accede a tu cuenta',
+    requestLocationPermission: 'Por favor habilita el permiso de localización',
+    activeGpsMessages: 'Por favor activa GPS',
     
 }
