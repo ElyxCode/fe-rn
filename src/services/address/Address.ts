@@ -3,7 +3,7 @@ import { api } from "../../api/api-config";
 
 
 import {useAppSelector} from '../../hooks/useRedux';
-import { Address, AddressResponse } from "../../model/Address";
+import { Address, AddressMessageDelete, AddressResponse } from "../../model/Address";
 
 
 
@@ -14,7 +14,7 @@ export const ReadAll = async (token: string): Promise<ApiResponse<Address[]>> =>
     return api.get('/addresses')
 };
 
-export const DeleteAddress = async (token: string, addresId:string) => {
+export const DeleteAddress = async (token: string, addresId:string): Promise<ApiResponse<AddressMessageDelete>> => {
   api.setHeader(
      'Authorization', "Bearer "+token
    )
