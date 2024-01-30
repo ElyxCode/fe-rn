@@ -18,3 +18,7 @@ export interface AddressResponse {
     address?: Address;
     errors?: any;
 }
+
+export interface AddressMessageDelete {
+    message: string
+}
