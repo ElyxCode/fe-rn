@@ -197,10 +197,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     height: 60,
-    width: 150,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     backgroundColor: colors.White,
   },
   buttonTitleText: {
