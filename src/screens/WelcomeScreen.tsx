@@ -31,8 +31,12 @@ export const WelcomeScreen = ({route, navigation}: any) => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (authToken.token) {
-      navigation.navigate('HomeNavigation');
+    if (authToken.isLoggedIn) {
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'HomeNavigation'}],
+      } as never);
+      // navigation.navigate('HomeNavigation');
     }
     setIsLoading(false);
   }, []);
