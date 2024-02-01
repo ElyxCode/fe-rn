@@ -115,8 +115,11 @@ export const UserOptionsMenuScreen = () => {
     dispatch(clearOrderUserPhoneTemp());
     dispatch(clearCardConfirmAdded());
 
-    navigation.navigate('WelcomeScreen' as never);
-    setIsLoading(true);
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'WelcomeScreen'}],
+    } as never);
+    setIsLoading(false);
   };
 
   const googleSignOut = async () => {
