@@ -36,7 +36,6 @@ export const WelcomeScreen = ({route, navigation}: any) => {
         index: 0,
         routes: [{name: 'HomeNavigation'}],
       } as never);
-      // navigation.navigate('HomeNavigation');
     }
     setIsLoading(false);
   }, []);
