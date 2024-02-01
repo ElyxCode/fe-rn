@@ -42,7 +42,7 @@ import BiometricIcon from '../assets/finger_scan_settings.svg';
 import {getPlatformDevice} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
-import {forgotPasswordUrl} from '../constants/Resources';
+import {forgotPasswordUrl, forgotPasswordUrlDev} from '../constants/Resources';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
 
@@ -241,7 +241,7 @@ export const LoginScreen = ({navigation}: any) => {
       await AsyncAlert();
       return;
     }
-
+    setIsLoading(true);
     const rnBiometrics = new ReactNativeBiometrics();
 
     const {biometryType, available} = await rnBiometrics.isSensorAvailable();
@@ -258,7 +258,7 @@ export const LoginScreen = ({navigation}: any) => {
         } else {
           await AlertBiometricFailed();
         }
-
+        setIsLoading(false);
         return;
       }
       await AlertBiometricFeatureUnavailable();
@@ -274,7 +274,7 @@ export const LoginScreen = ({navigation}: any) => {
         } else {
           await AlertBiometricFailed();
         }
-
+        setIsLoading(false);
         return;
       }
 
@@ -289,7 +289,7 @@ export const LoginScreen = ({navigation}: any) => {
         } else {
           await AlertBiometricFailed();
         }
-
+        setIsLoading(false);
         return;
       }
 
@@ -355,7 +355,7 @@ export const LoginScreen = ({navigation}: any) => {
             <Text style={{fontSize: 16, color: colors.White}}>Cerrar</Text>
           </Pressable>
         </View>
-        <WebView source={{uri: forgotPasswordUrl}} style={{flex: 1}} />
+        <WebView source={{uri: forgotPasswordUrlDev}} style={{flex: 1}} />
       </SafeAreaView>
     );
 
