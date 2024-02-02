@@ -73,12 +73,16 @@ export const BranchItemRender = ({
       }}>
       <View style={styles.BranchItemContainer}>
         <View style={styles.branchItemImageContainer}>
-          <Image source={{uri: img}} height={61} style={styles.imageStyle} />
+          <Image
+            source={{uri: img ?? undefined}}
+            height={61}
+            style={styles.imageStyle}
+          />
         </View>
         <View style={styles.branchDescriptionItemContainer}>
           <View style={styles.iconContainer}>
             <Image
-              source={{uri: icon}}
+              source={{uri: icon ?? undefined}}
               height={48}
               width={48}
               style={{
