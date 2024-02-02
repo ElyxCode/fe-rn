@@ -1,8 +1,8 @@
 import { create } from 'apisauce'
-import axios from 'axios'
+import config from 'react-native-config';
 
-const base_url_dev = 'https://devapi.ferreplace.com/api';
-const google_api_url = 'https://maps.googleapis.com/maps/';
+const base_url_dev = config.API_BASE_URL ?? '';
+const google_api_url = config.GOOGLE_API_URL ?? '';
 
 export const api = create({
     baseURL: base_url_dev,
@@ -14,7 +14,7 @@ export const api = create({
 });
 
 export const googleApi = create({
-   baseURL:google_api_url
+   baseURL: google_api_url
 });
 
 
