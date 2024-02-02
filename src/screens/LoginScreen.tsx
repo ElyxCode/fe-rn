@@ -16,6 +16,7 @@ import {
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
 import {WebView} from 'react-native-webview';
+import config from 'react-native-config';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
@@ -42,7 +43,6 @@ import BiometricIcon from '../assets/finger_scan_settings.svg';
 import {getPlatformDevice} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
-import {forgotPasswordUrl} from '../constants/Resources';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
 
@@ -52,6 +52,7 @@ export const LoginScreen = ({navigation}: any) => {
   const authToken = useAppSelector(state => state.authToken);
   const userData = useAppSelector(state => state.user.userData);
   const dispatch = useAppDispatch();
+  const forgotPasswordUrl = config.FORGOT_PASSWORD_URL ?? '';
 
   const {control, handleSubmit, getValues} = useForm({
     defaultValues: {
@@ -241,7 +242,7 @@ export const LoginScreen = ({navigation}: any) => {
       await AsyncAlert();
       return;
     }
-
+    setIsLoading(true);
     const rnBiometrics = new ReactNativeBiometrics();
 
     const {biometryType, available} = await rnBiometrics.isSensorAvailable();
@@ -258,7 +259,7 @@ export const LoginScreen = ({navigation}: any) => {
         } else {
           await AlertBiometricFailed();
         }
-
+        setIsLoading(false);
         return;
       }
       await AlertBiometricFeatureUnavailable();
@@ -274,7 +275,7 @@ export const LoginScreen = ({navigation}: any) => {
         } else {
           await AlertBiometricFailed();
         }
-
+        setIsLoading(false);
         return;
       }
 
@@ -289,7 +290,7 @@ export const LoginScreen = ({navigation}: any) => {
         } else {
           await AlertBiometricFailed();
         }
-
+        setIsLoading(false);
         return;
       }
 

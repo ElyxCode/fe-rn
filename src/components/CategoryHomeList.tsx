@@ -43,9 +43,13 @@ export const CategoryHomeList = ({
           ]}>
           {imageUri === 'allCategory' ? (
             <AllCategory height={17} width={21} />
-          ) : (
-            <Image source={{uri: imageUri}} height={17} width={21} />
-          )}
+          ) : imageUri ? (
+            <Image
+              source={{uri: imageUri ?? undefined}}
+              height={17}
+              width={21}
+            />
+          ) : null}
           <Text style={styles.categoryText}>{category}</Text>
         </View>
       </Pressable>

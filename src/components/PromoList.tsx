@@ -36,7 +36,7 @@ export const PromoList = ({
           }
         }}>
         <Image
-          source={{uri: item.image}}
+          source={{uri: item?.image}}
           height={128}
           width={233}
           style={{borderRadius: 12}}

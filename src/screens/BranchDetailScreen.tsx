@@ -44,6 +44,7 @@ import CloseCircleIcon from '../assets/close_circle_cyan.svg';
 
 import {getDistanceUserToBranch} from '../utils/utilities';
 import Messages from '../constants/Messages';
+import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
@@ -456,6 +457,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 12,
     color: colors.PrimaryTextColor,
+    paddingTop: isAndroid ? 3 : 2,
   },
   descriptionBranchContainer: {
     paddingTop: 7,

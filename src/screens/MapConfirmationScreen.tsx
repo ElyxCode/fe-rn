@@ -1,5 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, Alert, Linking} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  Linking,
+  Image,
+  Pressable,
+} from 'react-native';
 
 import {first} from 'lodash';
 import GetLocation from 'react-native-get-location';
@@ -20,9 +29,13 @@ import {setCurrentLocationGlobal} from '../services/google/locationSlice';
 
 import {Location} from '../model/Location';
 
+import GpsIcon from '../assets/gps_icon.svg';
+
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
+
+// const icLocationIcon: string = require('../../ios/ferreplace/Images.xcassets/ic_location_pin@1x.png');
 
 export enum MapFlow {
   HomeFlow,
@@ -44,9 +57,7 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
   const [isLoading, setLoading] = useState(true);
   const [currentLocation, setCurrentLocation] = useState<Location>();
   const dispatch = useAppDispatch();
-  const currentLocationGlobal = useAppSelector(
-    state => state.currentLocation.currentLocation,
-  );
+  const mapRef = useRef<MapView | null>();
   const {mapFlow} = route.params;
 
   const [region, setRegion] = useState({
@@ -120,7 +131,11 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
     switch (mapFlow) {
       case MapFlow.WelcomeFlow:
         dispatch(setCurrentLocationGlobal({...currentLocation!}));
-        await navigation.navigate('HomeNavigation');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'HomeNavigation'}],
+        } as never);
+
         break;
 
       case MapFlow.AddressFlow:
@@ -198,20 +213,31 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
       );
     });
 
+  const moveLastLocation = () => {
+    const region = {
+      latitude: markers[0].latitude,
+      longitude: markers[0].longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    };
+    mapRef.current?.animateToRegion(region);
+  };
+
   return (
     <>
       <View style={{flex: 1}}>
         <View style={styles.headerContainer}>
           <MapView
-            onPoiClick={e =>
+            ref={ref => (mapRef.current = ref)}
+            onPoiClick={e => {
               setLocation(
                 {
                   lat: e.nativeEvent.coordinate.latitude,
                   lng: e.nativeEvent.coordinate.longitude,
                 },
                 e.nativeEvent.name,
-              )
-            }
+              );
+            }}
             onPress={e => {
               setLocation({
                 lat: e.nativeEvent.coordinate.latitude,
@@ -231,10 +257,18 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
                 }}
                 title={marker.title}
                 description={marker.title}
-                image={{uri: 'ic_location_pin'}}
+                image={{
+                  uri: isAndroid ? 'ic_location_pin' : 'locationIcon',
+                }}
               />
             ))}
           </MapView>
+
+          <View style={{position: 'absolute', right: 10, bottom: 80}}>
+            <Pressable onPress={() => moveLastLocation()}>
+              <GpsIcon height={40} width={40} />
+            </Pressable>
+          </View>
         </View>
 
         <ScrollView
