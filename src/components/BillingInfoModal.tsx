@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {useAppDispatch} from '../hooks/useRedux';
@@ -95,7 +95,8 @@ export const BillingInfoModal = ({route, navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar titleText="Información de facturación" />
-      <View style={styles.container}>
+
+      <ScrollView style={styles.container}>
         <Text style={styles.descriptionText}>
           ¿Que tipo de facturación deseas?
         </Text>
@@ -111,7 +112,7 @@ export const BillingInfoModal = ({route, navigation}: any) => {
             person={typePerson ?? ''}
           />
         </View>
-      </View>
+      </ScrollView>
       <SubmitButton
         textButton="Continuar"
         customStyles={{marginBottom: 10, marginHorizontal: 40}}
