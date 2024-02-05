@@ -80,5 +80,28 @@
 		<string>This app requires access to the photo library.</string>
 		<key>NSFaceIDUsageDescription</key>
 		<string>Enabling Face ID allows you quick and secure access to your account</string>
+
+
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+  <key>CFBundleURLSchemes</key>
+  <array>
+    <string>973126410617515</string>
+  </array>
+  </dict>
+</array>
+<key>FacebookAppID</key>
+<string>973126410617515</string>
+<key>FacebookClientToken</key>
+<string>788388dfb65619667c2093797f7f5620</string>
+<key>FacebookDisplayName</key>
+<string>Ferreplace</string>
 	</dict>
+
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>fbapi</string>
+  <string>fb-messenger-share-api</string>
+</array>
 </plist>

@@ -4,4 +4,6 @@
         DO_NOT_ASK_JAVASCRIPT</string>
     <string name="appCenterAnalytics_whenToEnableAnalytics" moduleConfig="true" translatable="false">
         ALWAYS_SEND</string>
+        <string name="facebook_app_id">973126410617515</string>
+<string name="facebook_client_token">788388dfb65619667c2093797f7f5620</string>
 </resources>

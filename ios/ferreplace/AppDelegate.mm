@@ -6,11 +6,17 @@
 #import <AppCenterReactNative.h>
 #import <AppCenterReactNativeAnalytics.h>
 #import <AppCenterReactNativeCrashes.h>
+#import <AuthenticationServices/AuthenticationServices.h>
+#import <SafariServices/SafariServices.h>
+#import <FBSDKCoreKit/FBSDKCoreKit-Swift.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [[FBSDKApplicationDelegate sharedInstance] application:application
+                       didFinishLaunchingWithOptions:launchOptions];
+
   [GMSServices provideAPIKey:@"AIzaSyCytD23EG5zvcDjToXFyAYnvWcVd-e0ETw"];
   self.moduleName = @"ferreplace";
   if ([FIRApp defaultApp] == nil) {
