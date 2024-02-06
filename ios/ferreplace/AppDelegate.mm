@@ -30,6 +30,7 @@
   [AppCenterReactNative register];
   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
   [AppCenterReactNativeCrashes registerWithAutomaticProcessing];
+  [FBSDKApplicationDelegate.sharedInstance initializeSDK];
   return didFinish;
 }
 
