@@ -97,9 +97,15 @@ export const OrderListScreen = ({navigation}: any) => {
         <>
           <CustomNavBar titleText="Mis ordenes" />
           <ScrollView style={styles.container}>
-            {orders.map(order => (
-              <OrderItem key={order.id} order={order} />
-            ))}
+            {orders.length !== 0 ? (
+              orders.map(order => <OrderItem key={order.id} order={order} />)
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={{color: colors.LightGrayColor}}>
+                  No tienes ordenes
+                </Text>
+              </View>
+            )}
           </ScrollView>
         </>
       )}
