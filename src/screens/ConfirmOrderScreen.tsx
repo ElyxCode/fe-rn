@@ -3,6 +3,8 @@ import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useIsFocused} from '@react-navigation/native';
 
+import {AppEventsLogger} from 'react-native-fbsdk-next';
+
 import useAwaitableComponent from 'use-awaitable-component';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
@@ -164,6 +166,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   useEffect(() => {
     calculateQuote();
   }, [isFocused, discountCode.code]);
+
+  useEffect(() => {
+    AppEventsLogger.logEvent(AppEventsLogger.AppEvents.InitiatedCheckout);
+  }, []);
 
   const calculateQuote = async () => {
     if (!isFocused) return;
@@ -485,6 +491,8 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
       );
 
       clearData(orderRequest.method);
+
+      AppEventsLogger.logPurchase(Number((resp.data as Order).total), 'USD');
 
       navigation.navigate('OrderDetailScreen', {
         order: resp.data as Order,

@@ -15,6 +15,8 @@ import {
 } from '@react-native-google-signin/google-signin';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 
+import {AppEventsLogger} from 'react-native-fbsdk-next';
+
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomTextInput} from '../components/CustomTextInput';
@@ -101,7 +103,12 @@ export const SignUpScreen = ({navigation}: any) => {
         Alert.alert(Messages.titleMessage, response.data.message, [
           {text: Messages.okButton},
         ]);
-
+        AppEventsLogger.logEvent(
+          AppEventsLogger.AppEvents.CompletedRegistration,
+          {
+            [AppEventsLogger.AppEventParams.RegistrationMethod]: 'normal',
+          },
+        );
         navigation.goBack();
         setIsLoading(false);
         return;
@@ -150,7 +157,12 @@ export const SignUpScreen = ({navigation}: any) => {
             fcmToken ?? '',
             getPlatformDevice(),
           );
-
+          AppEventsLogger.logEvent(
+            AppEventsLogger.AppEvents.CompletedRegistration,
+            {
+              [AppEventsLogger.AppEventParams.RegistrationMethod]: 'google',
+            },
+          );
           navigation.navigate('SignUpComplementScreen', {
             userData: response.data?.user,
           });
@@ -244,6 +256,12 @@ export const SignUpScreen = ({navigation}: any) => {
           response.data?.user.email ?? '',
           fcmToken ?? '',
           getPlatformDevice(),
+        );
+        AppEventsLogger.logEvent(
+          AppEventsLogger.AppEvents.CompletedRegistration,
+          {
+            [AppEventsLogger.AppEventParams.RegistrationMethod]: 'apple',
+          },
         );
         navigation.navigate('SignUpComplementScreen', {
           userData: response.data?.user,

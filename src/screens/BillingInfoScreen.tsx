@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
+import {AppEventsLogger} from 'react-native-fbsdk-next';
+
 import {useAppDispatch} from '../hooks/useRedux';
 
 import {SubmitButton} from '../components/SubmitButton';
@@ -100,6 +102,9 @@ export const BillingInfoScreen = ({route, navigation}: any) => {
     };
 
     dispatch(setOrderUserBillingTemp({billingInfo: newBill}));
+    AppEventsLogger.logEvent(AppEventsLogger.AppEvents.AddedPaymentInfo, {
+      [AppEventsLogger.AppEventParams.Description]: 'Billing information',
+    });
     navigation.goBack();
   };
 

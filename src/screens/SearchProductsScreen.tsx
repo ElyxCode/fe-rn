@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 
+import {AppEventsLogger} from 'react-native-fbsdk-next';
+
 import {CustomNavBar} from '../components/CustomNavBar';
 import {ProductItemRender} from '../components/ProductItemRender';
 import {SearchInput} from '../components/SearchInput';
@@ -73,6 +75,9 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
 
   const searchProducts = async () => {
     setIsLoading(true);
+    AppEventsLogger.logEvent(AppEventsLogger.AppEvents.Searched, {
+      [AppEventsLogger.AppEventParams.SearchString]: inputValue,
+    });
     const response = await searchProductByProductName(
       branchData.id,
       inputValue,

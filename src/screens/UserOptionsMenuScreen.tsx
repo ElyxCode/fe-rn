@@ -11,6 +11,7 @@ import {
 import {SvgProps} from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {AppEventsLogger} from 'react-native-fbsdk-next';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
@@ -123,6 +124,9 @@ export const UserOptionsMenuScreen = () => {
       <Pressable
         onPress={() => {
           if (optionName === 'Ayuda') {
+            AppEventsLogger.logEvent(
+              AppEventsLogger.AppEvents.SubmitApplication,
+            );
             Linking.openURL(WhatsAppUri).catch(err => {
               console.log(err);
             });

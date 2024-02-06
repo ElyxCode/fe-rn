@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 
+import {AppEventsLogger} from 'react-native-fbsdk-next';
+
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
 import {CustomNavBar} from '../components/CustomNavBar';
@@ -39,6 +41,12 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
       dispatch(clearProduct());
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    AppEventsLogger.logEvent(AppEventsLogger.AppEvents.ViewedContent, {
+      [AppEventsLogger.AppEventParams.Description]: product.name,
+    });
+  }, []);
 
   const showDiferentBranchMessage = async (): Promise<boolean> => {
     const AsyncAlert = async () =>
@@ -166,6 +174,13 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
                       product,
                       itemAmount: itemCount,
                     }),
+                  );
+                  AppEventsLogger.logEvent(
+                    AppEventsLogger.AppEvents.AddedToCart,
+                    {
+                      [AppEventsLogger.AppEventParams.Content]: product.name,
+                      [AppEventsLogger.AppEventParams.NumItems]: itemCount,
+                    },
                   );
                   navigation.goBack();
                 }
