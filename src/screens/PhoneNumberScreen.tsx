@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-import {CustomNavBar} from './CustomNavBar';
-import {CustomTextInput} from './CustomTextInput';
-import {SubmitButton} from './SubmitButton';
+import {CustomNavBar} from '../components/CustomNavBar';
+import {CustomTextInput} from '../components/CustomTextInput';
+import {SubmitButton} from '../components/SubmitButton';
 
 import CallIcon from '../assets/call.svg';
 import {colors} from '../styles/colors';
@@ -22,7 +22,7 @@ import {setOrderUserPhoneTemp} from '../services/user/userSlice';
 import {isAndroid} from '../constants/Platform';
 import Messages from '../constants/Messages';
 
-export const PhoneNumberModal = ({navigation}: any) => {
+export const PhoneNumberScreen = ({navigation}: any) => {
   const orderUserPhoneTemp = useAppSelector(
     state => state.user.orderUserPhoneTemp?.phoneNumber,
   );

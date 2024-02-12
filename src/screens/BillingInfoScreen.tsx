@@ -11,19 +11,22 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {useAppDispatch} from '../hooks/useRedux';
 
-import {SubmitButton} from './SubmitButton';
-import {BillingInfo, SwitchBillControlButton} from './SwitchBillControlButton';
+import {SubmitButton} from '../components/SubmitButton';
+import {
+  BillingInfo,
+  SwitchBillControlButton,
+} from '../components/SwitchBillControlButton';
 
 import {BillInfo} from '../model/BillInfo';
 
 import {setOrderUserBillingTemp} from '../services/user/userSlice';
 
-import {CustomNavBar} from './CustomNavBar';
+import {CustomNavBar} from '../components/CustomNavBar';
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
 import {isAndroid} from '../constants/Platform';
 
-export const BillingInfoModal = ({route, navigation}: any) => {
+export const BillingInfoScreen = ({route, navigation}: any) => {
   const {billingData} = route.params;
 
   const [billing, setBilling] = useState<string>(billingData.bill_type ?? '');

@@ -2,16 +2,16 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {CardNavigation} from './CardNavigation';
 import {AddressNavigation} from './AddressNavigation';
+import {BranchConfirmOrderNavigation} from './BranchConfirmOrderNavigation';
 
 import {DeliveryInfoModal} from '../components/DeliveryInfoModal';
-import {PhoneNumberModal} from '../components/PhoneNumberModal';
-import {BillingInfoModal} from '../components/BillingInfoModal';
-import {PromoCodeModal} from '../components/PromoCodeModal';
 
+import {PhoneNumberScreen} from '../screens/PhoneNumberScreen';
+import {BillingInfoScreen} from '../screens/BillingInfoScreen';
+import {PromoCodeScreen} from '../screens/PromoCodeScreen';
 import {ConfirmOrderScreen} from '../screens/ConfirmOrderScreen';
 import {OrderDetailScreen} from '../screens/OrderDetailScreen';
 import {TransferScreen} from '../screens/TransferScreen';
-import {BranchConfirmOrderNavigation} from './BranchConfirmOrderNavigation';
 
 export type ConfirmOrderParams = {
   HomeNavigation: undefined;
@@ -22,9 +22,9 @@ export type ConfirmOrderParams = {
   DeliveryInfoModal: any;
   OrderDetailScreen: any;
   TransferScreen: any;
-  PhoneNumberModal: any;
-  BillingInfoModal: any;
-  PromoCodeModal: any;
+  PhoneNumberScreen: any;
+  BillingInfoScreen: any;
+  PromoCodeScreen: any;
 };
 
 const ConfirmOrderStack = createStackNavigator<ConfirmOrderParams>();
@@ -57,16 +57,16 @@ export const ConfirmOrderNavigation = () => {
         component={BranchConfirmOrderNavigation}
       />
       <ConfirmOrderStack.Screen
-        name="PhoneNumberModal"
-        component={PhoneNumberModal}
+        name="PhoneNumberScreen"
+        component={PhoneNumberScreen}
       />
       <ConfirmOrderStack.Screen
-        name="BillingInfoModal"
-        component={BillingInfoModal}
+        name="BillingInfoScreen"
+        component={BillingInfoScreen}
       />
       <ConfirmOrderStack.Screen
-        name="PromoCodeModal"
-        component={PromoCodeModal}
+        name="PromoCodeScreen"
+        component={PromoCodeScreen}
       />
       <ConfirmOrderStack.Group screenOptions={{presentation: 'modal'}}>
         <ConfirmOrderStack.Screen

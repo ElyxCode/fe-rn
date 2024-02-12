@@ -552,14 +552,14 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
             billInfo={orderUserBillingTemp ?? ({} as BillInfo)}
             onPress={() => {
               setCallAddressButton(false);
-              navigation.navigate('BillingInfoModal', {
+              navigation.navigate('BillingInfoScreen', {
                 billingData: orderUserBillingTemp ?? ({} as BillInfo),
               });
             }}
           />
           <CurrentPhoneButton
             phoneNumber={orderUserPhoneTemp ?? currentUser.phone ?? ''}
-            onPress={() => navigation.navigate('PhoneNumberModal')}
+            onPress={() => navigation.navigate('PhoneNumberScreen')}
           />
         </View>
         <View style={styles.productsContainer}>
@@ -604,7 +604,7 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
             promotionCode={discountCode.code}
             onPress={() => {
               setCallAddressButton(true);
-              navigation.navigate('PromoCodeModal', {
+              navigation.navigate('PromoCodeScreen', {
                 setPromotionCode: (text: string) => handlePromotionCode(text),
               });
             }}
