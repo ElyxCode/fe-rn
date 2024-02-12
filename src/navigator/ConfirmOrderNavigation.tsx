@@ -56,22 +56,22 @@ export const ConfirmOrderNavigation = () => {
         name="BranchConfirmOrderNavigation"
         component={BranchConfirmOrderNavigation}
       />
+      <ConfirmOrderStack.Screen
+        name="PhoneNumberModal"
+        component={PhoneNumberModal}
+      />
+      <ConfirmOrderStack.Screen
+        name="BillingInfoModal"
+        component={BillingInfoModal}
+      />
+      <ConfirmOrderStack.Screen
+        name="PromoCodeModal"
+        component={PromoCodeModal}
+      />
       <ConfirmOrderStack.Group screenOptions={{presentation: 'modal'}}>
         <ConfirmOrderStack.Screen
           name="DeliveryInfoModal"
           component={DeliveryInfoModal}
-        />
-        <ConfirmOrderStack.Screen
-          name="PhoneNumberModal"
-          component={PhoneNumberModal}
-        />
-        <ConfirmOrderStack.Screen
-          name="BillingInfoModal"
-          component={BillingInfoModal}
-        />
-        <ConfirmOrderStack.Screen
-          name="PromoCodeModal"
-          component={PromoCodeModal}
         />
       </ConfirmOrderStack.Group>
     </ConfirmOrderStack.Navigator>
