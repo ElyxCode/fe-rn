@@ -178,9 +178,9 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
     if (code === 'UNAUTHORIZED') {
       await CustomAlert(Messages.requestLocationPermission);
       if (isAndroid) {
-        Linking.openSettings();
-      } else {
         Linking.sendIntent('android.settings.SETTINGS');
+      } else {
+        Linking.openSettings();
       }
       return;
     }
