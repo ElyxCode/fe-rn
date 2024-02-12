@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {useAppDispatch} from '../hooks/useRedux';
@@ -14,6 +21,7 @@ import {setOrderUserBillingTemp} from '../services/user/userSlice';
 import {CustomNavBar} from './CustomNavBar';
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
+import {isAndroid} from '../constants/Platform';
 
 export const BillingInfoModal = ({route, navigation}: any) => {
   const {billingData} = route.params;
@@ -95,24 +103,27 @@ export const BillingInfoModal = ({route, navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar titleText="Información de facturación" />
-
-      <ScrollView style={styles.container}>
-        <Text style={styles.descriptionText}>
-          ¿Que tipo de facturación deseas?
-        </Text>
-        <View style={styles.billingContainer}>
-          <SwitchBillControlButton
-            personSelected={value => setTypePerson(value)}
-            billSelected={value => setBilling(value)}
-            setDui={setDui}
-            setIva={setIva}
-            dui={dui}
-            iva={iva}
-            bill={billing ?? ''}
-            person={typePerson ?? ''}
-          />
-        </View>
-      </ScrollView>
+      <KeyboardAvoidingView
+        behavior={isAndroid ? 'height' : 'padding'}
+        style={{flex: 1}}>
+        <ScrollView style={styles.container}>
+          <Text style={styles.descriptionText}>
+            ¿Que tipo de facturación deseas?
+          </Text>
+          <View style={styles.billingContainer}>
+            <SwitchBillControlButton
+              personSelected={value => setTypePerson(value)}
+              billSelected={value => setBilling(value)}
+              setDui={setDui}
+              setIva={setIva}
+              dui={dui}
+              iva={iva}
+              bill={billing ?? ''}
+              person={typePerson ?? ''}
+            />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <SubmitButton
         textButton="Continuar"
         customStyles={{marginBottom: 10, marginHorizontal: 40}}
