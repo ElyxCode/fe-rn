@@ -16,6 +16,7 @@ import {
 import {Quote, QuoteResponse, QuoteResponseError} from '../model/Quote';
 import {BillInfo} from '../model/BillInfo';
 import {Card, ValidationCardError, ValidationCardResponse} from '../model/Card';
+import {Address} from '../model/Address';
 
 import {quoteService} from '../services/quote';
 import {getCardsService, validationCardService} from '../services/card/card';
@@ -52,11 +53,11 @@ import {CreditCardValidationModal} from '../components/CreditCardValidationModal
 import {CreditCardValidationErrorModal} from '../components/CreditCardValidationErrorModal';
 import {PhoneRequiredModal} from '../components/PhoneRequiredModal';
 
-import Messages from '../constants/Messages';
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
+import {clearCommaNumber} from '../utils/utilities';
+import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
-import {Address} from '../model/Address';
 
 export type TempCardExpDate = {
   month: string;
@@ -189,7 +190,16 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
         ...discountCode,
         valid: (response.data as QuoteResponse).coupon_valid,
       });
-      setQuoteData(response.data as QuoteResponse);
+      let data = response.data as QuoteResponse;
+      setQuoteData({
+        ...data,
+        subtotal: clearCommaNumber(data.subtotal),
+        subtotal_with_discount: clearCommaNumber(data.subtotal_with_discount),
+        total: clearCommaNumber(data.total),
+        discount: clearCommaNumber(data.discount),
+        transport: clearCommaNumber(data.transport),
+        promo: clearCommaNumber(data.promo),
+      } as QuoteResponse);
       setQuoteError('');
 
       if (callAddressButton && isFocused) {

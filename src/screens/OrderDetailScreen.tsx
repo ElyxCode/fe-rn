@@ -17,7 +17,7 @@ import {ProductListOrder} from '../components/ProductListOrder';
 import {OrderStatus} from '../components/OrderStatus';
 import {RatingViewComponent} from '../components/RatingViewComponent';
 
-import {paymentMethodFormat} from '../utils/utilities';
+import {clearCommaNumber, paymentMethodFormat} from '../utils/utilities';
 import {colors} from '../styles/colors';
 import {isAndroid} from '../constants/Platform';
 
@@ -25,7 +25,15 @@ export const OrderDetailScreen = ({navigation, route}: any) => {
   const {order, navigationPath, resetRootNavigation, isOrderCreated} =
     route.params;
 
-  const [currentOrder] = useState<Order>(order);
+  const [currentOrder] = useState<Order>({
+    ...order,
+    subtotal: clearCommaNumber(order.subtotal),
+    delivery: clearCommaNumber(order.delivery),
+    discount: clearCommaNumber(order.discount),
+    total: clearCommaNumber(order.total),
+    coupon_discount: clearCommaNumber(order.coupon_discount),
+    subtotal_with_discount: clearCommaNumber(order.subtotal_with_discount),
+  });
   const [showReview, setShowReview] = useState<boolean>(
     Boolean(currentOrder.review),
   );
