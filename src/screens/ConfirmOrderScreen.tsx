@@ -52,6 +52,7 @@ import {CurrentTotalOrder} from '../components/CurrentTotalOrder';
 import {CreditCardValidationModal} from '../components/CreditCardValidationModal';
 import {CreditCardValidationErrorModal} from '../components/CreditCardValidationErrorModal';
 import {PhoneRequiredModal} from '../components/PhoneRequiredModal';
+import {BillingInfo} from '../components/SwitchBillControlButton';
 
 import {billFormatOrderRequest} from '../helpers/billFormatOrderRequest';
 import {showServiceErrors} from '../helpers/showServiceErrors';
@@ -125,10 +126,10 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   useEffect(() => {
     if (orderUserBillingTemp?.bill_type.length === 0) {
       const bill: BillInfo = {
-        bill_type: currentUser.bill_type ?? '',
-        bill_entity: currentUser.bill_entity ?? '',
-        dui: currentUser.dui ?? '',
-        iva: currentUser.iva ?? '',
+        bill_type: currentUser.bill_type ?? BillingInfo.bill.finalConsumer,
+        bill_entity: currentUser.bill_entity ?? null,
+        dui: currentUser.dui ?? null,
+        iva: currentUser.iva ?? null,
       };
       dispatch(setOrderUserBillingTemp({billingInfo: bill}));
     }
@@ -217,8 +218,6 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   };
 
   const freeShipping = async (quoteResponse: QuoteResponse) => {
-    // if (!quoteResponse.special_discount) return;
-
     if (
       Number(
         productsCart.products[productsCart.products.length - 1].branch
@@ -286,6 +285,31 @@ export const ConfirmOrderScreen = ({navigation}: any) => {
   const confirmOrder = async () => {
     if (orderUserPhoneTemp === undefined || orderUserPhoneTemp.length === 0) {
       setPhoneRequiredModal(true);
+      return;
+    }
+
+    if (
+      orderUserBillingTemp.bill_type === BillingInfo.bill.finalConsumer &&
+      (orderUserBillingTemp.dui === null || orderUserBillingTemp.dui === '')
+    ) {
+      const AsyncAlert = async () =>
+        new Promise(resolve => {
+          Alert.alert(
+            Messages.titleMessage,
+            Messages.billInfoCheckoutRequired,
+            [
+              {
+                text: Messages.okButton,
+                onPress: () => {
+                  resolve('YES');
+                },
+              },
+            ],
+            {cancelable: false},
+          );
+        });
+
+      await AsyncAlert();
       return;
     }
 
