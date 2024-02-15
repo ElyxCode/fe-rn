@@ -150,3 +150,7 @@ export const passwordValidation = (userPassword: string) =>
 export const getPlatformDevice = (): string => {
     return isAndroid ? 'android' : 'ios'
 }
+
+export const clearCommaNumber = (amount: string): string => {
+    return amount.replace(/\,/g, '');
+}

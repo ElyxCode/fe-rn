@@ -151,7 +151,9 @@ export const SignUpScreen = ({navigation}: any) => {
             getPlatformDevice(),
           );
 
-          navigation.navigate('HomeNavigation');
+          navigation.navigate('SignUpComplementScreen', {
+            userData: response.data?.user,
+          });
         } else {
           console.log({errorRespon: response.data?.error});
           Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -243,7 +245,9 @@ export const SignUpScreen = ({navigation}: any) => {
           fcmToken ?? '',
           getPlatformDevice(),
         );
-        navigation.navigate('HomeNavigation');
+        navigation.navigate('SignUpComplementScreen', {
+          userData: response.data?.user,
+        });
       } else {
         console.log({errorRespon: response.data?.error});
         Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);

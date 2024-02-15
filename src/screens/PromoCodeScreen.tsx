@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {CustomNavBar} from './CustomNavBar';
+import {CustomNavBar} from '../components/CustomNavBar';
 import {StyleSheet, Text, View} from 'react-native';
 
-import {SubmitButton} from './SubmitButton';
-import {CustomTextInput} from './CustomTextInput';
+import {SubmitButton} from '../components/SubmitButton';
+import {CustomTextInput} from '../components/CustomTextInput';
 
 import ReceiptDiscountIcon from '../assets/receipt-disscount.svg';
 import ReceiptDiscountBlueIcon from '../assets/receipt-disscount-blue.svg';
 
 import {colors} from '../styles/colors';
 
-export const PromoCodeModal = ({route, navigation}: any) => {
+export const PromoCodeScreen = ({route, navigation}: any) => {
   const {setPromotionCode} = route.params;
   const [promoCode, setPromoCode] = useState('');
   const handlePromoCode = (text: string) => {

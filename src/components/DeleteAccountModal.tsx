@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   Alert,
+  Dimensions,
   Pressable,
   SafeAreaView,
   StyleProp,
@@ -28,6 +29,8 @@ import {clearAddress} from '../services/address/addressSlice';
 
 import Messages from '../constants/Messages';
 import {colors} from '../styles/colors';
+
+const screenDimensions = Dimensions.get('screen');
 
 type ButtonProps = {
   text: string;
@@ -153,13 +156,13 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     marginTop: 10,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
   },
   buttonContainer: {
+    width: (screenDimensions.width - 140) / 2,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 50,
     paddingVertical: 11,
   },
   buttonText: {

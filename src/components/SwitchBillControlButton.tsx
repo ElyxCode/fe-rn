@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View, Dimensions} from 'react-native';
 
 import {CustomTextInput} from './CustomTextInput';
 
@@ -8,6 +8,8 @@ import ReceiptEditIcon from '../assets/receipt_edit.svg';
 
 import {colors} from '../styles/colors';
 import {isAndroid} from '../constants/Platform';
+
+const screenDimensions = Dimensions.get('screen');
 
 type SwitchBillControlButtonProps = {
   billSelected: (value: string) => void;
@@ -122,7 +124,7 @@ export const SwitchBillControlButton = ({
     <View style={styles.container}>
       <View style={styles.buttonsContainer}>
         <BillingButton
-          name={'Consumidor\n        final'}
+          name={BillingInfoLabel.bill.finalConsumer}
           value={BillingInfo.bill.finalConsumer}
           selected={selectedBilling}
           setSelected={setSelectedBilling}
@@ -192,6 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 15,
+    flex: 1,
   },
   buttonContainer: {
     borderWidth: 1,
@@ -199,12 +202,15 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    width: (screenDimensions.width - 100) / 2,
+    flex: 1,
+    paddingHorizontal: 10,
     backgroundColor: colors.White,
   },
   buttonTitleText: {
     color: colors.PrimaryTextColor,
     fontSize: 16,
+    textAlign: 'center',
     fontFamily: 'Poppins-Medium',
   },
   inputDocumentNumberContainer: {

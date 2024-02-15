@@ -43,6 +43,6 @@ export default {
     requestLocationPermission: 'Por favor, habilita el permiso de localización',
     activeGpsMessages: 'Por favor activa GPS',
     requestMediaFilePermission: 'Por favor, habilitar el permiso de lectura de almacenamiento',
-    deleteAddressError: 'Ocurrió un problema al eliminar la dirección, intente más tarde'
-    
+    deleteAddressError: 'Ocurrió un problema al eliminar la dirección, intente más tarde',
+    billInfoCheckoutRequired: 'Ingresa la información requerida para la facturación de tus productos',
 }

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   ScrollView,
   StyleSheet,
@@ -31,7 +32,6 @@ import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {formatter} from '../utils/utilities';
 import {colors} from '../styles/colors';
-import {LoaderScreen} from './LoaderScreen';
 
 type ProductItemRenderProps = {
   productItem: Product;
@@ -55,6 +55,7 @@ export const ShoppingCartScreen = ({navigation}: any) => {
       productItem.quantity.toString() ?? '1',
     );
     const handleItemAmount = (value: number) => {
+      setIsLoading(true);
       if (value === 0 || value < 1) {
         setItemAmount('1');
         value = 1;
@@ -68,6 +69,9 @@ export const ShoppingCartScreen = ({navigation}: any) => {
           itemAmount: value,
         }),
       );
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     };
 
     const productStockValidation = (amountProduct: number) => {
@@ -148,8 +152,6 @@ export const ShoppingCartScreen = ({navigation}: any) => {
     );
   };
 
-  if (isLoading) return <LoaderScreen />;
-
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar titleText={branchName} />
@@ -169,24 +171,37 @@ export const ShoppingCartScreen = ({navigation}: any) => {
           </Text>
         </View>
       </ScrollView>
-      <SubmitButton
-        onPress={() => {
-          if (exceedsStock || productsCart.products.length === 0) return;
-          navigation.navigate('ConfirmOrderNavigation');
-        }}
-        textButton="Pagar"
-        activeOpacity={
-          exceedsStock || productsCart.products.length === 0 ? 1 : 0.9
-        }
-        customStyles={{
-          marginHorizontal: 20,
-          marginBottom: 20,
-          backgroundColor:
-            exceedsStock || productsCart.products.length === 0
-              ? colors.disbledButtonColor
-              : colors.PrimaryColor,
-        }}
-      />
+      {isLoading ? (
+        <View
+          style={{
+            height: 53,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginHorizontal: 20,
+            marginBottom: 20,
+          }}>
+          <ActivityIndicator color={colors.PrimaryColor} style={{height: 30}} />
+        </View>
+      ) : (
+        <SubmitButton
+          onPress={() => {
+            if (exceedsStock || productsCart.products.length === 0) return;
+            navigation.navigate('ConfirmOrderNavigation');
+          }}
+          textButton="Pagar"
+          activeOpacity={
+            exceedsStock || productsCart.products.length === 0 ? 1 : 0.9
+          }
+          customStyles={{
+            marginHorizontal: 20,
+            marginBottom: 20,
+            backgroundColor:
+              exceedsStock || productsCart.products.length === 0
+                ? colors.disbledButtonColor
+                : colors.PrimaryColor,
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };
