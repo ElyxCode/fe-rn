@@ -20,4 +20,5 @@ export const colors = {
   textInputBorderColorIos: '#2A3890',
   PopUpBackground: 'rgba(0, 0, 0, 0.8)',
   disbledButtonColor: '#cccccc',
+  lineDivisor: '#D8D8D8',
 };
