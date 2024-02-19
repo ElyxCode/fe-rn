@@ -119,7 +119,7 @@ const style = StyleSheet.create({
   textNumber: {
     fontSize: 24,
     fontFamily: 'Poppins-Medium',
-    paddingHorizontal: 28,
+    paddingHorizontal: 60,
     textAlign: 'center',
   },
 });
