@@ -25,27 +25,29 @@ export const CategoryItem = ({
   return (
     <View>
       <View style={styles.categoryItemContainer}>
-        <View
-          style={{
-            flexDirection: 'row',
-            columnGap: 8,
-            justifyContent: 'center',
+        <Pressable
+          style={{flex: 1}}
+          onPress={() => {
+            dispatch(
+              setCategory({categoryId: item.id, categoryName: item.name}),
+            );
+            navigation.goBack();
           }}>
-          {item.avatar !== null ? (
-            <Image source={{uri: item.avatar ?? ''}} height={17} width={17} />
-          ) : null}
-          <Pressable
-            onPress={() => {
-              dispatch(
-                setCategory({categoryId: item.id, categoryName: item.name}),
-              );
-              navigation.goBack();
+          <View
+            style={{
+              flexDirection: 'row',
+              columnGap: 8,
+              alignItems: 'center',
             }}>
+            {item.avatar !== null ? (
+              <Image source={{uri: item.avatar ?? ''}} height={17} width={17} />
+            ) : null}
+
             <Text style={styles.categoryItemText}>{item.name}</Text>
-          </Pressable>
-        </View>
+          </View>
+        </Pressable>
         {item.categories.length > 0 ? (
-          <View style={{flex: 1, alignItems: 'flex-end'}}>
+          <View style={{paddingLeft: 8}}>
             <Pressable
               onPress={() => {
                 item.isExtended = !item.isExtended;
