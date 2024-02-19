@@ -34,7 +34,6 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
   const dispatch = useAppDispatch();
   const isFocused = useIsFocused();
 
-  console.log({product});
   useEffect(() => {
     if (!isLoggedIn && isFocused) {
       dispatch(clearProduct());
@@ -69,7 +68,7 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: colors.White}}>
       <CustomNavBar />
       <ScrollView
         style={{flex: 1}}
@@ -83,21 +82,39 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
         </View>
         <View style={styles.screenContainer}>
           <Text style={styles.name}>{product.name}</Text>
-          <Text style={styles.price}>${product.price}</Text>
-          <Text style={styles.brandName}>{product.brand.name}</Text>
+          {Number(product.price_with_discount) !== 0 ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                columnGap: 5,
+                alignItems: 'center',
+              }}>
+              <Text style={styles.priceSale}>${product.price}</Text>
+              <Text style={styles.price}>${product.price_with_discount}</Text>
+            </View>
+          ) : (
+            <Text style={styles.price}>${product.price}</Text>
+          )}
 
+          <Text style={styles.brandName}>{product.brand.name}</Text>
+          <View
+            style={{
+              backgroundColor: colors.lineDivisor,
+              height: 1,
+              marginVertical: 20,
+            }}></View>
           <Text
             style={{
               fontSize: 14,
               color: colors.DarkGrayColor,
-              fontFamily: 'Poppins-Medium',
+              fontFamily: 'Poppins-Bold',
             }}>
             Descripción
           </Text>
           <View>
             {descriptionItems.map((item, index) => (
               <Text style={styles.description} key={index}>
-                *{item}
+                {item}
               </Text>
             ))}
           </View>
@@ -181,6 +198,12 @@ const styles = StyleSheet.create({
     color: colors.DarkGrayColor,
     paddingTop: 10,
   },
+  priceSale: {
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    color: colors.DarkGrayColor,
+    textDecorationLine: 'line-through',
+  },
   price: {
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
@@ -203,5 +226,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flex: 1,
     paddingBottom: 30,
+    paddingTop: 15,
   },
 });
