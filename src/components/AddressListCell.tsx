@@ -31,9 +31,7 @@ export const AddressListCell = ({
         <Text style={styles.name} numberOfLines={1}>
           {address.name}
         </Text>
-        <Text style={styles.stringAddress} numberOfLines={1}>
-          {address.address}
-        </Text>
+        <Text style={styles.stringAddress}>{address.address}</Text>
       </View>
       <Trash onPress={() => onPressDelete()} />
     </TouchableOpacity>
@@ -53,6 +51,7 @@ const styles = StyleSheet.create({
   containerText: {
     flex: 1,
     paddingLeft: 16,
+    rowGap: 5,
   },
   name: {
     color: colors.DarkGrayColor,
