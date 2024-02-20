@@ -157,6 +157,16 @@ export const AddressListScreen = ({navigation, route}: any) => {
         <FlatList
           contentContainerStyle={{paddingHorizontal: 20}}
           data={addresses}
+          ListHeaderComponent={
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: 'bold',
+                color: colors.DarkGrayColor,
+              }}>
+              Selecciona la dirección que deseas usar
+            </Text>
+          }
           renderItem={({item}) => (
             <AddressListCell
               onPress={() => setActiveAddress(item)}
