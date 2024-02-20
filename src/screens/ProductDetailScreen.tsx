@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 12,
     color: colors.DarkGrayColor,
+    fontFamily: 'Poppins-Medium',
   },
   submitButton: {
     justifyContent: 'flex-end',
