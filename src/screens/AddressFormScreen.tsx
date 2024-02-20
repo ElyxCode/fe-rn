@@ -132,7 +132,7 @@ export const AddressFormScreen = ({route, navigation}: any) => {
     const addressrequest: Address = {
       id: 0,
       name: name,
-      address: address ? address : '',
+      address: address ? address + ' ' + block : '',
       block: block,
       slope: slope,
       road: localRoad,
