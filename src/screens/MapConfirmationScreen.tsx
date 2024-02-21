@@ -6,14 +6,14 @@ import {
   ScrollView,
   Alert,
   Linking,
-  Image,
   Pressable,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {first} from 'lodash';
 import GetLocation from 'react-native-get-location';
 
-import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
+import {useAppDispatch} from '../hooks/useRedux';
 
 import {AddressBox} from '../components/AddressBox';
 import {SubmitButton} from '../components/SubmitButton';
@@ -34,8 +34,7 @@ import GpsIcon from '../assets/gps_icon.svg';
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
-
-// const icLocationIcon: string = require('../../ios/ferreplace/Images.xcassets/ic_location_pin@1x.png');
+import {CustomNavBar} from '../components/CustomNavBar';
 
 export enum MapFlow {
   HomeFlow,
@@ -224,7 +223,8 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
   };
 
   return (
-    <>
+    <SafeAreaView style={{flex: 1}}>
+      <CustomNavBar />
       <View style={{flex: 1}}>
         <View style={styles.headerContainer}>
           <MapView
@@ -310,7 +310,7 @@ export const MapConfirmationScreen = ({navigation, route}: any) => {
           />
         </ScrollView>
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
