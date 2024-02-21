@@ -60,12 +60,10 @@ export const BranchConfirmOrderNavigation = () => {
             <BranchConfirmationStack.Screen
               name="PromotionDetailScreen"
               component={PromotionDetailScreen}
-              options={{headerShown: true, header: () => <CustomNavBar />}}
             />
             <BranchConfirmationStack.Screen
               name="PromotionProductsScreen"
               component={PromotionProductsScreen}
-              options={{headerShown: true, header: () => <CustomNavBar />}}
             />
             <BranchConfirmationStack.Screen
               name="CategoryListModal"

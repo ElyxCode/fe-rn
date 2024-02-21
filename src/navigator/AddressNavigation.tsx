@@ -22,13 +22,10 @@ export const AddressNavigation = () => {
           name="AddressListScreen"
           component={AddressListScreen}
         />
-
         <AddressStack.Screen
           name="MapConfirmationScreen"
           component={MapConfirmationScreen}
-          options={{headerShown: true, header: () => <CustomNavBar />}}
         />
-
         <AddressStack.Screen
           name="AddressFormScreen"
           component={AddressFormScreen}

@@ -38,34 +38,25 @@ export const HomeNavigation = () => {
       <HomeStack.Screen
         name="MapConfirmationScreen"
         component={MapConfirmationScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="SearchAddressScreen"
         component={SearchAddressScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="PromotionDetailScreen"
         component={PromotionDetailScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="PromotionProductsScreen"
         component={PromotionProductsScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="SearchBranchsScreen"
         component={SearchBranchsScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
-      <HomeStack.Group screenOptions={{presentation: 'modal'}}>
-        <HomeStack.Screen
-          name="BranchNavigation"
-          component={BranchNavigation}
-        />
-      </HomeStack.Group>
+
+      <HomeStack.Screen name="BranchNavigation" component={BranchNavigation} />
     </HomeStack.Navigator>
   );
 };

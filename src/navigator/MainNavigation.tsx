@@ -52,7 +52,6 @@ export const MainNavigation = () => {
       <MainStack.Screen
         name="SearchAddressScreen"
         component={SearchAddressScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
 
       <MainStack.Screen name="HomeNavigation" component={HomeNavigation} />
