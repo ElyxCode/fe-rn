@@ -9,12 +9,13 @@ type imageProps = {
 export const PromotionImageDetail = ({image, height}: imageProps) => {
   return (
     <Image
-      resizeMode="stretch"
+      resizeMode="contain"
       source={{uri: image}}
       height={height}
       style={{
         borderRadius: 12,
         marginHorizontal: 20,
+        marginTop: 10,
       }}
     />
   );
