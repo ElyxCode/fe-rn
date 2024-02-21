@@ -8,24 +8,32 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import LocationIcon from '../assets/location.svg';
-import CloseCircle from '../assets/close_circle.svg';
-import GoogleIcon from '../assets/poweredbygoogle.svg';
-import {colors} from '../styles/colors';
+import {SafeAreaView} from 'react-native-safe-area-context';
+
+import {useAppSelector} from '../hooks/useRedux';
+import {useNavigation} from '@react-navigation/native';
+
+import {CustomNavBar} from '../components/CustomNavBar';
+import {PlaceCell} from '../components/PlaceCell';
+
 import {getPlaceDetails, getPlaces} from '../services/google/maps';
 import {
   GooglePlaceAutoCompletePrediction,
   GooglePlaceAutoCompleteResult,
 } from '../model/GooglePlaceAutoCompleteResult';
-import {PlaceCell} from '../components/PlaceCell';
-import {useNavigation} from '@react-navigation/native';
 import {Location} from '../model/Location';
+
+import LocationIcon from '../assets/location.svg';
+import GoogleIcon from '../assets/poweredbygoogle.svg';
+import CloseCircle from '../assets/close_circle.svg';
+
+import {colors} from '../styles/colors';
 
 export const SearchAddressScreen = ({route}: any) => {
   const {setLocation} = route.params;
 
   const navigation = useNavigation();
-
+  const authToken = useAppSelector(state => state.authToken);
   const [isButtonVisible, setButtonVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [predictions, setPredictions] =
@@ -57,10 +65,14 @@ export const SearchAddressScreen = ({route}: any) => {
   };
 
   return (
-    <>
+    <SafeAreaView style={{flex: 1}}>
+      <CustomNavBar />
       <View style={styles.container}>
-        <Text style={styles.title}>Editar dirección</Text>
-
+        {authToken.isLoggedIn ? (
+          <Text style={styles.title}>Editar dirección</Text>
+        ) : (
+          <Text style={styles.title}>Buscar dirección</Text>
+        )}
         <View style={styles.searchContainer}>
           <View style={styles.leftContainer}>
             <LocationIcon height={24} width={24} />
@@ -79,7 +91,8 @@ export const SearchAddressScreen = ({route}: any) => {
           )}
         </View>
         <View style={styles.googleContainer}>
-          <GoogleIcon height={15} width={110} />
+          <Text style={{fontSize: 12, color: colors.Black}}>Powered by</Text>
+          <GoogleIcon height={15} width={55} style={{top: 2}} />
         </View>
 
         <FlatList
@@ -91,16 +104,17 @@ export const SearchAddressScreen = ({route}: any) => {
                 selectedPlace(item);
               }}
             />
-          )}></FlatList>
+          )}
+        />
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   googleContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 8,
   },
   container: {
@@ -128,9 +142,8 @@ const styles = StyleSheet.create({
     marginVertical: 21,
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: Platform.OS === 'ios' ? 10 : 5,
-    borderColor: colors.PrimaryColor,
-    borderWidth: 1,
+    paddingVertical: Platform.OS === 'ios' ? 15 : 5,
+    backgroundColor: colors.White,
     borderRadius: 10,
   },
 });
