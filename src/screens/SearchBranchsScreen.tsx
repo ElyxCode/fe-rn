@@ -8,6 +8,7 @@ import {BranchItemRender} from '../components/BranchHomeList';
 import {LoaderScreen} from './LoaderScreen';
 
 import {Branch} from '../model/Branch';
+import {CustomNavBar} from '../components/CustomNavBar';
 
 export const SearchBranchsScreen = ({navigation, route}: any) => {
   const {branchs} = route.params;
@@ -45,6 +46,7 @@ export const SearchBranchsScreen = ({navigation, route}: any) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <CustomNavBar />
       <View style={styles.container}>
         <SearchInput
           title="Comienza a explorar"
