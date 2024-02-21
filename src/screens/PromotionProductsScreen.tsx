@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 
 import {ProductItemRender} from '../components/ProductItemRender';
 import {PromotionImageDetail} from '../components/PromotionImageDetail';
@@ -9,6 +9,8 @@ import {LoaderScreen} from './LoaderScreen';
 import {Promotion} from '../model/Promotion';
 
 import {colors} from '../styles/colors';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {CustomNavBar} from '../components/CustomNavBar';
 
 type PromoProps = {
   promotion: Promotion;
@@ -45,10 +47,9 @@ export const PromotionProductsScreen = ({route, navigation}: any) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <CustomNavBar />
       <View style={styles.container}>
-        <PromotionImageDetail
-          image={promotion.image}
-          height={165}></PromotionImageDetail>
+        <PromotionImageDetail image={promotion.image} height={185} />
         <Text style={styles.title}>Productos</Text>
 
         <FlatList
