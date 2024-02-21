@@ -52,12 +52,10 @@ export const BranchNavigation = () => {
         <BranchStack.Screen
           name="PromotionDetailScreen"
           component={PromotionDetailScreen}
-          options={{headerShown: true, header: () => <CustomNavBar />}}
         />
         <BranchStack.Screen
           name="PromotionProductsScreen"
           component={PromotionProductsScreen}
-          options={{headerShown: true, header: () => <CustomNavBar />}}
         />
         <BranchStack.Screen
           name="CategoryListModal"
