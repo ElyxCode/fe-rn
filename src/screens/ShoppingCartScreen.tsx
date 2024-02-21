@@ -164,16 +164,16 @@ export const ShoppingCartScreen = ({navigation}: any) => {
             <ProductItemRender key={item.id} productItem={item} />
           ))}
         </View>
-        <View style={styles.subtotalContainer}>
-          <Text style={[styles.subtotalText, {color: colors.PrimaryTextColor}]}>
-            Subtotal
-          </Text>
-          <Text
-            style={[styles.subtotalText, {color: colors.SecondaryTextColor}]}>
-            {formatter.format(Number(productsCart.totalValue))}
-          </Text>
-        </View>
       </ScrollView>
+
+      <View style={styles.subtotalContainer}>
+        <Text style={[styles.subtotalText, {color: colors.PrimaryTextColor}]}>
+          Subtotal
+        </Text>
+        <Text style={[styles.subtotalText, {color: colors.SecondaryTextColor}]}>
+          {formatter.format(Number(productsCart.totalValue))}
+        </Text>
+      </View>
       {isLoading ? (
         <View
           style={{
@@ -222,7 +222,8 @@ const styles = StyleSheet.create({
   subtotalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
   },
   subtotalText: {
     fontFamily: 'Poppins-Medium',
