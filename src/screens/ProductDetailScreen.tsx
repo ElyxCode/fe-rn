@@ -88,6 +88,7 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
                 flexDirection: 'row',
                 columnGap: 5,
                 alignItems: 'center',
+                marginVertical: 5,
               }}>
               <Text style={styles.priceSale}>${product.price}</Text>
               <Text style={styles.price}>${product.price_with_discount}</Text>
@@ -101,7 +102,7 @@ export const ProductDetailScreen = ({route, navigation}: any) => {
             style={{
               backgroundColor: colors.lineDivisor,
               height: 1,
-              marginVertical: 20,
+              marginVertical: 15,
             }}></View>
           <Text
             style={{
@@ -208,6 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
     color: colors.PrimaryColor,
+    marginVertical: 5,
   },
   brandName: {
     fontSize: 16,
