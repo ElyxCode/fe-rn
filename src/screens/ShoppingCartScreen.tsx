@@ -270,5 +270,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     textAlign: 'center',
+    color: colors.Black,
   },
 });

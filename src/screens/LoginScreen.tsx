@@ -470,6 +470,7 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
+    color: colors.DarkGrayColor,
   },
   inputTextContainer: {
     rowGap: 20,

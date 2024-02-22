@@ -2,6 +2,7 @@ import React from 'react';
 import {GooglePlaceAutoCompletePrediction} from '../model/GooglePlaceAutoCompleteResult';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import SearchIcon from '../assets/search_home.svg';
+import {colors} from '../styles/colors';
 
 type Props = {
   item: GooglePlaceAutoCompletePrediction;
@@ -37,5 +38,6 @@ const styles = StyleSheet.create({
   text: {
     paddingHorizontal: 16,
     fontSize: 12,
+    color: colors.DarkGrayColor,
   },
 });

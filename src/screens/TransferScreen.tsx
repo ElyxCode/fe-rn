@@ -445,6 +445,7 @@ export const TransferScreen = ({navigation, route}: any) => {
             placeholder={
               fileData.fileName ? fileData.fileName : 'Adjunta tu comprobante'
             }
+            placeholderTextColor={'#A9A9AC'}
           />
           <SubmitButton
             textButton="Adjuntar"

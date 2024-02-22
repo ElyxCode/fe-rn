@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Medium',
     flex: 1,
+    color: colors.DarkGrayColor,
   },
   searchContainer: {
     flexDirection: 'row',

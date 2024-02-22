@@ -214,6 +214,9 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
                 labelField="name"
                 valueField="id"
                 placeholder={'Elige un rol'}
+                placeholderStyle={{color: '#A9A9AC'}}
+                selectedTextStyle={{color: colors.Black}}
+                itemTextStyle={{color: colors.Black}}
                 search={false}
                 value={value}
                 onBlur={onBlur}

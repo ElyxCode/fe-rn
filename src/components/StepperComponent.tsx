@@ -121,5 +121,6 @@ const style = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     paddingHorizontal: 60,
     textAlign: 'center',
+    color: colors.Black,
   },
 });
