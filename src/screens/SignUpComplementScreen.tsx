@@ -34,6 +34,7 @@ import {
   dateFormatPattern,
   documentNumberPatternValidation,
   getPlatformDevice,
+  removeFormatDui,
   transformBirthDateToSend,
   transformBirthDateUTCTtoDDMMYYYY,
 } from '../utils/utilities';
@@ -56,7 +57,7 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
     defaultValues: {
       birthDate:
         transformBirthDateUTCTtoDDMMYYYY(userData.birthday ?? '') ?? '',
-      dui: userData.dui ?? '',
+      dui: removeFormatDui(userData.dui) ?? '',
       occupation: userData.occupation?.id ?? '',
     },
   });

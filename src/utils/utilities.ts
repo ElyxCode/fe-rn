@@ -154,3 +154,10 @@ export const getPlatformDevice = (): string => {
 export const clearCommaNumber = (amount: string): string => {
     return amount.replace(/\,/g, '');
 }
+
+export const removeFormatDui = (value: any): string => {
+    if(value.includes('-')){
+        value.replace('-','');
+    }
+    return value
+} 
