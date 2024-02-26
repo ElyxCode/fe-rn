@@ -15,16 +15,16 @@ import {TransferScreen} from '../screens/TransferScreen';
 
 export type ConfirmOrderParams = {
   HomeNavigation: undefined;
-  AddressNavigation: any;
-  CardNavigation: any;
-  BranchConfirmOrderNavigation: any;
-  ConfirmOrderScreen: any;
-  DeliveryInfoModal: any;
-  OrderDetailScreen: any;
-  TransferScreen: any;
-  PhoneNumberScreen: any;
-  BillingInfoScreen: any;
-  PromoCodeScreen: any;
+  AddressNavigation: undefined;
+  CardNavigation: undefined;
+  BranchConfirmOrderNavigation: undefined;
+  ConfirmOrderScreen: undefined;
+  DeliveryInfoModal: undefined;
+  OrderDetailScreen: undefined;
+  TransferScreen: undefined;
+  PhoneNumberScreen: undefined;
+  BillingInfoScreen: undefined;
+  PromoCodeScreen: undefined;
 };
 
 const ConfirmOrderStack = createStackNavigator<ConfirmOrderParams>();

@@ -6,15 +6,15 @@ import {SignUpComplementScreen} from '../screens/SignUpComplementScreen';
 import {SignUpWelcomeScreen} from '../screens/SignUpWelcomeScreen';
 import {BiometricDetailScreen} from '../screens/BiometricDetailScreen';
 
-export type RootStackParams = {
-  LoginScreen: any;
-  SignUpScreen: any;
-  SignUpComplementScreen: any;
-  SignUpWelcomeScreen: any;
-  BiometricDetailScreen: any;
+export type SignInStackParams = {
+  LoginScreen: undefined;
+  SignUpScreen: undefined;
+  SignUpComplementScreen: undefined;
+  SignUpWelcomeScreen: undefined;
+  BiometricDetailScreen: undefined;
 };
 
-const SignIn = createStackNavigator<RootStackParams>();
+const SignIn = createStackNavigator<SignInStackParams>();
 
 export const SignInNavigation = () => {
   return (

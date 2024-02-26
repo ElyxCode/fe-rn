@@ -4,8 +4,8 @@ import {CardFormScreen} from '../screens/CardFormScreen';
 import {CardsScreen} from '../screens/CardsScreen';
 
 export type CardNavigatorParams = {
-  CardsScreen: any;
-  CardFormScreen: any;
+  CardsScreen: undefined;
+  CardFormScreen: undefined;
 };
 
 const CardStack = createStackNavigator<CardNavigatorParams>();

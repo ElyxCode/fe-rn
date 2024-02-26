@@ -1,15 +1,13 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import {useAppSelector} from '../hooks/useRedux';
 
 import {AddressListScreen} from '../screens/AddressListScreen';
 import {AddressFormScreen} from '../screens/AddressFormScreen';
 import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
-import {CustomNavBar} from '../components/CustomNavBar';
 
 export type AddressStackParams = {
-  AddressListScreen: any;
-  AddressFormScreen: any;
-  MapConfirmationScreen: any;
+  AddressListScreen: undefined;
+  AddressFormScreen: undefined;
+  MapConfirmationScreen: undefined;
 };
 
 const AddressStack = createStackNavigator<AddressStackParams>();
