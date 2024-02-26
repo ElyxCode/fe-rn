@@ -2,8 +2,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {AddressNavigation} from './AddressNavigation';
 import {BranchNavigation} from './BranchNavigation';
-
-import {CustomNavBar} from '../components/CustomNavBar';
+import {ProfileNavigation} from './ProfileNavigation';
+import {UnloggedNavigation} from './UnloggedNavigation';
 
 import {MapConfirmationScreen} from '../screens/MapConfirmationScreen';
 import {HomeBranchScreen} from '../screens/HomeBranchScreen';
@@ -14,13 +14,15 @@ import {SearchBranchsScreen} from '../screens/SearchBranchsScreen';
 
 export type HomeStackParams = {
   BranchNavigation: undefined;
+  ProfileNavigation: undefined;
+  UnloggedNavigation: undefined;
   HomeBranchScreen: undefined;
   MapConfirmationScreen: undefined;
   AddressNavigation: undefined;
   SearchAddressScreen: undefined;
-  PromotionDetailScreen: any;
-  PromotionProductsScreen: any;
-  SearchBranchsScreen: any;
+  PromotionDetailScreen: undefined;
+  PromotionProductsScreen: undefined;
+  SearchBranchsScreen: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -38,34 +40,32 @@ export const HomeNavigation = () => {
       <HomeStack.Screen
         name="MapConfirmationScreen"
         component={MapConfirmationScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="SearchAddressScreen"
         component={SearchAddressScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="PromotionDetailScreen"
         component={PromotionDetailScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="PromotionProductsScreen"
         component={PromotionProductsScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
       <HomeStack.Screen
         name="SearchBranchsScreen"
         component={SearchBranchsScreen}
-        options={{headerShown: true, header: () => <CustomNavBar />}}
       />
-      <HomeStack.Group screenOptions={{presentation: 'modal'}}>
-        <HomeStack.Screen
-          name="BranchNavigation"
-          component={BranchNavigation}
-        />
-      </HomeStack.Group>
+      <HomeStack.Screen name="BranchNavigation" component={BranchNavigation} />
+      <HomeStack.Screen
+        name="ProfileNavigation"
+        component={ProfileNavigation}
+      />
+      <HomeStack.Screen
+        name="UnloggedNavigation"
+        component={UnloggedNavigation}
+      />
     </HomeStack.Navigator>
   );
 };

@@ -2,37 +2,43 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {LoginScreen} from '../screens/LoginScreen';
 import {SignUpScreen} from '../screens/SignUpScreen';
+import {OptionsUnLoggedScreen} from '../screens/OptionsUnLoggedScreen';
 import {SignUpComplementScreen} from '../screens/SignUpComplementScreen';
 import {SignUpWelcomeScreen} from '../screens/SignUpWelcomeScreen';
 import {BiometricDetailScreen} from '../screens/BiometricDetailScreen';
 
-export type SignInStackParams = {
+export type UnloggedStackParams = {
   LoginScreen: undefined;
   SignUpScreen: undefined;
+  OptionsUnLoggedScreen: undefined;
   SignUpComplementScreen: undefined;
   SignUpWelcomeScreen: undefined;
   BiometricDetailScreen: undefined;
 };
 
-const SignIn = createStackNavigator<SignInStackParams>();
+const UnloggedStack = createStackNavigator<UnloggedStackParams>();
 
-export const SignInNavigation = () => {
+export const UnloggedNavigation = () => {
   return (
-    <SignIn.Navigator screenOptions={{headerShown: false}}>
-      <SignIn.Screen name="LoginScreen" component={LoginScreen} />
-      <SignIn.Screen name="SignUpScreen" component={SignUpScreen} />
-      <SignIn.Screen
+    <UnloggedStack.Navigator screenOptions={{headerShown: false}}>
+      <UnloggedStack.Screen
+        name="OptionsUnLoggedScreen"
+        component={OptionsUnLoggedScreen}
+      />
+      <UnloggedStack.Screen name="LoginScreen" component={LoginScreen} />
+      <UnloggedStack.Screen name="SignUpScreen" component={SignUpScreen} />
+      <UnloggedStack.Screen
         name="SignUpComplementScreen"
         component={SignUpComplementScreen}
       />
-      <SignIn.Screen
+      <UnloggedStack.Screen
         name="SignUpWelcomeScreen"
         component={SignUpWelcomeScreen}
       />
-      <SignIn.Screen
+      <UnloggedStack.Screen
         name="BiometricDetailScreen"
         component={BiometricDetailScreen}
       />
-    </SignIn.Navigator>
+    </UnloggedStack.Navigator>
   );
 };

@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     height: 40,
+    color: colors.Black,
   },
   acceptButtonText: {
     textAlign: 'center',

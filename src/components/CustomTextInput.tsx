@@ -48,6 +48,7 @@ export const CustomTextInput = ({
         editable={editable}
         numberOfLines={1}
         textBreakStrategy="simple"
+        placeholderTextColor={'#A9A9AC'}
       />
     </View>
   );

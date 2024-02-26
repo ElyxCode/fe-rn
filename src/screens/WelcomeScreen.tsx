@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
   textDescription: {
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
+    color: colors.DarkGrayColor,
   },
   featureDescriptionAppContainer: {
     flexDirection: 'row',

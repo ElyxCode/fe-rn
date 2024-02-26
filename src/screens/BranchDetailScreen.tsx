@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
   Image,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -46,6 +45,7 @@ import {getDistanceUserToBranch} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const {branchId} = route.params;

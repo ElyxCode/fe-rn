@@ -2,9 +2,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import {ConfirmOrderNavigation} from './ConfirmOrderNavigation';
 import {HomeNavigation} from './HomeNavigation';
+import {SignInNavigation} from './SignInNavigation';
 
 import {CategoryListModal} from '../components/CategoryListModal';
-import {CustomNavBar} from '../components/CustomNavBar';
 import {BranchInfoModal} from '../components/BranchInfoModal';
 
 import {BranchDetailScreen} from '../screens/BranchDetailScreen';
@@ -15,16 +15,17 @@ import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
 import {SearchProductsScreen} from '../screens/SearchProductsScreen';
 
 export type BranchNavigatorParams = {
-  HomeNavigation: any;
-  ConfirmOrderNavigation: any;
-  BranchDetailScreen: any;
-  ProductDetailScreen: any;
-  PromotionDetailScreen: any;
-  PromotionProductsScreen: any;
-  ShoppingCartScreen: any;
-  CategoryListModal: any;
-  BranchInfoModal: any;
-  SearchProductsScreen: any;
+  HomeNavigation: undefined;
+  ConfirmOrderNavigation: undefined;
+  SignInNavigation: undefined;
+  BranchDetailScreen: undefined;
+  ProductDetailScreen: undefined;
+  PromotionDetailScreen: undefined;
+  PromotionProductsScreen: undefined;
+  ShoppingCartScreen: undefined;
+  CategoryListModal: undefined;
+  BranchInfoModal: undefined;
+  SearchProductsScreen: undefined;
 };
 
 const BranchStack = createStackNavigator<BranchNavigatorParams>();
@@ -52,12 +53,10 @@ export const BranchNavigation = () => {
         <BranchStack.Screen
           name="PromotionDetailScreen"
           component={PromotionDetailScreen}
-          options={{headerShown: true, header: () => <CustomNavBar />}}
         />
         <BranchStack.Screen
           name="PromotionProductsScreen"
           component={PromotionProductsScreen}
-          options={{headerShown: true, header: () => <CustomNavBar />}}
         />
         <BranchStack.Screen
           name="CategoryListModal"
@@ -72,7 +71,10 @@ export const BranchNavigation = () => {
           component={SearchProductsScreen}
         />
       </BranchStack.Group>
-
+      <BranchStack.Screen
+        name="SignInNavigation"
+        component={SignInNavigation}
+      />
       <BranchStack.Screen name="HomeNavigation" component={HomeNavigation} />
     </BranchStack.Navigator>
   );

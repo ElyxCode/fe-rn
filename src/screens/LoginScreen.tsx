@@ -86,7 +86,11 @@ export const LoginScreen = ({navigation}: any) => {
         authToken.fcmToken ?? '',
         getPlatformDevice(),
       );
-      navigation.navigate('HomeNavigation');
+
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'HomeNavigation'}],
+      } as never);
     } else {
       console.log({error: response.data?.error});
       Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -143,7 +147,11 @@ export const LoginScreen = ({navigation}: any) => {
             authToken.fcmToken ?? '',
             getPlatformDevice(),
           );
-          navigation.navigate('HomeNavigation');
+
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'HomeNavigation'}],
+          } as never);
         } else {
           console.log({errorRespon: response.data?.error});
           Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -210,7 +218,11 @@ export const LoginScreen = ({navigation}: any) => {
           authToken.fcmToken ?? '',
           getPlatformDevice(),
         );
-        navigation.navigate('HomeNavigation');
+
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'HomeNavigation'}],
+        } as never);
       } else {
         console.log({errorRespon: response.data?.error});
         Alert.alert('Ferreplace', response.data?.error, [{text: 'Aceptar'}]);
@@ -470,6 +482,7 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
+    color: colors.DarkGrayColor,
   },
   inputTextContainer: {
     rowGap: 20,

@@ -1,41 +1,50 @@
-import React from "react";
+import React from 'react';
 import LocationIcon from '../assets/location.svg';
-import {StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle} from 'react-native';
-import {colors} from '../styles/colors'
-
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
+import {colors} from '../styles/colors';
 
 type Props = {
-    textButton: string;
-    customStyles?: StyleProp<ViewStyle>;
-    onPress: () => void;
-  };
+  textButton: string;
+  customStyles?: StyleProp<ViewStyle>;
+  onPress: () => void;
+};
 
-export const AddressBox = ({textButton,customStyles, onPress}: Props) => {
-    return(
+export const AddressBox = ({textButton, customStyles, onPress}: Props) => {
+  return (
     <>
-    <TouchableOpacity onPress={onPress}  style={[styles.content, customStyles]}> 
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.content, customStyles]}>
         <LocationIcon height={24} width={24} />
-        <Text numberOfLines={1} lineBreakMode='tail' style={styles.text}>{textButton}</Text>
-    </TouchableOpacity>
+        <Text numberOfLines={1} lineBreakMode="tail" style={styles.text}>
+          {textButton}
+        </Text>
+      </TouchableOpacity>
     </>
-    );
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  content:{
-    flexDirection:'row',
-    paddingHorizontal:15,
-    paddingVertical:12,
-    borderColor:colors.PrimaryColor,
-    borderWidth:1,
-    borderRadius:10
+  content: {
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderColor: colors.PrimaryColor,
+    borderWidth: 1,
+    borderRadius: 10,
   },
-  text:{
-    flex:1,
-     paddingLeft:15,
-     marginRight:0,
-     fontSize:14,
-     fontFamily:'Poppins-Medium',
-     
-  }
-})
+  text: {
+    flex: 1,
+    paddingLeft: 15,
+    marginRight: 0,
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
+    color: colors.DarkGrayColor,
+  },
+});
