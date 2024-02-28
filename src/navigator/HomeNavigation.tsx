@@ -11,6 +11,8 @@ import {SearchAddressScreen} from '../screens/SearchAddressScreen';
 import {PromotionDetailScreen} from '../screens/PromotionDetailScreen';
 import {PromotionProductsScreen} from '../screens/PromotionProductsScreen';
 import {SearchBranchsScreen} from '../screens/SearchBranchsScreen';
+import {ShoppingCartScreen} from '../screens/ShoppingCartScreen';
+import {ConfirmOrderNavigation} from './ConfirmOrderNavigation';
 
 export type HomeStackParams = {
   BranchNavigation: undefined;
@@ -23,6 +25,8 @@ export type HomeStackParams = {
   PromotionDetailScreen: undefined;
   PromotionProductsScreen: undefined;
   SearchBranchsScreen: undefined;
+  ShoppingCartScreen: undefined;
+  ConfirmOrderNavigation: undefined;
 };
 
 const HomeStack = createStackNavigator<HomeStackParams>();
@@ -57,7 +61,15 @@ export const HomeNavigation = () => {
         name="SearchBranchsScreen"
         component={SearchBranchsScreen}
       />
+      <HomeStack.Screen
+        name="ShoppingCartScreen"
+        component={ShoppingCartScreen}
+      />
       <HomeStack.Screen name="BranchNavigation" component={BranchNavigation} />
+      <HomeStack.Screen
+        name="ConfirmOrderNavigation"
+        component={ConfirmOrderNavigation}
+      />
       <HomeStack.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}
