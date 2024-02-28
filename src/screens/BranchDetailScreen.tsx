@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
   Pressable,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import {useIsFocused} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {useAppDispatch, useAppSelector} from '../hooks/useRedux';
 
@@ -28,7 +29,6 @@ import {
   nextPageProductsService,
   getProductByCategoryService,
 } from '../services/product/product';
-
 import {clearCategorySelected} from '../services/category/categorySlice';
 
 import {Branch} from '../model/Branch';
@@ -45,7 +45,6 @@ import {getDistanceUserToBranch} from '../utils/utilities';
 import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
-import {SafeAreaView} from 'react-native-safe-area-context';
 
 export const BranchDetailScreen = ({route, navigation}: any) => {
   const {branchId} = route.params;
@@ -105,7 +104,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
       const response = await branchByIdService(branchId);
       if (response.ok) {
         setBranchData(prev => ({...prev, ...response.data}));
-        // shippingFree(response.data as Branch);
+        shippingFree(response.data as Branch);
       } else {
         console.log({error: response.originalError});
       }
@@ -189,12 +188,6 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
     }
     setIsOpenModal(false);
   }, [isFocused]);
-
-  useEffect(() => {
-    if (!isLoading && Object.keys(branchData).length !== 0 && isFocused) {
-      shippingFree(branchData);
-    }
-  }, [isLoading]);
 
   const shippingFree = async (branchData: Branch) => {
     let currentDistante: number = getDistanceUserToBranch(
