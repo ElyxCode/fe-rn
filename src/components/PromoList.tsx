@@ -57,22 +57,20 @@ export const PromoList = ({
     <>
       {isLoading ? (
         <LoaderPromo />
-      ) : (
-        <>
-          <View style={styles.container}>
-            <Text style={styles.titleText}>Promos</Text>
-            <FlatList
-              contentContainerStyle={{paddingHorizontal: 20}}
-              horizontal={true}
-              data={promotions}
-              renderItem={({item}) => <PromoItemRender item={item} />}
-              keyExtractor={item => item.id.toString()}
-              showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View style={{width: 12}}></View>}
-            />
-          </View>
-        </>
-      )}
+      ) : promotions.length !== 0 ? (
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Promos</Text>
+          <FlatList
+            contentContainerStyle={{paddingHorizontal: 20}}
+            horizontal={true}
+            data={promotions}
+            renderItem={({item}) => <PromoItemRender item={item} />}
+            keyExtractor={item => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            ItemSeparatorComponent={() => <View style={{width: 12}}></View>}
+          />
+        </View>
+      ) : null}
     </>
   );
 };
