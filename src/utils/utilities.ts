@@ -48,14 +48,14 @@ export const normalizeCvvCard = (value: string): string => {
 
 export const DUIFormat = (value: string): string => {
    return value.replace(/\//g, "").replace(/[-—]+/g, '')
-    .replace(/[,.]+/g, '').substring(0, 8) + 
+    .replace(/[,.]+/g, '').replace(' ', '').substring(0, 8) + 
             (value.length > 8 ? '-' : '') + value.replace(/\//g, "").replace(/[-—]+/g, '')
             .replace(/[,.]+/g, '').substring(8, 9);         
 }
 
 export const IVAFormat = (value: string): string => {
     return value.replace(/\//g, "").replace(/[-—]+/g, '')
-    .replace(/[,.]+/g, '').substring(0, 6) + 
+    .replace(/[,.]+/g, '').replace(' ', '').substring(0, 6) + 
             (value.length > 6 ? '-' : '') + value.replace(/\//g, "").replace(/[-—]+/g, '')
             .replace(/[,.]+/g, '').substring(6, 7); 
 }
