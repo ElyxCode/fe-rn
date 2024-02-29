@@ -31,6 +31,7 @@ import PersonalCardIcon from '../assets/personalcard.svg';
 import Profile2UserIcon from '../assets/profile-2user.svg';
 
 import {
+  BirthDateFormat,
   dateFormatPattern,
   documentNumberPatternValidation,
   getPlatformDevice,
@@ -175,7 +176,9 @@ export const SignUpComplementScreen = ({route, navigation}: any) => {
               <CustomTextInput
                 placeHolder="DD/MM/YYYY"
                 InputIcon={CalendarIcon}
-                onChangeText={onChange}
+                onChangeText={(text: any) => {
+                  onChange(BirthDateFormat(text));
+                }}
                 onBlur={onBlur}
                 value={value}
               />

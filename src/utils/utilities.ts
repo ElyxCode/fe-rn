@@ -1,7 +1,8 @@
 import { isAndroid } from "../constants/Platform";
 import { Order } from "../model/Order";
 
-export const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
+// export const dateFormatPattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
+export const dateFormatPattern = /(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})/gi;
 export const phoneFormatPattern = /^(?!\s*$)[0-9\s]{8}$/;
 export const emailFormatPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 export const expirationCardPattern = /^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/gm;
@@ -58,6 +59,18 @@ export const IVAFormat = (value: string): string => {
     .replace(/[,.]+/g, '').replace(' ', '').substring(0, 6) + 
             (value.length > 6 ? '-' : '') + value.replace(/\//g, "").replace(/[-—]+/g, '')
             .replace(/[,.]+/g, '').substring(6, 7); 
+}
+
+export const BirthDateFormat = (value: string): string => {
+    return value.replace(/\//g, "").replace(/[-—]+/g, '')
+    .replace(/[,.]+/g, '').replace(' ','').substring(0, 2) + 
+            (value.length > 2 ? '/' : '') + value.replace(/\//g, "").replace(/[-—]+/g, '')
+            .replace(/[,.]+/g, '').replace(' ','').substring(2, 4) + (value.length > 5 ? '/' : '') + value.replace(/\//g, "").replace(/[-—]+/g, '')
+            .replace(/[,.]+/g, '').replace(' ','').substring(4, 8); 
+}
+
+export const isValidDate = (date: string) => {
+    return !isNaN(Date.parse(date));
 }
 
 export const transformBirthDateToSend = (dateFormat: string): string => {
