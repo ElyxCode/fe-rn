@@ -8,6 +8,7 @@ import ReceiptEditIcon from '../assets/receipt_edit.svg';
 
 import {colors} from '../styles/colors';
 import {isAndroid} from '../constants/Platform';
+import {DUIFormat, IVAFormat} from '../utils/utilities';
 
 const screenDimensions = Dimensions.get('screen');
 
@@ -139,15 +140,21 @@ export const SwitchBillControlButton = ({
       <View style={styles.inputDocumentNumberContainer}>
         {selectedBilling === BillingInfo.bill.finalConsumer ? (
           <CustomTextInput
+            placeHolder="00000000-0"
             keyboardType={isAndroid ? 'numeric' : 'number-pad'}
-            onChangeText={setDui}
+            onChangeText={(text: any) => {
+              setDui(DUIFormat(text));
+            }}
             value={dui}
             InputIcon={PersonalCardIcon}
           />
         ) : (
           <CustomTextInput
+            placeHolder="000000-0"
             keyboardType={isAndroid ? 'numeric' : 'number-pad'}
-            onChangeText={setIva}
+            onChangeText={(text: any) => {
+              setIva(IVAFormat(text));
+            }}
             value={iva}
             InputIcon={ReceiptEditIcon}
           />
@@ -173,9 +180,12 @@ export const SwitchBillControlButton = ({
           {selectedTypePerson === BillingInfo.Person.natural ? (
             <View style={styles.inputDocumentNumberContainer}>
               <CustomTextInput
+                placeHolder="00000000-0"
                 keyboardType={isAndroid ? 'numeric' : 'number-pad'}
                 InputIcon={PersonalCardIcon}
-                onChangeText={setDui}
+                onChangeText={(text: any) => {
+                  setDui(DUIFormat(text));
+                }}
                 value={dui}
               />
             </View>
