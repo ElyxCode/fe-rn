@@ -196,13 +196,31 @@ export const ShoppingCartScreen = ({navigation}: any) => {
         </View>
       ) : (
         <SubmitButton
-          onPress={() => {
-            if (
-              exceedsStock ||
-              productsCart.products.length === 0 ||
-              onFocusTextInput.current
-            )
+          onPress={async () => {
+            if (exceedsStock || productsCart.products.length === 0) return;
+
+            if (onFocusTextInput.current) {
+              const AsyncAlert = async () =>
+                new Promise(resolve => {
+                  Alert.alert(
+                    Messages.titleMessage,
+                    Messages.askQuantityProductMessage,
+                    [
+                      {
+                        text: Messages.okButton,
+                        onPress: () => {
+                          resolve('YES');
+                        },
+                      },
+                    ],
+                    {cancelable: false},
+                  );
+                });
+
+              await AsyncAlert();
               return;
+            }
+
             navigation.navigate('ConfirmOrderNavigation');
           }}
           textButton="Pagar"
