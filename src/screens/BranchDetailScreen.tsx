@@ -386,6 +386,18 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
               </>
             ) : null
           }
+          ListEmptyComponent={() => (
+            <View>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: colors.DarkGrayColor,
+                  fontFamily: 'Poppins-Medium',
+                }}>
+                Sin productos para mostrar
+              </Text>
+            </View>
+          )}
         />
       </View>
       {isLoggedIn && productsCart.products.length !== 0 && (
