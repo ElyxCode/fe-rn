@@ -79,10 +79,8 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
     );
 
     if (response.ok) {
+      setNextPageProduct(response.data?.links.next);
       setProducts(response.data?.data ?? []);
-      if (response.data?.data.length === 0) {
-        setNextPageProduct(null);
-      }
     }
     setIsLoading(false);
   };
