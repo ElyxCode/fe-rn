@@ -47,7 +47,8 @@ export const ShoppingCartScreen = ({navigation}: any) => {
 
   useEffect(() => {
     setBranchName(
-      productsCart.products[productsCart.products.length - 1].branch.name ?? '',
+      productsCart?.products[productsCart.products.length - 1]?.branch?.name ??
+        '',
     );
   }, []);
 
@@ -159,11 +160,19 @@ export const ShoppingCartScreen = ({navigation}: any) => {
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar titleText={branchName} />
       <ScrollView style={styles.container}>
-        <View style={styles.productsListContainer}>
-          {productsCart.products.map(item => (
-            <ProductItemRender key={item.id} productItem={item} />
-          ))}
-        </View>
+        {
+          <View style={styles.productsListContainer}>
+            {productsCart.products.length !== 0 ? (
+              productsCart.products.map(item => (
+                <ProductItemRender key={item.id} productItem={item} />
+              ))
+            ) : (
+              <View>
+                <Text style={{textAlign: 'center'}}>No tienes productos</Text>
+              </View>
+            )}
+          </View>
+        }
       </ScrollView>
 
       <View style={styles.subtotalContainer}>
