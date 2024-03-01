@@ -86,6 +86,7 @@ export const BranchDetailScreen = ({route, navigation}: any) => {
         );
 
         if (response.ok) {
+          setNextPageProduct(response.data?.links.next);
           setProducts(response.data?.data as Product[]);
         } else {
           console.log({error: response.originalError});
