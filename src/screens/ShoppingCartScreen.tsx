@@ -44,7 +44,7 @@ export const ShoppingCartScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [exceedsStock, setExceedsStock] = useState(false);
   const onFocusTextInput = useRef<boolean>(false);
-  const viewRef = useRef<number>(isAndroid ? 90 : 120);
+  const viewRef = useRef<number>(isAndroid ? 130 : 120);
 
   const dispatch = useAppDispatch();
 
