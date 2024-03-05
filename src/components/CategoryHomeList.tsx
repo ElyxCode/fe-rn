@@ -1,4 +1,3 @@
-import React, {useEffect, useState} from 'react';
 import {FlatList, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 
 import {Category} from '../model/Category';
@@ -6,9 +5,6 @@ import {Category} from '../model/Category';
 import AllCategory from '../assets/allcategory_cyan.svg';
 
 import {colors} from '../styles/colors';
-import {branchService, filterBranchesByCategory} from '../services/branch';
-import {Branch} from '../model/Branch';
-import {useAppSelector} from '../hooks/useRedux';
 
 type CategoryHomeListProps = {
   categories: Category[];
@@ -42,12 +38,13 @@ export const CategoryHomeList = ({
             id === categoryId ? styles.categoryContainerSelected : null,
           ]}>
           {imageUri === 'allCategory' ? (
-            <AllCategory height={17} width={21} />
+            <AllCategory height={21} width={21} />
           ) : imageUri ? (
             <Image
               source={{uri: imageUri ?? undefined}}
-              height={17}
+              height={21}
               width={21}
+              style={{tintColor: colors.SecondaryColor}}
             />
           ) : null}
           <Text style={styles.categoryText}>{category}</Text>

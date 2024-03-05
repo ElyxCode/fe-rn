@@ -74,26 +74,10 @@ const menuOptions: MenuOptionItemProps[] = [
 
 export const UserOptionsMenuScreen = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {token, social} = useAppSelector(state => state.authToken);
+  const {social} = useAppSelector(state => state.authToken);
   const user = useAppSelector(state => state.user.userData);
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
-
-  // llama servicio para obtener usuario
-  useEffect(() => {
-    const getUserData = async () => {
-      setIsLoading(true);
-      const response = await getUserService(token);
-      if (response.ok) {
-        dispatch(setUser({...response.data}));
-      } else {
-        console.log({errorStatus: response.status});
-        console.log({error: response.data?.error});
-      }
-      setIsLoading(false);
-    };
-    getUserData();
-  }, []);
 
   useEffect(() => {
     if (social === thirdPartySocial.google) {

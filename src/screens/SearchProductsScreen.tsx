@@ -79,6 +79,7 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
     );
 
     if (response.ok) {
+      setNextPageProduct(response.data?.links.next);
       setProducts(response.data?.data ?? []);
     }
     setIsLoading(false);
@@ -132,6 +133,7 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
                 nextPageProduct !== '' &&
                 nextPageProduct !== undefined
               ) {
+                console.log(nextPageProduct);
                 loadMoreProducts();
               } else {
                 console.log('No hay mas items');
@@ -152,6 +154,18 @@ export const SearchProductsScreen = ({route, navigation}: any) => {
                 </>
               ) : null
             }
+            ListEmptyComponent={() => (
+              <View>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: colors.DarkGrayColor,
+                    fontFamily: 'Poppins-Medium',
+                  }}>
+                  Sin productos para mostrar
+                </Text>
+              </View>
+            )}
           />
         )}
       </View>

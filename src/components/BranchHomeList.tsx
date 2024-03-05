@@ -46,6 +46,20 @@ export const BranchHomeList = ({branchs, navigation}: BranchHomeListProps) => {
             navigation={navigation}
           />
         )}
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={styles.emptyCategoryText}>
+              Por el momento no contamos con ferreterias en tu zona
+            </Text>
+            <Text style={styles.emptyCategoryText}>
+              ¡Próximamente estaremos cerca de tu proyecto!
+            </Text>
+          </View>
+        )}
         ItemSeparatorComponent={() => <View style={{height: 10}}></View>}
         keyExtractor={item => item.id.toString()}
         scrollEnabled={false}
@@ -165,5 +179,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.PrimaryTextColor,
     fontFamily: 'Poppins-SemiBold',
+  },
+  emptyCategoryText: {
+    fontFamily: 'Poppins-Medium',
+    color: colors.DarkGrayColor,
+    textAlign: 'center',
   },
 });

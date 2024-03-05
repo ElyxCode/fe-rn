@@ -31,7 +31,7 @@ import {CustomNavBar} from '../components/CustomNavBar';
 
 import {loginServices} from '../services/auth/auth';
 import {ThirdPartyLoginService} from '../services/auth/authThirdParty';
-import {updateDeviceIdService} from '../services/user/user';
+import {getUserService, updateDeviceIdService} from '../services/user/user';
 
 import UserTickIcon from '../assets/user_tick_darkgray.svg';
 import LockIcon from '../assets/ic_lock.svg';
@@ -45,6 +45,7 @@ import Messages from '../constants/Messages';
 import {googleSingInConf} from '../constants/googleSignInConf';
 import {isAndroid} from '../constants/Platform';
 import {colors} from '../styles/colors';
+import {setUser} from '../services/user/userSlice';
 
 export const LoginScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -79,6 +80,9 @@ export const LoginScreen = ({navigation}: any) => {
           isLoggedIn: true,
         }),
       ); // guardo el token
+
+      getUserData(response.data?.token!);
+
       await updateDeviceIdService(
         response.data?.token ?? '',
         response.data?.user.name ?? '',
@@ -139,6 +143,8 @@ export const LoginScreen = ({navigation}: any) => {
               isLoggedIn: true,
             }),
           ); // guardo el token
+
+          getUserData(response.data?.token!);
 
           await updateDeviceIdService(
             response.data?.token ?? '',
@@ -211,6 +217,9 @@ export const LoginScreen = ({navigation}: any) => {
             isLoggedIn: true,
           }),
         ); // guardo el token
+
+        getUserData(response.data?.token!);
+
         await updateDeviceIdService(
           response.data?.token ?? '',
           response.data?.user.name ?? '',
@@ -343,6 +352,18 @@ export const LoginScreen = ({navigation}: any) => {
         {cancelable: false},
       );
     });
+
+  const getUserData = async (token: string) => {
+    setIsLoading(true);
+    const response = await getUserService(token);
+    if (response.ok) {
+      dispatch(setUser({...response.data}));
+    } else {
+      console.log({errorStatus: response.status});
+      console.log({error: response.data?.error});
+    }
+    setIsLoading(false);
+  };
 
   const BiometricButton = () => (
     <Pressable onPress={() => biometricFlow()}>

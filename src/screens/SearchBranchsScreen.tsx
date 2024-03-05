@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {SearchInput} from '../components/SearchInput';
@@ -9,6 +9,7 @@ import {LoaderScreen} from './LoaderScreen';
 
 import {Branch} from '../model/Branch';
 import {CustomNavBar} from '../components/CustomNavBar';
+import {colors} from '../styles/colors';
 
 export const SearchBranchsScreen = ({navigation, route}: any) => {
   const {branchs} = route.params;
@@ -76,6 +77,18 @@ export const SearchBranchsScreen = ({navigation, route}: any) => {
           ItemSeparatorComponent={() => <View style={{height: 15}}></View>}
           keyExtractor={item => item.id.toString() + Math.random() * 3}
           initialNumToRender={20}
+          ListEmptyComponent={() => (
+            <View>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: colors.DarkGrayColor,
+                  fontFamily: 'Poppins-Medium',
+                }}>
+                Sin ferreterias para mostrar
+              </Text>
+            </View>
+          )}
         />
       </View>
     </SafeAreaView>

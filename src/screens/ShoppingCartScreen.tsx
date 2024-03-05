@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   Text,
@@ -43,11 +44,14 @@ export const ShoppingCartScreen = ({navigation}: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [exceedsStock, setExceedsStock] = useState(false);
   const onFocusTextInput = useRef<boolean>(false);
+  const viewRef = useRef<number>(isAndroid ? 130 : 120);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     setBranchName(
-      productsCart.products[productsCart.products.length - 1].branch.name ?? '',
+      productsCart?.products[productsCart.products.length - 1]?.branch?.name ??
+        '',
     );
   }, []);
 
@@ -158,58 +162,108 @@ export const ShoppingCartScreen = ({navigation}: any) => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <CustomNavBar titleText={branchName} />
-      <ScrollView style={styles.container}>
-        <View style={styles.productsListContainer}>
-          {productsCart.products.map(item => (
-            <ProductItemRender key={item.id} productItem={item} />
-          ))}
-        </View>
-      </ScrollView>
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        keyboardVerticalOffset={-viewRef.current}
+        behavior={isAndroid ? 'height' : 'padding'}>
+        <View style={{flex: 1}}>
+          <ScrollView style={styles.container}>
+            {
+              <View style={styles.productsListContainer}>
+                {productsCart.products.length !== 0 ? (
+                  productsCart.products.map(item => (
+                    <ProductItemRender key={item.id} productItem={item} />
+                  ))
+                ) : (
+                  <View>
+                    <Text style={{textAlign: 'center'}}>
+                      No tienes productos
+                    </Text>
+                  </View>
+                )}
+              </View>
+            }
+          </ScrollView>
 
-      <View style={styles.subtotalContainer}>
-        <Text style={[styles.subtotalText, {color: colors.PrimaryTextColor}]}>
-          Subtotal
-        </Text>
-        <Text style={[styles.subtotalText, {color: colors.SecondaryTextColor}]}>
-          {formatter.format(Number(productsCart.totalValue))}
-        </Text>
-      </View>
-      {isLoading ? (
-        <View
-          style={{
-            height: 53,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginHorizontal: 20,
-            marginBottom: 20,
-          }}>
-          <ActivityIndicator color={colors.PrimaryColor} style={{height: 30}} />
+          <View
+            onLayout={({nativeEvent}) => {
+              const {height} = nativeEvent.layout;
+              viewRef.current = height;
+            }}>
+            <View style={styles.subtotalContainer}>
+              <Text
+                style={[styles.subtotalText, {color: colors.PrimaryTextColor}]}>
+                Subtotal
+              </Text>
+              <Text
+                style={[
+                  styles.subtotalText,
+                  {color: colors.SecondaryTextColor},
+                ]}>
+                {formatter.format(Number(productsCart.totalValue))}
+              </Text>
+            </View>
+            {isLoading ? (
+              <View
+                style={{
+                  height: 53,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginHorizontal: 20,
+                  marginBottom: 20,
+                }}>
+                <ActivityIndicator
+                  color={colors.PrimaryColor}
+                  style={{height: 30}}
+                />
+              </View>
+            ) : (
+              <SubmitButton
+                onPress={async () => {
+                  if (exceedsStock || productsCart.products.length === 0)
+                    return;
+
+                  if (onFocusTextInput.current) {
+                    const AsyncAlert = async () =>
+                      new Promise(resolve => {
+                        Alert.alert(
+                          Messages.titleMessage,
+                          Messages.askQuantityProductMessage,
+                          [
+                            {
+                              text: Messages.okButton,
+                              onPress: () => {
+                                resolve('YES');
+                              },
+                            },
+                          ],
+                          {cancelable: false},
+                        );
+                      });
+
+                    await AsyncAlert();
+                    return;
+                  }
+
+                  navigation.navigate('ConfirmOrderNavigation');
+                }}
+                textButton="Pagar"
+                activeOpacity={
+                  exceedsStock || productsCart.products.length === 0 ? 1 : 0.9
+                }
+                customStyles={{
+                  marginHorizontal: 20,
+                  marginBottom: 20,
+                  backgroundColor:
+                    exceedsStock || productsCart.products.length === 0
+                      ? colors.disbledButtonColor
+                      : colors.PrimaryColor,
+                }}
+              />
+            )}
+          </View>
         </View>
-      ) : (
-        <SubmitButton
-          onPress={() => {
-            if (
-              exceedsStock ||
-              productsCart.products.length === 0 ||
-              onFocusTextInput.current
-            )
-              return;
-            navigation.navigate('ConfirmOrderNavigation');
-          }}
-          textButton="Pagar"
-          activeOpacity={
-            exceedsStock || productsCart.products.length === 0 ? 1 : 0.9
-          }
-          customStyles={{
-            marginHorizontal: 20,
-            marginBottom: 20,
-            backgroundColor:
-              exceedsStock || productsCart.products.length === 0
-                ? colors.disbledButtonColor
-                : colors.PrimaryColor,
-          }}
-        />
-      )}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

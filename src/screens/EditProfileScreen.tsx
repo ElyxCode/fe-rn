@@ -39,6 +39,7 @@ import Messages from '../constants/Messages';
 import {isAndroid} from '../constants/Platform';
 
 import {
+  BirthDateFormat,
   clearObjectUserData,
   dateFormatPattern,
   emailFormatPattern,
@@ -334,9 +335,12 @@ export const EditProfileScreen = () => {
                 }}
                 render={({field: {onChange, value, onBlur}}) => (
                   <CustomTextInput
+                    keyboardType={isAndroid ? 'numeric' : 'number-pad'}
                     placeHolder="DD/MM/YYYY"
                     InputIcon={CalendarIcon}
-                    onChangeText={onChange}
+                    onChangeText={(text: any) => {
+                      onChange(BirthDateFormat(text));
+                    }}
                     onBlur={onBlur}
                     value={value}
                   />

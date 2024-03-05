@@ -85,8 +85,8 @@ android {
         applicationId "com.ferreplace.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 33
+        versionName "1.0.1"
         vectorDrawables.useSupportLibrary = true
         resValue 'string', 'build_config_package','com.ferreplace.app'
     }

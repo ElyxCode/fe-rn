@@ -14,6 +14,16 @@
       "filename" : "Icon-40@3x.png",
       "idiom" : "iphone",
       "scale" : "3x"
+    },
+    {
+      "filename" : "Icon-40 1.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Icon-40@2x 1.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
   ],
   "info" : {
