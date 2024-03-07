@@ -1,0 +1,5 @@
+APP_CONFIG=development
+API_BASE_URL=https:/$()/devapi.ferreplace.com/api
+FORGOT_PASSWORD_URL=https:/$()/devapi.ferreplace.com/forgot
+GOOGLE_API_URL=https:/$()/maps.googleapis.com/maps/
+GOOGLE_API_KEY=AIzaSyCytD23EG5zvcDjToXFyAYnvWcVd-e0ETw
